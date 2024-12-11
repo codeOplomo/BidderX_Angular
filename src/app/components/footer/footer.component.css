@@ -1,0 +1,13 @@
+/* @media (max-width: 768px) {
+    .top-footer {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+    .footer-logo {
+      flex: 1 1 calc(50% - 10px);
+    }
+    .footer-panel {
+      flex: 1 1 calc(50% - 10px);
+    }
+  } */
