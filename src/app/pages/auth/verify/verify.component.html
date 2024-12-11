@@ -1,0 +1,58 @@
+<div class="flex align-items-center justify-content-center h-screen" style="background-color: rgb(191, 191, 191);">
+    <p-card header="Verify Your Account" subheader="Enter the verification code sent to your email">
+      <form [formGroup]="verifyForm" id="verifyForm" (ngSubmit)="onVerify()">
+        <div class="verification-content">
+          <!-- Email Input (Disabled) -->
+          <div class="input-section">
+            <span class="p-input-icon-left w-full">
+              <p-iconfield>
+                <input pInputText id="email" formControlName="email" class="w-full" readonly placeholder="Email" />
+                <p-inputicon class="pi pi-envelope"></p-inputicon>
+              </p-iconfield>
+            </span>
+          </div>
+  
+          <!-- Verification Code Input -->
+          <div class="input-section">
+            <span class="p-input-icon-left w-full">
+              <input 
+                pInputText 
+                id="verificationCode" 
+                formControlName="verificationCode" 
+                placeholder="6-digit code" 
+                class="w-full" 
+                maxlength="6"
+              />
+            </span>
+            <div *ngIf="isFieldInvalid('verificationCode')" class="text-right w-full mb-2">
+              <small class="p-error block text-right">
+                {{ getErrorMessage('verificationCode') }}
+              </small>
+            </div>
+          </div>
+  
+          <!-- Verify Button -->
+          <div class="flex align-items-center justify-content-center w-full mt-4">
+            <button 
+              pButton 
+              type="submit" 
+              label="Verify" 
+              [loading]="loading" 
+              class="w-full">
+            </button>
+          </div>
+  
+          <!-- Resend Code Section -->
+          <div class="flex align-items-center justify-content-center w-full mt-3">
+            <p-button 
+              label="Didn't receive code? Resend" 
+              [link]="true" 
+              [disabled]="loading">
+            </p-button>
+          </div>
+
+        </div>
+      </form>
+    </p-card>
+  </div>
+  

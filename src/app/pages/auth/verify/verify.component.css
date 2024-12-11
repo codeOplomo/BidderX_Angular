@@ -1,0 +1,53 @@
+.h-screen { 
+    height: 100vh; 
+  }
+  
+  .p-error { 
+    color: red; 
+  }
+  
+  .flex { 
+    display: flex; 
+  }
+  
+  .align-items-center { 
+    align-items: center; 
+  }
+  
+  .justify-content-center { 
+    justify-content: center; 
+  }
+  
+  .flex-column { 
+    flex-direction: column; 
+  }
+  
+  /* Common content layout */
+  .verification-content,
+  .login-content {
+    display: flex;
+    flex-direction: column;
+    gap: 1.3rem;
+    height: 100%;
+  }
+  
+  /* Input section shared between pages */
+  .input-section {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+  
+  .p-input-icon-left input,
+  .p-password {
+    width: 100%;
+  }
+  
+  .verification-footer,
+  .login-footer {
+    margin-top: auto;
+    padding-top: 0.2rem;
+  }
+  

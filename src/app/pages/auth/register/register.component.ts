@@ -10,6 +10,11 @@ import { PasswordModule } from 'primeng/password';
 import { DividerModule } from 'primeng/divider';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
+import { Toast } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
+import { AuthService } from '../../../services/auth.service';
+import { HttpClientModule } from '@angular/common/http';
+import { ToastService } from '../../../services/toast.service';
 
 @Component({
   selector: 'app-register',
@@ -24,10 +29,13 @@ import { InputIcon } from 'primeng/inputicon';
     PasswordModule,
     DividerModule,
     IconField,
-    InputIcon
+    InputIcon,
+    Toast,
+    HttpClientModule
   ],
   templateUrl: './register.component.html',
-  styleUrls: ['./register.component.css']
+  styleUrls: ['./register.component.css'],
+  providers: [ToastService, AuthService]
 })
 export class RegisterComponent implements OnInit {
   public registerForm!: FormGroup;
@@ -36,7 +44,9 @@ export class RegisterComponent implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private toastService: ToastService,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -78,6 +88,7 @@ export class RegisterComponent implements OnInit {
     });
   }
 
+  
   checkPasswordMatch() {
     const password = this.registerForm.get('password')?.value;
     const confirmPassword = this.registerForm.get('confirmPassword')?.value;
@@ -149,19 +160,38 @@ export class RegisterComponent implements OnInit {
       
       this.loading = true;
       
-      // Uncomment and implement actual registration service
-      // this.authService.register(registerData).subscribe({
-      //   next: (response) => {
-      //     // Handle successful registration
-      //     this.router.navigate(['/login']);
-      //   },
-      //   error: (err) => {
-      //     // Handle registration error
-      //     console.error('Registration error', err);
-      //     this.loading = false;
-      //   }
-      // });
+      // Use the AuthService to send the registration request
+      this.authService.register(registerData).subscribe({
+        next: (response) => {
+          // Show success message using ToastService
+          this.toastService.showSuccess(
+            'Registration Successful', 
+            'Please check your email for a verification code.',
+            9000  // Display for 3 seconds
+          );
+          
+          // Redirect to verification page, passing the registered email
+          this.router.navigate(['/verification'], { 
+            queryParams: { email: registerData.email }
+          });
+          
+          this.loading = false;
+        },
+        error: (err) => {
+          // Show error message using ToastService
+          this.toastService.showError(
+            'Registration Failed', 
+            err.error?.message || 'An error occurred',
+            9000  // Display for 3 seconds
+          );
+          
+          this.loading = false;
+        }
+      });
+    } else {
+      this.loading = false;
     }
   }
+  
 }
 
