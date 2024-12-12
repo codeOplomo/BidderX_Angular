@@ -15,11 +15,17 @@
     </ng-template>
     <ng-template #end>
         <div class="flex items-center gap-2">
-          
-        <a *ngIf="!isLoggedIn" routerLink="/login" 
-        style="text-decoration: none; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 5px; font-size: 1rem; text-align: center; display: inline-block;">
-        Get Started
-      </a>
+            <a *ngIf="!isLoggedIn" routerLink="/login" 
+               style="text-decoration: none; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 5px; font-size: 1rem; text-align: center; display: inline-block;">
+                Get Started
+            </a>
+            
+            <button *ngIf="isLoggedIn" 
+                    pButton 
+                    (click)="logout()" 
+                    label="Logout" 
+                    class="p-button-outlined p-button-danger">
+            </button>
             <!-- <input type="text" pInputText placeholder="Search" class="w-36" />
             <p-avatar image="https://primefaces.org/cdn/primeng/images/demo/avatar/amyelsner.png" shape="circle" /> -->
         </div>

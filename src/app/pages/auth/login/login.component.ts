@@ -9,9 +9,9 @@ import { PasswordModule } from 'primeng/password';
 import { FormsModule } from '@angular/forms';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { DividerModule } from 'primeng/divider';
-import { Toast } from 'primeng/toast';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -27,7 +27,6 @@ import { InputIcon } from 'primeng/inputicon';
     FormsModule, 
     InputGroupAddonModule, 
     DividerModule, 
-    Toast, 
     IconField, 
     InputIcon
   ],
@@ -43,6 +42,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
+    private authService: AuthService
   ) {}
 
   ngOnInit() {
@@ -83,33 +83,33 @@ export class LoginComponent implements OnInit {
 
   onLogin() {
     this.submitted = true;
-    
+  
     // Mark all fields as touched to trigger validation
     this.loginForm.markAllAsTouched();
-    
+  
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-      
-      const loginData = {
-        email: email,
-        password: password
-      };
-      
+  
+      const loginData = { email, password };
+  
       this.loading = true;
-      
-      // Uncomment and implement actual login service
-      // this.authService.login(loginData).subscribe({
-      //   next: (response) => {
-      //     this.redirectBasedOnRole(response.role);
-      //   },
-      //   error: (err) => {
-      //     this.errorMessage = err.error || 'Login failed. Please check your credentials.';
-      //     console.error('Login error', err);
-      //     this.loading = false;
-      //   }
-      // });
+      this.errorMessage = ''; // Clear any previous error messages
+  
+      this.authService.login(loginData).subscribe({
+        next: (response) => {
+          // Successful login 
+          // Token is now stored in the service's login method
+          this.router.navigate(['/profile']);
+        },
+        error: (err) => {
+          this.errorMessage = err.error?.message || 'Login failed. Please check your credentials.';
+          console.error('Login error', err);
+          this.loading = false;
+        }
+      });
     }
   }
+  
 
   private redirectBasedOnRole(role: string) {
     switch(role) {
