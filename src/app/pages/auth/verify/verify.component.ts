@@ -112,12 +112,10 @@ export class VerifyComponent implements OnInit {
           verificationCode: this.verifyForm.get('verificationCode')?.value
         };
     
-        // Make the API call and properly handle response and error
+        // Call the verifyUser API and handle responses
         this.authService.verifyUser(verifyData).pipe(
           tap({
             next: (response) => {
-              console.log("The response is: ", response); // Inspect the response here
-    
               if (response && response.message) {
                 this.toastService.showSuccess(
                   'Verification Successful',
@@ -129,32 +127,21 @@ export class VerifyComponent implements OnInit {
                 setTimeout(() => {
                   this.router.navigate(['/login']);
                 }, 3000); // Adjust delay if necessary
-              } else {
-                this.toastService.showError(
-                  'Verification Failed',
-                  'Something went wrong.',
-                  3000
-                );
               }
-    
               this.loading = false;
             },
             error: (err) => {
-              console.log("Error occurred: ", err); // Check the error structure
-    
-              this.toastService.showError(
-                'Verification Failed',
-                err?.error?.message || 'An error occurred during verification.',
-                3000
-              );
+              const errorMessage = err?.error?.message || 'An error occurred during verification.';
+              this.toastService.showError('Verification Failed', errorMessage, 3000);
               this.loading = false;
             }
           })
-        ).subscribe(); // Ensure to subscribe to trigger the observable
+        ).subscribe();
       } else {
         this.loading = false;
       }
     }
+    
     
   }
   

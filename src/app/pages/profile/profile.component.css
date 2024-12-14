@@ -1,62 +1,71 @@
 .profile-page {
-    padding: 2rem;
-  
-    .profile-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem;
-      border-radius: 8px;
-  
-      .profile-picture {
-        width: 80px;
-        height: 80px;
-        border-radius: 50%;
-        object-fit: cover;
-        margin-right: 1rem;
-      }
-  
-      .profile-info {
-        flex-grow: 1;
-  
-        h2 {
-          margin: 0;
-          font-size: 1.5rem;
-        }
-  
-        p {
-          margin: 0.25rem 0;
-          color: #888;
-        }
-      }
+  padding: 2rem;
+
+  .profile-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border-radius: 8px;
+
+    .profile-picture {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 1rem;
     }
-  
-    .product-card {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1rem;
-      border: 1px solid #ddd;
-      border-radius: 8px;
-      margin-bottom: 1rem;
-  
-      img {
-        width: 100px;
-        height: 100px;
-        object-fit: cover;
-        border-radius: 8px;
-        margin-right: 1rem;
-      }
-  
-      h3 {
+
+    .profile-info {
+      flex-grow: 1;
+
+      h2 {
         margin: 0;
-        flex-grow: 1;
+        font-size: 1.5rem;
       }
-  
-      .old-price {
-        text-decoration: line-through;
+
+      p {
+        margin: 0.25rem 0;
         color: #888;
       }
     }
   }
-  
+
+  .owner-actions {
+    display: flex;
+    justify-content: center;
+    margin: 1rem 0;
+
+    button {
+      margin: 0 0.5rem;
+    }
+  }
+
+  .product-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+
+    img {
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-right: 1rem;
+    }
+
+    h3 {
+      margin: 0;
+      flex-grow: 1;
+    }
+
+    .old-price {
+      text-decoration: line-through;
+      color: #888;
+    }
+  }
+}

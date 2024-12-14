@@ -68,7 +68,15 @@ export class AuthService {
       .pipe(
         tap(response => {
           if (response.token) {
+            // Store the token
             localStorage.setItem('token', response.token);
+            
+            // Decode the token to extract roles
+            const tokenPayload = this.decodeToken(response.token);
+            if (tokenPayload && tokenPayload.roles) {
+              localStorage.setItem('userRoles', JSON.stringify(tokenPayload.roles));
+            }
+            
             // Update login status
             this.isLoggedInSubject.next(true);
           }
@@ -76,9 +84,29 @@ export class AuthService {
         catchError(this.handleError)
       );
   }
-
+  
+  // Method to decode JWT token
+  private decodeToken(token: string): any {
+    try {
+      // Basic JWT decoding (note: this is a simplified version)
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace('-', '+').replace('_', '/');
+      return JSON.parse(window.atob(base64));
+    } catch (error) {
+      console.error('Error decoding token', error);
+      return null;
+    }
+  }
+  
+  // Method to check if user has a specific role
+  hasRole(role: string): boolean {
+    const roles = JSON.parse(localStorage.getItem('userRoles') || '[]');
+    return roles.includes(`ROLE_${role}`);
+  }
+  
   logout(): void {
     localStorage.removeItem('token');
+    localStorage.removeItem('userRoles');
     // Update login status
     this.isLoggedInSubject.next(false);
   }
