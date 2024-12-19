@@ -111,19 +111,19 @@ export class LoginComponent implements OnInit {
   }
   
 
-  private redirectBasedOnRole(role: string) {
-    switch(role) {
-      case 'ADMIN':
-        this.router.navigate(['/admin-dashboard']);
-        break;
-      case 'OWNER':
-        this.router.navigate(['/owner-dashboard']);
-        break;
-      case 'BIDDER':
-        this.router.navigate(['/bidder-dashboard']);
-        break;
-      default:
-        this.router.navigate(['/']);
-    }
-  }
+  // private redirectBasedOnRole(role: string) {
+  //   switch(role) {
+  //     case 'ADMIN':
+  //       this.router.navigate(['/admin-dashboard']);
+  //       break;
+  //     case 'OWNER':
+  //       this.router.navigate(['/owner-dashboard']);
+  //       break;
+  //     case 'BIDDER':
+  //       this.router.navigate(['/bidder-dashboard']);
+  //       break;
+  //     default:
+  //       this.router.navigate(['/']);
+  //   }
+  // }
 }

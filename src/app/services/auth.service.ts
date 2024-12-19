@@ -1,56 +1,109 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpErrorResponse, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, Observable, throwError } from 'rxjs';
-import { catchError, tap } from 'rxjs/operators';
-
-// Interface for registration response
-export interface RegisterResponse {
-  message: string;
-  email: string;
-}
-
-// Interface for registration data
-export interface RegisterData {
-  email: string;
-  password: string;
-  profileIdentifier: string;
-  firstName: string;
-  lastName: string;
-  phoneNumber: string;
-}
-
-// Interface for verification data
-export interface VerifyData {
-  email: string;
-  verificationCode: string;
-}
-
-export interface LoginResponse {
-  token: string;
-}
-
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
+import { catchError, tap, delay } from 'rxjs/operators';
+import { RegisterDataVM } from '../models/view-models/register-data.model';
+import { RegisterResponseVM } from '../models/view-models/register-response.model';
+import { VerifyDataVM } from '../models/view-models/verify-data.model';
+import { TokenResponseVM } from '../models/view-models/token-response.model';
+import { Router } from '@angular/router';
+  
 @Injectable({
   providedIn: 'root'
 })
+
 export class AuthService {
   private apiUrl = 'http://localhost:8080/api/auth';
-  private isLoggedInSubject = new BehaviorSubject<boolean>(this.checkTokenExists());
+  private isLoggedInSubject = new BehaviorSubject<boolean>(false);
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
+  private userSubject = new BehaviorSubject<any>(null);
+  user$ = this.userSubject.asObservable();
 
-  constructor(private http: HttpClient) { }
+  setUser(user: any) {
+    this.userSubject.next(user);
+  }
+
+  getUser() {
+    return this.userSubject.getValue();
+  }
+
+  constructor(private http: HttpClient) {}
+
+  initializeAuthState() {
+    const hasToken = this.hasValidToken();
+    this.isLoggedInSubject.next(hasToken);
+  }
+
+  private hasValidToken(): boolean {
+    const token = localStorage.getItem('accessToken');
+    return !!token;
+  }
+
+  login(loginData: any) {
+    return this.http.post<TokenResponseVM>(`${this.apiUrl}/login`, loginData).pipe(
+      tap({
+        next: (response) => {
+          const { accessToken, refreshToken } = response;
+  
+          // Decode the accessToken to extract roles
+          const decodedToken = this.decodeToken(accessToken);
+          const roles = decodedToken?.roles || [];
+  
+          // Store tokens and roles in localStorage
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', refreshToken);
+          localStorage.setItem('userRoles', JSON.stringify(roles));
+  
+          // Update the logged-in state
+          this.isLoggedInSubject.next(true);
+        },
+        error: (error) => {
+          console.error('Login error:', error);
+        }
+      })
+    );
+  }
+  
+
+  logout() {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('userRoles');
+    this.isLoggedInSubject.next(false);
+  }
+
+  checkAuthState(): boolean {
+    return this.hasValidToken();
+  }
 
   private checkTokenExists(): boolean {
-    return !!localStorage.getItem('token');
+    return !!localStorage.getItem('accessToken');
   }
-  register(registerData: RegisterData): Observable<RegisterResponse> {
-    return this.http.post<RegisterResponse>(`${this.apiUrl}/register`, registerData)
+  private setTokens(accessToken: string, refreshToken: string) {
+    localStorage.setItem('accessToken', accessToken);
+    localStorage.setItem('refreshToken', refreshToken);
+  }
+
+  private setRoles(roles: string[]): void {
+    localStorage.setItem('userRoles', JSON.stringify(roles));
+  }
+
+
+  // Method to check if user has a specific role
+  hasRole(role: string): boolean {
+    const roles = JSON.parse(localStorage.getItem('userRoles') || '[]');
+    return roles.includes(`ROLE_${role}`);
+  }
+
+  register(registerDataVM: RegisterDataVM): Observable<RegisterResponseVM> {
+    return this.http.post<RegisterResponseVM>(`${this.apiUrl}/register`, registerDataVM)
       .pipe(
         catchError(this.handleError)
       );
   }
 
-  verifyUser(verifyData: VerifyData): Observable<any> {
-    return this.http.post(`${this.apiUrl}/verify`, verifyData)
+  verifyUser(verifyDataVM: VerifyDataVM): Observable<any> {
+    return this.http.post(`${this.apiUrl}/verify`, verifyDataVM)
       .pipe(
         catchError(this.handleError)
       );
@@ -58,67 +111,6 @@ export class AuthService {
 
   resendVerificationCode(email: string): Observable<any> {
     return this.http.post(`${this.apiUrl}/resend-verification`, { email })
-      .pipe(
-        catchError(this.handleError)
-      );
-  }
-
-  login(loginData: { email: string, password: string }): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, loginData)
-      .pipe(
-        tap(response => {
-          if (response.token) {
-            // Store the token
-            localStorage.setItem('token', response.token);
-            
-            // Decode the token to extract roles
-            const tokenPayload = this.decodeToken(response.token);
-            if (tokenPayload && tokenPayload.roles) {
-              localStorage.setItem('userRoles', JSON.stringify(tokenPayload.roles));
-            }
-            
-            // Update login status
-            this.isLoggedInSubject.next(true);
-          }
-        }),
-        catchError(this.handleError)
-      );
-  }
-  
-  // Method to decode JWT token
-  private decodeToken(token: string): any {
-    try {
-      // Basic JWT decoding (note: this is a simplified version)
-      const base64Url = token.split('.')[1];
-      const base64 = base64Url.replace('-', '+').replace('_', '/');
-      return JSON.parse(window.atob(base64));
-    } catch (error) {
-      console.error('Error decoding token', error);
-      return null;
-    }
-  }
-  
-  // Method to check if user has a specific role
-  hasRole(role: string): boolean {
-    const roles = JSON.parse(localStorage.getItem('userRoles') || '[]');
-    return roles.includes(`ROLE_${role}`);
-  }
-  
-  logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userRoles');
-    // Update login status
-    this.isLoggedInSubject.next(false);
-  }
-
-  getProfile
-    (): Observable<any> {
-    // Set up headers with the token
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    });
-
-    return this.http.get<any>(`${this.apiUrl}/profile`, { headers })
       .pipe(
         catchError(this.handleError)
       );
@@ -139,4 +131,24 @@ export class AuthService {
     console.error(errorMessage);
     return throwError(() => new Error(errorMessage));
   }
+  // Method to decode JWT token
+  private decodeToken(token: string): any {
+    try {
+      // Basic JWT decoding (note: this is a simplified version)
+      const base64Url = token.split('.')[1];
+      const base64 = base64Url.replace('-', '+').replace('_', '/');
+      return JSON.parse(window.atob(base64));
+    } catch (error) {
+      console.error('Error decoding token', error);
+      return null;
+    }
+  }
+  // private isValidToken(token: string): boolean {
+  //   try {
+  //     const decoded = this.decodeToken(token);
+  //     return decoded && decoded.exp > Date.now() / 1000;
+  //   } catch {
+  //     return false;
+  //   }
+  // }
 }

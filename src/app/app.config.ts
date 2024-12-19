@@ -7,13 +7,14 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
-import { provideHttpClient } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptors } from '@angular/common/http';
+import { headersInterceptor } from './interceptor/headers.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes), 
-    provideHttpClient(),
+    provideHttpClient(withInterceptors([headersInterceptor])),
     importProvidersFrom(MenubarModule),
     importProvidersFrom(ButtonModule),
     provideAnimationsAsync(),
@@ -21,5 +22,11 @@ export const appConfig: ApplicationConfig = {
       theme: {
         preset: Aura
       }
-    })]
+    }),
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: TokenInterceptor,
+    //   multi: true
+    // }
+  ]
 };

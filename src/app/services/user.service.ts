@@ -12,20 +12,16 @@ export class UserService {
 
   constructor(private http: HttpClient) { }
 
-  updateProfile(ProfileUpdateVM: ProfileUpdateVM): Observable<any> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    });
 
-    return this.http.put(`${this.apiUrl}/edit-profile`, ProfileUpdateVM, { headers });
+  getProfile(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/profile`);
+  }
+
+  updateProfile(profileUpdateVM: ProfileUpdateVM): Observable<any> {
+    return this.http.put(`${this.apiUrl}/edit-profile`, profileUpdateVM);
   }
 
   updatePassword(passwordUpdateVM: PasswordUpdateVM): Observable<any> {
-    const headers = new HttpHeaders({
-      'Authorization': `Bearer ${localStorage.getItem('token')}`
-    });
-
-    return this.http.put(`${this.apiUrl}/change-password`, passwordUpdateVM, { headers });
+    return this.http.put(`${this.apiUrl}/change-password`, passwordUpdateVM);
   }
-  
 }

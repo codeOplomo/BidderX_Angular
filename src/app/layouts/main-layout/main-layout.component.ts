@@ -1,7 +1,8 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavbarComponent } from '../../components/navbar/navbar.component';
 import { FooterComponent } from '../../components/footer/footer.component';
 import { RouterOutlet } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-main-layout',
@@ -10,6 +11,11 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './main-layout.component.html',
   styleUrl: './main-layout.component.css'
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
 
+  constructor(private authService: AuthService) {}
+  ngOnInit() {
+    // Initialize auth state on app start
+    this.authService.initializeAuthState();
+  }
 }

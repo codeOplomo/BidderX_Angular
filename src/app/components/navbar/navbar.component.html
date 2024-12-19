@@ -1,44 +1,29 @@
 <p-menubar [model]="items">
-    <ng-template #start>
-      <svg width="33" height="35" viewBox="0 0 33 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="..." fill="var(--primary-color)" />
-      </svg>
-      <span style="font-size: 1.5rem; font-weight: bold;">Bidder X</span>
-    </ng-template>
-  
-    <ng-template #item let-item let-root="root">
-      <a pRipple class="flex items-center p-menubar-item-link">
-        <span>{{ item.label }}</span>
-        <p-badge *ngIf="item.badge" [ngClass]="{ 'ml-auto': !root, 'ml-2': root }" [value]="item.badge" />
-        <span *ngIf="item.shortcut" class="ml-auto border border-surface rounded bg-emphasis text-muted-color text-xs p-1">{{ item.shortcut }}</span>
-        <i *ngIf="item.items" [ngClass]="['ml-auto pi', root ? 'pi-angle-down' : 'pi-angle-right']"></i>
-      </a>
-    </ng-template>
-  
-    <ng-template #end>
-      <div class="flex items-center gap-2">
-        <ng-container *ngIf="isLoggedIn; else guestView">
-          <div>
-            <button 
-  class="flex items-center gap-2 p-button p-button-text dropdown-button"
-  (click)="toggleDropdown($event)"
->
-  <p-avatar [image]="user?.avatar || defaultAvatar" shape="circle"></p-avatar>
-  <span>{{ user?.profileIdentifier || 'User' }}</span>
-  <i class="pi pi-angle-down"></i>
-</button>
+  <ng-template #start>
+    <svg width="33" height="35" viewBox="0 0 33 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="..." fill="var(--primary-color)" />
+    </svg>
+    <span style="font-size: 1.5rem; font-weight: bold;">Bidder X</span>
+  </ng-template>
 
-            <p-menu #userMenu [model]="dropdownItems" [popup]="true"></p-menu>
-          </div>
-        </ng-container>
-        <ng-template #guestView>
-          <a 
-            routerLink="/login"
-            style="text-decoration: none; padding: 10px 20px; background-color: #007bff; color: white; border-radius: 5px; font-size: 1rem;"
+  <ng-template #end>
+    <div class="flex items-center gap-2">
+      <ng-container *ngIf="(authService.isLoggedIn$ | async); else guestView">
+        <div *ngIf="user$ | async as user">
+          <button
+            class="flex items-center gap-2 p-button p-button-text dropdown-button"
+            (click)="toggleDropdown($event)"
           >
-            Get Started
-          </a>
-        </ng-template>
-      </div>
-    </ng-template>
-  </p-menubar>
+            <p-avatar [image]="user?.avatar || defaultAvatar" shape="circle"></p-avatar>
+            <span>{{ user?.profileIdentifier || user?.firstName || 'User' }}</span>
+            <i class="pi pi-angle-down"></i>
+          </button>
+          <p-menu #userMenu [model]="dropdownItems" [popup]="true"></p-menu>
+        </div>
+      </ng-container>
+      <ng-template #guestView>
+        <a routerLink="/login" class="p-button p-button-primary">Get Started</a>
+      </ng-template>
+    </div>
+  </ng-template>
+</p-menubar>

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
 import { ToastService } from '../../services/toast.service';
 import { UserService } from '../../services/user.service';
@@ -10,6 +9,7 @@ import { CardModule } from 'primeng/card';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProfileUpdateVM } from '../../models/view-models/profile-update.model';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-edit-profile',
@@ -55,7 +55,7 @@ export class EditProfileComponent implements OnInit {
 
   loadProfileData(): void {
     this.isLoading = true;
-    this.authService.getProfile().subscribe({
+    this.userService.getProfile().subscribe({
       next: (profile) => {
         this.editProfileForm.patchValue(profile);
         this.isLoading = false;
@@ -81,6 +81,7 @@ export class EditProfileComponent implements OnInit {
         next: (response) => {
           this.successMessage = 'Profile updated successfully!';
           this.toastService.showSuccess('Success', this.successMessage);
+          this.authService.setUser(profileUpdateVM);
           this.router.navigate(['/profile']);
           this.isLoading = false;
         },
