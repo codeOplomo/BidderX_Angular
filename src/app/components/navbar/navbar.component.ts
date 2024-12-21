@@ -69,11 +69,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Make sure the user profile is loaded on component init, or rely on `user$` observable
-    this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe(user => {
-      if (!user) {
-        this.loadUserProfile();
-      }
-    });
+    // this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe(user => {
+    //   if (!user) {
+    //     this.loadUserProfile();
+    //   }
+    // });
   }
 
   private loadUserProfile() {
@@ -88,7 +88,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         return EMPTY;
       })
     ).subscribe(profile => {
-      this.authService.setUser(profile); // Assuming a method to update user in auth service
+      this.authService.setUser(profile); 
     });
   }
 

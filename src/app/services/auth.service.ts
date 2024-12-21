@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, Subject, throwError } from 'rxjs';
-import { catchError, tap, delay } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, Subject, throwError } from 'rxjs';
+import { catchError, tap, delay, switchMap } from 'rxjs/operators';
 import { RegisterDataVM } from '../models/view-models/register-data.model';
 import { RegisterResponseVM } from '../models/view-models/register-response.model';
 import { VerifyDataVM } from '../models/view-models/verify-data.model';
 import { TokenResponseVM } from '../models/view-models/token-response.model';
 import { Router } from '@angular/router';
+import { UserService } from './user.service';
   
 @Injectable({
   providedIn: 'root'
@@ -27,11 +28,18 @@ export class AuthService {
     return this.userSubject.getValue();
   }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private userService: UserService) {
+    this.initializeAuthState();
+  }
 
   initializeAuthState() {
     const hasToken = this.hasValidToken();
     this.isLoggedInSubject.next(hasToken);
+    
+    // If we have a token, try to load the user profile
+    if (hasToken) {
+      this.userService.getProfile().subscribe();
+    }
   }
 
   private hasValidToken(): boolean {
@@ -44,22 +52,25 @@ export class AuthService {
       tap({
         next: (response) => {
           const { accessToken, refreshToken } = response;
-  
+          
           // Decode the accessToken to extract roles
           const decodedToken = this.decodeToken(accessToken);
           const roles = decodedToken?.roles || [];
-  
+          
           // Store tokens and roles in localStorage
           localStorage.setItem('accessToken', accessToken);
           localStorage.setItem('refreshToken', refreshToken);
           localStorage.setItem('userRoles', JSON.stringify(roles));
-  
+          
           // Update the logged-in state
           this.isLoggedInSubject.next(true);
-        },
-        error: (error) => {
-          console.error('Login error:', error);
         }
+      }),
+      // After successful login, fetch the user profile
+      switchMap(() => this.userService.getProfile()),
+      tap(userProfile => {
+        // Update the user subject with the profile data
+        this.userSubject.next(userProfile);
       })
     );
   }
@@ -79,16 +90,6 @@ export class AuthService {
   private checkTokenExists(): boolean {
     return !!localStorage.getItem('accessToken');
   }
-  private setTokens(accessToken: string, refreshToken: string) {
-    localStorage.setItem('accessToken', accessToken);
-    localStorage.setItem('refreshToken', refreshToken);
-  }
-
-  private setRoles(roles: string[]): void {
-    localStorage.setItem('userRoles', JSON.stringify(roles));
-  }
-
-
   // Method to check if user has a specific role
   hasRole(role: string): boolean {
     const roles = JSON.parse(localStorage.getItem('userRoles') || '[]');
@@ -143,6 +144,7 @@ export class AuthService {
       return null;
     }
   }
+  
   // private isValidToken(token: string): boolean {
   //   try {
   //     const decoded = this.decodeToken(token);

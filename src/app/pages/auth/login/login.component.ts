@@ -96,7 +96,7 @@ export class LoginComponent implements OnInit {
       this.errorMessage = ''; // Clear any previous error messages
   
       this.authService.login(loginData).subscribe({
-        next: (response) => {
+        next: () => {
           // Successful login 
           // Token is now stored in the service's login method
           this.router.navigate(['/profile']);
