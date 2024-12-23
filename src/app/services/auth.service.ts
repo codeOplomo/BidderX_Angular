@@ -6,10 +6,10 @@ import { RegisterDataVM } from '../models/view-models/register-data.model';
 import { RegisterResponseVM } from '../models/view-models/register-response.model';
 import { VerifyDataVM } from '../models/view-models/verify-data.model';
 import { TokenResponseVM } from '../models/view-models/token-response.model';
-import { Router } from '@angular/router';
-import { UserService } from './user.service';
 import { Store } from '@ngrx/store';
 import * as UserActions from '../store/user/user.actions';
+import { RefreshTokenResponseVM } from '../models/view-models/refresh-token-response.model';
+import { RefreshTokenRequestVM } from '../models/view-models/refresh-token-request.model';
   
 @Injectable({
   providedIn: 'root'
@@ -21,6 +21,8 @@ export class AuthService {
   isLoggedIn$ = this.isLoggedInSubject.asObservable();
   private userSubject = new BehaviorSubject<any>(null);
   user$ = this.userSubject.asObservable();
+  isRefreshing = false;
+  refreshTokenSubject = new BehaviorSubject<string | null>(null);
 
   setUser(user: any) {
     this.userSubject.next(user);
@@ -74,6 +76,35 @@ export class AuthService {
     );
   }
   
+  refreshToken(): Observable<RefreshTokenResponseVM> {
+    const refreshToken = localStorage.getItem('refreshToken');
+    if (!refreshToken) {
+      return throwError(() => new Error('Refresh token not found'));
+    }
+
+    const refreshTokenRequest: RefreshTokenRequestVM = {
+      refreshToken
+    };
+
+    return this.http.post<RefreshTokenResponseVM>(`${this.apiUrl}/refresh-token`, refreshTokenRequest)
+      .pipe(
+        tap((response: RefreshTokenResponseVM) => {
+          // Update access token in localStorage
+          localStorage.setItem('accessToken', response.newAccessToken);
+          
+          // Update auth state
+          this.isLoggedInSubject.next(true);
+          
+          // Reload user profile after successful token refresh
+          this.store.dispatch(UserActions.loadUserProfile());
+        }),
+        catchError((error) => {
+          this.logout();
+          return throwError(() => error);
+        })
+      );
+  }
+  
 
   logout() {
     localStorage.removeItem('accessToken');
@@ -81,6 +112,8 @@ export class AuthService {
     localStorage.removeItem('userRoles');
     this.store.dispatch(UserActions.clearUserProfile());
     this.isLoggedInSubject.next(false);
+    this.refreshTokenSubject.next(null);
+    this.isRefreshing = false;
   }
 
   checkAuthState(): boolean {

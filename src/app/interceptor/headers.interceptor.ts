@@ -1,21 +1,20 @@
-import { HttpClient, HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { catchError, switchMap, throwError } from 'rxjs';
+import { catchError, filter, finalize, switchMap, take, throwError } from 'rxjs';
 import { inject } from '@angular/core';
-import { RefreshTokenRequestVM } from '../models/view-models/refresh-token-request.model';
 import { RefreshTokenResponseVM } from '../models/view-models/refresh-token-response.model';
+import { AuthService } from '../services/auth.service';
 
 export const headersInterceptor: HttpInterceptorFn = (req, next) => {
-  const http = inject(HttpClient);
+  const authService = inject(AuthService);
   const router = inject(Router);
 
-  const accessToken = localStorage.getItem('accessToken');
-  const refreshToken = localStorage.getItem('refreshToken');
-
-  // Skip Authorization for login request
-  if (req.url.includes('/api/auth/login')) {
+  // Skip Authorization for login or refresh token requests
+  if (req.url.includes('/api/auth/login') || req.url.includes('/api/auth/refresh-token')) {
     return next(req);
   }
+
+  const accessToken = localStorage.getItem('accessToken');
 
   if (accessToken) {
     const modifiedReq = req.clone({
@@ -26,35 +25,52 @@ export const headersInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(modifiedReq).pipe(
       catchError(error => {
-        if (error.status === 401 && refreshToken) {
-          const refreshTokenRequest: RefreshTokenRequestVM = {
-            refreshToken: refreshToken
-          };
-          // Attempt to refresh the token
-          return http.post<RefreshTokenResponseVM>('/api/auth/refresh-token', refreshTokenRequest).pipe(
-            switchMap((response: RefreshTokenResponseVM) => {
-              // Update tokens in localStorage
-              localStorage.setItem('accessToken', response.newAccessToken);
+        if (error.status === 401) {
+          // Check if we're already refreshing to prevent multiple refresh calls
+          if (!authService.isRefreshing) {
+            authService.isRefreshing = true;
+            authService.refreshTokenSubject.next(null);
 
-              // Retry the original request with the new access token
-              const retryReq = req.clone({
-                setHeaders: {
-                  Authorization: `Bearer ${response.newAccessToken}`
-                }
-              });
+            return authService.refreshToken().pipe(
+              switchMap((response: RefreshTokenResponseVM) => {
+                authService.isRefreshing = false;
+                authService.refreshTokenSubject.next(response.newAccessToken);
 
-              return next(retryReq);  // Retry the original request with new token
-            }),
-            catchError(refreshError => {
-              // Handle refresh token failure
-              localStorage.removeItem('accessToken');
-              localStorage.removeItem('refreshToken');
-              router.navigate(['/login']);
-              return throwError(refreshError);
-            })
-          );
+                // Retry the original request with new token
+                const retryReq = req.clone({
+                  setHeaders: {
+                    Authorization: `Bearer ${response.newAccessToken}`
+                  }
+                });
+                return next(retryReq);
+              }),
+              catchError(refreshError => {
+                authService.isRefreshing = false;
+                authService.logout();
+                router.navigate(['/login']);
+                return throwError(() => refreshError);
+              }),
+              finalize(() => {
+                authService.isRefreshing = false;
+              })
+            );
+          } else {
+            // If refresh is in progress, wait for new token
+            return authService.refreshTokenSubject.pipe(
+              filter(token => token !== null),
+              take(1),
+              switchMap(token => {
+                const retryReq = req.clone({
+                  setHeaders: {
+                    Authorization: `Bearer ${token}`
+                  }
+                });
+                return next(retryReq);
+              })
+            );
+          }
         }
-        return throwError(error);
+        return throwError(() => error);
       })
     );
   }
