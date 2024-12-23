@@ -7,16 +7,18 @@ import { Router } from '@angular/router';
 import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
 import { ButtonModule } from 'primeng/button';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
-import { NgIf } from '@angular/common';
-import { UserService } from '../../services/user.service';
-import { combineLatest, EMPTY, filter, Subject, take, takeUntil } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { CommonModule, NgIf } from '@angular/common';
+import { combineLatest, EMPTY, filter, Observable, Subject, take, takeUntil } from 'rxjs';
+import { Store } from '@ngrx/store';
+import * as UserActions from '../../store/user/user.actions';
+import { selectUser } from '../../store/user/user.selectors';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
     RatingModule,
+    CommonModule,
     TabsModule,
     FormsModule,
     SplitButton,
@@ -31,14 +33,7 @@ import { catchError } from 'rxjs/operators';
 export class ProfileComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   rating: number = 5;
-
-  profile: any = {
-    email: '',
-    phoneNumber: '',
-    profileIdentifier: '',
-    firstName: '',
-    lastName: ''
-  };
+  user$: Observable<any>;
 
   errorMessage: string = '';
 
@@ -57,15 +52,21 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   constructor(
     private authService: AuthService,
-    private userService: UserService,
+    private store: Store,
     private router: Router,
-  ) {}
+  ) {
+    // Initialize user$ in constructor
+    this.user$ = this.store.select(selectUser);
+  }
 
   ngOnInit() {
-    // Simplified profile fetching
     if (this.authService.checkAuthState()) {
-      this.fetchProfile();
+      this.user$ = this.store.select(selectUser);
     }
+  }
+
+  updateProfile(profileData: any) {
+    this.store.dispatch(UserActions.updateUserProfile({ profileData }));
   }
 
   ngOnDestroy() {
@@ -77,26 +78,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return this.authService.hasRole('OWNER');
   }
 
-  private fetchProfile(): void {
-    this.userService.getProfile().pipe(
-      takeUntil(this.destroy$),
-      catchError((error: HttpErrorResponse) => {
-        console.error('Profile fetch error:', error);
-        this.errorMessage = 'Unable to fetch profile. Please try again.';
-        if (error.status === 401) {
-          this.authService.logout();
-          this.router.navigate(['/login']);
-        }
-        return EMPTY;
-      })
-    ).subscribe(profileData => {
-      console.log('Profile data received:', profileData);
-      this.profile = {
-        ...this.profile,
-        ...profileData
-      };
-    });
-  }
 
   onEditProfile() {
     this.router.navigate(['/edit-profile']);

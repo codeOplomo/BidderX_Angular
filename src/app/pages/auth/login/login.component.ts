@@ -12,11 +12,13 @@ import { DividerModule } from 'primeng/divider';
 import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { AuthService } from '../../../services/auth.service';
+import { Toast } from 'primeng/toast';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
+    Toast,
     CommonModule, 
     ReactiveFormsModule, 
     RouterModule, 

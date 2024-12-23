@@ -12,6 +12,9 @@ import { UserService } from '../../services/user.service';
 import { BehaviorSubject, EMPTY, Observable, of, Subject } from 'rxjs';
 import { catchError, delay, distinctUntilChanged, filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { MenuItem } from 'primeng/api';
+import { Store } from '@ngrx/store';
+import { UserState } from '../../store/user/user.state';
+import { selectUser } from '../../store/user/user.selectors';
 
 @Component({
   selector: 'app-navbar',
@@ -36,8 +39,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   defaultAvatar = 'assets/default-avatar.png';
 
-  // Declare user$ after the constructor
-  user$: Observable<any>;
+  
+  user$!: Observable<any>;
 
   items = [
     { label: 'Home', icon: 'pi pi-home', routerLink: '/' },
@@ -60,36 +63,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     public authService: AuthService,
+    private store: Store<UserState>,
     private userService: UserService,
     private router: Router
-  ) {
-    // Initialize user$ in the constructor after authService is injected
-    this.user$ = this.authService.user$;
-  }
+  ) {  }
 
   ngOnInit() {
-    // Make sure the user profile is loaded on component init, or rely on `user$` observable
-    // this.authService.user$.pipe(takeUntil(this.destroy$)).subscribe(user => {
-    //   if (!user) {
-    //     this.loadUserProfile();
-    //   }
-    // });
-  }
-
-  private loadUserProfile() {
-    this.userService.getProfile().pipe(
-      takeUntil(this.destroy$),
-      catchError(error => {
-        console.error('Profile loading error:', error);
-        if (error.status === 401) {
-          this.authService.logout();
-          this.router.navigate(['/login']);
-        }
-        return EMPTY;
-      })
-    ).subscribe(profile => {
-      this.authService.setUser(profile); 
-    });
+    // Initialize user$ after the store is available
+    this.user$ = this.store.select(selectUser);
   }
 
   ngOnDestroy() {

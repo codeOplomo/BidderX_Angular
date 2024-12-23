@@ -8,6 +8,8 @@ import { VerifyDataVM } from '../models/view-models/verify-data.model';
 import { TokenResponseVM } from '../models/view-models/token-response.model';
 import { Router } from '@angular/router';
 import { UserService } from './user.service';
+import { Store } from '@ngrx/store';
+import * as UserActions from '../store/user/user.actions';
   
 @Injectable({
   providedIn: 'root'
@@ -28,17 +30,17 @@ export class AuthService {
     return this.userSubject.getValue();
   }
 
-  constructor(private http: HttpClient, private userService: UserService) {
-    this.initializeAuthState();
-  }
+  constructor(
+    private http: HttpClient, 
+    private store: Store
+  ) {}
 
   initializeAuthState() {
     const hasToken = this.hasValidToken();
     this.isLoggedInSubject.next(hasToken);
     
-    // If we have a token, try to load the user profile
     if (hasToken) {
-      this.userService.getProfile().subscribe();
+      this.store.dispatch(UserActions.loadUserProfile());
     }
   }
 
@@ -66,11 +68,8 @@ export class AuthService {
           this.isLoggedInSubject.next(true);
         }
       }),
-      // After successful login, fetch the user profile
-      switchMap(() => this.userService.getProfile()),
-      tap(userProfile => {
-        // Update the user subject with the profile data
-        this.userSubject.next(userProfile);
+      tap(() => {
+        this.store.dispatch(UserActions.loadUserProfile());
       })
     );
   }
@@ -80,6 +79,7 @@ export class AuthService {
     localStorage.removeItem('accessToken');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userRoles');
+    this.store.dispatch(UserActions.clearUserProfile());
     this.isLoggedInSubject.next(false);
   }
 

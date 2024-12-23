@@ -1,51 +1,50 @@
 <div class="profile-page">
-    <!-- Profile Header -->
-    <div class="profile-header p-card">
-      <img src="assets/profile-picture.jpg" alt="Profile Picture" class="profile-picture" />
-      <div class="profile-info">
-        <p>{{ profile.profileIdentifier }}</p>
-        <p>{{ profile.email }}</p>
-        <p>{{ profile.phoneNumber }}</p>
-        <p-rating [(ngModel)]="rating" [readonly]="true"></p-rating>
-      </div>
-      <div class="profile-actions">
-        <p-splitbutton label="Edit Profile" dropdownIcon="pi pi-ellipsis-v" [model]="editItems" />
-      </div>
+  <!-- Profile Header -->
+  <div class="profile-header p-card">
+    <img src="assets/profile-picture.jpg" alt="Profile Picture" class="profile-picture" />
+    <div class="profile-info">
+      <p>{{ (user$ | async)?.profileIdentifier }}</p>
+      <p>{{ (user$ | async)?.email }}</p>
+      <p>{{ (user$ | async)?.phoneNumber }}</p>
+      <p-rating [(ngModel)]="rating" [readonly]="true"></p-rating>
     </div>
-  
-    <!-- Owner-Specific Buttons -->
-    <div class="owner-actions" *ngIf="isOwner()">
-      <button pButton label="Create Collection" (click)="onCreateCollection()" class="p-button-primary"></button>
-      <button pButton label="Create Auction" (click)="onCreateAuction()" class="p-button-primary ml-2"></button>
+    <div class="profile-actions">
+      <p-splitbutton label="Edit Profile" dropdownIcon="pi pi-ellipsis-v" [model]="editItems" />
     </div>
-  
-    <!-- Tabs Section -->
-    <p-tabs value="0">
-      <p-tablist>
-        <p-tab value="0">Products</p-tab>
-        <p-tab value="1">About</p-tab>
-        <p-tab value="2">Policies</p-tab>
-        <p-tab value="3">Reviews</p-tab>
-      </p-tablist>
-      <p-tabpanels>
-        <p-tabpanel value="0">
-          <div class="product-card">
-            <img src="assets/product-image.jpg" alt="Product" />
-            <h3>Art – The Last Suppers</h3>
-            <p>$450.00 <span class="old-price">$510.00</span></p>
-            <button pButton label="View Details" class="p-button-secondary"></button>
-          </div>
-        </p-tabpanel>
-        <p-tabpanel value="1">
-          <p class="m-0">About content goes here...</p>
-        </p-tabpanel>
-        <p-tabpanel value="2">
-          <p class="m-0">Policy content goes here...</p>
-        </p-tabpanel>
-        <p-tabpanel value="3">
-          <p class="m-0">Review content goes here...</p>
-        </p-tabpanel>
-      </p-tabpanels>
-    </p-tabs>
   </div>
-  
+
+  <!-- Owner-Specific Buttons -->
+  <div class="owner-actions" *ngIf="isOwner()">
+    <button pButton label="Create Collection" (click)="onCreateCollection()" class="p-button-primary"></button>
+    <button pButton label="Create Auction" (click)="onCreateAuction()" class="p-button-primary ml-2"></button>
+  </div>
+
+  <!-- Tabs Section -->
+  <p-tabs value="0">
+    <p-tablist>
+      <p-tab value="0">Products</p-tab>
+      <p-tab value="1">About</p-tab>
+      <p-tab value="2">Policies</p-tab>
+      <p-tab value="3">Reviews</p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="0">
+        <div class="product-card">
+          <img src="assets/product-image.jpg" alt="Product" />
+          <h3>Art – The Last Suppers</h3>
+          <p>$450.00 <span class="old-price">$510.00</span></p>
+          <button pButton label="View Details" class="p-button-secondary"></button>
+        </div>
+      </p-tabpanel>
+      <p-tabpanel value="1">
+        <p class="m-0">About content goes here...</p>
+      </p-tabpanel>
+      <p-tabpanel value="2">
+        <p class="m-0">Policy content goes here...</p>
+      </p-tabpanel>
+      <p-tabpanel value="3">
+        <p class="m-0">Review content goes here...</p>
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</div>
