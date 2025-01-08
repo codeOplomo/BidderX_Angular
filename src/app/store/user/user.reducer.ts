@@ -4,6 +4,13 @@ import { initialState } from './user.state';
 
 export const UserReducer = createReducer(
     initialState,
+    
+    on(UserActions.updateUserImageSuccess, (state, { imageUrl }) => ({
+      ...state,
+      user: { ...state.user, imageUrl },
+      loading: false,
+      error: null
+    })),    
     on(UserActions.loadUserProfile, state => ({
       ...state,
       loading: true,

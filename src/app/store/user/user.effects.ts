@@ -35,7 +35,7 @@ export class UserEffects {
             lastName: response.data.lastName,
             phoneNumber: response.data.phoneNumber,
             email: response.data.email,
-            avatar: response.data.avatar
+            imageUrl: response.data.imageUrl
           };
           return UserActions.updateUserProfileSuccess({ user: updatedUser });
         }),
@@ -46,5 +46,21 @@ export class UserEffects {
       );
     })
   ));
+
+  updateImage$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(UserActions.updateUserImage),
+      switchMap(({ imageFile }) => // Expecting a File object
+        this.userService.uploadProfileImage(imageFile).pipe(
+          map(response =>
+            UserActions.updateUserImageSuccess({ imageUrl: response.imageUrl })
+          ),
+          catchError(error =>
+            of(UserActions.updateUserImageFailure({ error }))
+          )
+        )
+      )
+    )
+  );
   
 }

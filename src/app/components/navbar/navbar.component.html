@@ -14,7 +14,7 @@
             class="flex items-center gap-2 p-button p-button-text dropdown-button"
             (click)="toggleDropdown($event)"
           >
-            <p-avatar [image]="user?.avatar || defaultAvatar" shape="circle"></p-avatar>
+          <p-avatar [image]="getAvatarUrl(user?.imageUrl || '')" shape="circle"></p-avatar>
             <span>{{ user?.profileIdentifier || user?.firstName || 'User' }}</span>
             <i class="pi pi-angle-down"></i>
           </button>

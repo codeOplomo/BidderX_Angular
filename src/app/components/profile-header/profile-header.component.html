@@ -1,0 +1,66 @@
+<div class="profile-header">
+    <!-- Background with gradient (cover image) -->
+    <div class="header-background">
+      <!-- Upload Cover Image Icon -->
+      <!-- <div class="update-cover-picture" (click)="onUpdateCoverPicture()">
+        <i class="pi pi-camera"></i>
+      </div> -->
+    </div>
+  
+    <div class="profile-content">
+      <!-- Profile Image -->
+      <div class="profile-image-container">
+        <img
+          [src]="getImageUrl((user$ | async)?.imageUrl)"
+          [class.loading]="imageLoading"
+          alt="Profile Picture"
+          class="profile-image"
+        />
+        <!-- Update Profile Picture Icon -->
+        <div class="update-profile-picture" (click)="onUpdateProfilePicture()">
+          <i class="pi pi-camera"></i>
+        </div>
+      </div>
+  
+      <!-- Profile Info -->
+      <div class="profile-info">
+        <div class="name-section">
+          <h2>{{ (user$ | async)?.name }}</h2>
+          <p-tag severity="success" value="Verified Seller" *ngIf="isOwner()"></p-tag>
+        </div>
+  
+        <div class="user-details">
+          <span><i class="pi pi-id-card"></i> {{ (user$ | async)?.profileIdentifier }}</span>
+          <span class="separator">•</span>
+          <div class="rating-container">
+            <p-rating [ngModel]="rating" [readonly]="true" class="rating-star"></p-rating>
+            <span>{{ rating }}</span>
+          </div>
+        </div>
+  
+        <div class="contact-info">
+          <span><i class="pi pi-envelope"></i> {{ (user$ | async)?.email }}</span>
+          <span class="separator">•</span>
+          <span><i class="pi pi-phone"></i> {{ (user$ | async)?.phoneNumber }}</span>
+        </div>
+      </div>
+  
+      <!-- Action Buttons -->
+      <div class="profile-actions">
+        <p-splitbutton
+          label="Edit Profile"
+          class="p-button-rounded p-button-outlined"
+          dropdownIcon="pi pi-ellipsis-v"
+          [model]="editItems"
+        ></p-splitbutton>
+        <button
+          pButton
+          type="button"
+          label="Message"
+          icon="pi pi-send"
+          class="p-button-rounded p-button-primary"
+        ></button>
+      </div>
+    </div>
+  </div>
+  

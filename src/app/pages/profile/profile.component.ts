@@ -1,28 +1,34 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { RatingModule } from 'primeng/rating';
+import { TabPanel, TabViewModule } from 'primeng/tabview';
 import { TabsModule } from 'primeng/tabs';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Router } from '@angular/router';
-import { HttpClientModule, HttpErrorResponse } from '@angular/common/http';
+import { HttpClientModule, HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
 import { ButtonModule } from 'primeng/button';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
 import { CommonModule, NgIf } from '@angular/common';
-import { combineLatest, EMPTY, filter, Observable, Subject, take, takeUntil } from 'rxjs';
+import { combineLatest, EMPTY, filter, map, Observable, Subject, take, takeUntil } from 'rxjs';
 import { Store } from '@ngrx/store';
 import * as UserActions from '../../store/user/user.actions';
 import { selectUser } from '../../store/user/user.selectors';
+import { CardModule } from 'primeng/card';
+import { MenuModule } from 'primeng/menu';
+import { TagModule } from 'primeng/tag';
+import { MenuItem } from 'primeng/api';
+import { UserService } from '../../services/user.service';
+import { ProfileHeaderComponent } from '../../components/profile-header/profile-header.component';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
   imports: [
-    RatingModule,
+    ProfileHeaderComponent,
     CommonModule,
-    TabsModule,
     FormsModule,
-    SplitButton,
-    SplitButtonModule,
+    CardModule,
+    MenuModule,
     HttpClientModule,
     ButtonModule,
     NgIf
@@ -34,24 +40,14 @@ export class ProfileComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   rating: number = 5;
   user$: Observable<any>;
+  imageLoading = false;
 
   errorMessage: string = '';
 
-  editItems: any[] = [
-    {
-      label: 'Edit Profile',
-      icon: 'pi pi-pencil',
-      command: () => this.onEditProfile()
-    },
-    {
-      label: 'Edit Password',
-      icon: 'pi pi-lock',
-      command: () => this.onEditPassword()
-    }
-  ];
-
+  
   constructor(
     private authService: AuthService,
+    private userService: UserService,
     private store: Store,
     private router: Router,
   ) {
@@ -63,11 +59,23 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (this.authService.checkAuthState()) {
       this.user$ = this.store.select(selectUser);
     }
+    this.user$.subscribe(user => console.log(user));
+
   }
 
   updateProfile(profileData: any) {
     this.store.dispatch(UserActions.updateUserProfile({ profileData }));
   }
+
+  getImageUrl(imagePath: string): string {
+    return this.userService.getImageUrl(imagePath);
+  }
+  
+  updateProfileImage(file: File) {
+  this.store.dispatch(UserActions.updateUserImage({ imageFile: file }));
+}
+
+
 
   ngOnDestroy() {
     this.destroy$.next();
@@ -78,14 +86,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
     return this.authService.hasRole('OWNER');
   }
 
-
-  onEditProfile() {
-    this.router.navigate(['/edit-profile']);
-  }
-
-  onEditPassword() {
-    this.router.navigate(['/edit-password']);
-  }
 
   onCreateCollection() {
     this.router.navigate(['/create-collection']);

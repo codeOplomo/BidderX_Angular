@@ -73,6 +73,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.user$ = this.store.select(selectUser);
   }
 
+  getAvatarUrl(imagePath: string): string {
+    return this.userService.getImageUrl(imagePath);
+  }
+
   ngOnDestroy() {
     this.destroy$.next();
     this.destroy$.complete();
