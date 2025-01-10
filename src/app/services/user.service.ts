@@ -4,6 +4,7 @@ import { filter, map, Observable } from 'rxjs';
 import { PasswordUpdateVM } from '../models/view-models/password-update.model';
 import { ProfileUpdateVM } from '../models/view-models/profile-update.model';
 import { ApiResponse } from '../models/view-models/api-response.model';
+import { ImagesService } from './images.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,54 +12,30 @@ import { ApiResponse } from '../models/view-models/api-response.model';
 export class UserService {
   private apiUrl = 'http://localhost:8080/api/users';
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private imagesService: ImagesService) { }
 
 
   getProfile(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/profile`).pipe(
       map(profile => ({
         ...profile,
-        imageUrl: this.getImageUrl(profile.imageUrl), // Correct method call
+        imageUrl: this.imagesService.getImageUrl(profile.imageUrl), 
+        coverImageUrl: this.imagesService.getImageUrl(profile.coverImageUrl)
       }))
     );
   }
   
-
-  getImageUrl(imagePath: string): string {
-    return this.getImageUrlFromPath(imagePath); 
-  }
-
-  private getImageUrlFromPath(relativePath: string | null): string {
-    const baseUrl = 'http://localhost:8080';
-    if (relativePath && !relativePath.startsWith(baseUrl)) {
-      return `${baseUrl}${relativePath}`;
-    }
-    return relativePath || 'assets/images/default-avatar.png'; 
-  }
   
 
   uploadProfileImage(image: File): Observable<{ imageUrl: string }> {
-    const formData = new FormData();
-    formData.append('image', image);
-  
-    return this.http.post<{ data: string }>(`${this.apiUrl}/upload-image`, formData).pipe(
-      map(response => ({
-        imageUrl: this.getImageUrlFromPath(response.data)
-      }))
-    );
+    return this.imagesService.uploadImage(image, 'profile');
+  }
+
+  uploadCoverImage(image: File): Observable<{ imageUrl: string }> {
+    return this.imagesService.uploadImage(image, 'cover');
   }
 
   
-  uploadCoverImage(image: File): Observable<{ imageUrl: string }> {
-    const formData = new FormData();
-    formData.append('image', image);
-  
-    return this.http.post<{ data: string }>(`${this.apiUrl}/upload-cover-image`, formData).pipe(
-      map(response => ({
-        imageUrl: this.getImageUrlFromPath(response.data)
-      }))
-    );
-  }
 
   
   

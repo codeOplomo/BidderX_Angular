@@ -15,13 +15,14 @@ import { UserEffects } from './store/user/user.effects';
 import { UserReducer } from './store/user/user.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { isDevMode } from '@angular/core';
+import { TabsModule } from 'primeng/tabs';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes), 
     provideHttpClient(withInterceptors([headersInterceptor])),
-    importProvidersFrom(MenubarModule),
+    importProvidersFrom(TabsModule),
     importProvidersFrom(ButtonModule),
     provideAnimationsAsync(),
     providePrimeNG({

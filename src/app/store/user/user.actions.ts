@@ -18,6 +18,21 @@ export const updateUserImageFailure = createAction(
   props<{ error: any }>()
 );
 
+export const updateUserCoverImage = createAction(
+  '[User] Update Cover Image',
+  props<{ imageFile: File }>()
+)
+
+export const updateUserCoverImageSuccess = createAction(
+  '[User] Update Cover Image Success',
+  props<{ coverImageUrl: string }>()
+);
+
+export const updateUserCoverImageFailure = createAction(
+  '[User] Update Cover Image Failure',
+  props<{ error: any }>()
+);
+
 export const loadUserProfileSuccess = createAction(
   '[User] Load Profile Success',
   props<{ user: any }>()

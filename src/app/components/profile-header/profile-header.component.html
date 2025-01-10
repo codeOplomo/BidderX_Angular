@@ -1,11 +1,11 @@
 <div class="profile-header">
     <!-- Background with gradient (cover image) -->
-    <div class="header-background">
-      <!-- Upload Cover Image Icon -->
-      <!-- <div class="update-cover-picture" (click)="onUpdateCoverPicture()">
-        <i class="pi pi-camera"></i>
-      </div> -->
+    <div class="header-background" [style.backgroundImage]="'url(' + getImageUrl((user$ | async)?.coverImageUrl) + ')'">
+    <!-- Update Cover Picture Icon -->
+    <div class="update-cover-picture" (click)="onUpdateCoverPicture()">
+      <i class="pi pi-camera"></i>
     </div>
+  </div>
   
     <div class="profile-content">
       <!-- Profile Image -->

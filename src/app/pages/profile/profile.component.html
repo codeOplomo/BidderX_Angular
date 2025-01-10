@@ -2,8 +2,6 @@
   <p-card styleClass="modern-profile-card mb-4">
     <app-profile-header
       [user$]="user$"
-      [rating]="rating"
-      [imageLoading]="imageLoading"
     ></app-profile-header>
   </p-card>
 
@@ -15,19 +13,3 @@
   </div>
 
 </div>
-
-<!-- Tabs Section -->
-<!-- <p-tabView [(activeIndex)]="activeTab">
-    <p-tabPanel header="About">
-      <p>{{ (user$ | async)?.about }}</p>
-    </p-tabPanel>
-    <p-tabPanel header="Products">
-      <p>List of Products will be displayed here.</p>
-    </p-tabPanel>
-    <p-tabPanel header="Policies">
-      <p>Company Policies will be displayed here.</p>
-    </p-tabPanel>
-    <p-tabPanel header="Reviews">
-      <p>Customer Reviews will be displayed here.</p>
-    </p-tabPanel>
-  </p-tabView> -->

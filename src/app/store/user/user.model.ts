@@ -5,6 +5,7 @@ export interface User {
     phoneNumber?: string;
     email?: string;
     imageUrl?: string; 
+    coverImageUrl?: string;
     message?: string;
     // Add other properties as needed
   }

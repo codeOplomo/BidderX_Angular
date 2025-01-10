@@ -1,0 +1,70 @@
+<div class="profile-tabs">
+    <p-tabs>
+      <!-- About Tab -->
+      <p-tab header="About">
+        <div class="about-section">
+          <h3>About {{ (user$ | async)?.name }}</h3>
+          <div class="about-content">
+            <p>{{ (user$ | async)?.bio || 'No bio available' }}</p>
+            <div class="stats">
+              <div class="stat-item">
+                <span class="stat-label">Member Since</span>
+                <span class="stat-value">{{ (user$ | async)?.joinDate | date }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Total Sales</span>
+                <span class="stat-value">{{ (user$ | async)?.totalSales || 0 }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </p-tab>
+  
+      <!-- Products Tab -->
+      <p-tab header="Products">
+        <div class="products-section">
+          <h3>Listed Products</h3>
+          <div class="products-grid">
+            <!-- Products will be rendered here -->
+          </div>
+        </div>
+      </p-tab>
+  
+      <!-- Policies Tab -->
+      <p-tab header="Policies">
+        <div class="policies-section">
+          <h3>Shop Policies</h3>
+          <div class="policy-items">
+            <div class="policy-item">
+              <h4>Shipping</h4>
+              <p>{{ (user$ | async)?.policies?.shipping || 'No shipping policy available' }}</p>
+            </div>
+            <div class="policy-item">
+              <h4>Returns</h4>
+              <p>{{ (user$ | async)?.policies?.returns || 'No return policy available' }}</p>
+            </div>
+            <div class="policy-item">
+              <h4>Additional Information</h4>
+              <p>{{ (user$ | async)?.policies?.additional || 'No additional information available' }}</p>
+            </div>
+          </div>
+        </div>
+      </p-tab>
+  
+      <!-- Reviews Tab -->
+      <p-tab header="Reviews">
+        <div class="reviews-section">
+          <h3>Customer Reviews</h3>
+          <div class="reviews-summary">
+            <div class="rating-overview">
+              <h4>Overall Rating</h4>
+            </div>
+            <div class="reviews-list">
+              <!-- Reviews will be rendered here -->
+            </div>
+          </div>
+        </div>
+      </p-tab>
+    </p-tabs>
+  </div>
+  

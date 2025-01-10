@@ -11,6 +11,12 @@ export const UserReducer = createReducer(
       loading: false,
       error: null
     })),    
+    on(UserActions.updateUserCoverImageSuccess, (state, { coverImageUrl }) => ({
+      ...state,
+      user: { ...state.user, coverImageUrl },
+      loading: false,
+      error: null
+    })),
     on(UserActions.loadUserProfile, state => ({
       ...state,
       loading: true,

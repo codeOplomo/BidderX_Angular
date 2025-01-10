@@ -19,6 +19,7 @@ import { TagModule } from 'primeng/tag';
 import { MenuItem } from 'primeng/api';
 import { UserService } from '../../services/user.service';
 import { ProfileHeaderComponent } from '../../components/profile-header/profile-header.component';
+import { ProfileTabsComponent } from '../../components/profile-tabs/profile-tabs.component';
 
 @Component({
   selector: 'app-profile',
@@ -31,10 +32,13 @@ import { ProfileHeaderComponent } from '../../components/profile-header/profile-
     MenuModule,
     HttpClientModule,
     ButtonModule,
-    NgIf
+    NgIf,
+    ProfileTabsComponent,
+    TabsModule
   ],
   templateUrl: './profile.component.html',
-  styleUrl: './profile.component.css'
+  styleUrl: './profile.component.css',
+  // providers: [UserService, TabsModule, ProfileHeaderComponent, ProfileTabsComponent, TabViewModule]
 })
 export class ProfileComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
@@ -47,7 +51,6 @@ export class ProfileComponent implements OnInit, OnDestroy {
   
   constructor(
     private authService: AuthService,
-    private userService: UserService,
     private store: Store,
     private router: Router,
   ) {
@@ -59,22 +62,13 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (this.authService.checkAuthState()) {
       this.user$ = this.store.select(selectUser);
     }
-    this.user$.subscribe(user => console.log(user));
+    // this.user$.subscribe(user => console.log(user));
 
   }
 
   updateProfile(profileData: any) {
     this.store.dispatch(UserActions.updateUserProfile({ profileData }));
   }
-
-  getImageUrl(imagePath: string): string {
-    return this.userService.getImageUrl(imagePath);
-  }
-  
-  updateProfileImage(file: File) {
-  this.store.dispatch(UserActions.updateUserImage({ imageFile: file }));
-}
-
 
 
   ngOnDestroy() {

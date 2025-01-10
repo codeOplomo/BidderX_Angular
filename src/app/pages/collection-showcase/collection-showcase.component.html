@@ -1,0 +1,31 @@
+<div class="collection-showcase">
+  <!-- Showcase Header -->
+  <app-showcase-header
+    [name]="collection?.name"
+    [description]="collection?.description"
+    [imageUrl]="collection?.imageUrl">
+  </app-showcase-header>
+
+  <!-- Items Section -->
+  <div *ngIf="collection?.items?.length > 0; else noItemsTemplate" class="items-grid">
+    <div *ngFor="let item of collection?.items" class="item-card">
+      <img [src]="item.imageUrl || 'assets/item-placeholder.png'" alt="{{ item.name }}" class="item-image" />
+      <div class="item-content">
+        <h3>{{ item.name }}</h3>
+        <p>{{ item.description }}</p>
+        <div class="item-actions">
+          <button (click)="onEditItem(item)" class="btn-edit">Edit</button>
+          <button (click)="onDeleteItem(item)" class="btn-delete">Delete</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- No Items Template -->
+  <ng-template #noItemsTemplate>
+    <div class="empty-state">
+      <img src="assets/empty-illustration.svg" alt="No items" />
+      <p>No items available in this collection. Add some to get started!</p>
+    </div>
+  </ng-template>
+</div>

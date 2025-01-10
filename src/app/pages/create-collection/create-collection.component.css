@@ -1,0 +1,76 @@
+.header {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+  
+  .header h2 {
+    font-size: 24px;
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .header p {
+    font-size: 16px;
+    color: #666;
+  }
+  .form-group {
+    margin-bottom: 20px;
+  }
+  
+  .form-control {
+    width: 100%;
+    padding: 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    transition: border-color 0.3s;
+  }
+  
+  .form-control:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+  }
+  
+  .error-text {
+    color: #e74c3c;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+
+  .p-button-primary {
+    background: linear-gradient(to right, #007bff, #0056b3);
+    color: #fff;
+    border: none;
+    transition: transform 0.2s, background 0.3s;
+  }
+  
+  .p-button-primary:hover {
+    transform: scale(1.05);
+    background: linear-gradient(to right, #0056b3, #003f7f);
+  }
+  
+  .p-button-secondary {
+    background: #f0f0f0;
+    color: #333;
+  }
+  
+  .p-button-secondary:hover {
+    background: #e0e0e0;
+  }
+
+  .create-collection-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: linear-gradient(to bottom, #f8f9fa, #e9ecef);
+  }
+  
+  .create-collection-card {
+    width: 400px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
