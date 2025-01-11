@@ -30,15 +30,12 @@ export class UserService {
   uploadProfileImage(image: File): Observable<{ imageUrl: string }> {
     return this.imagesService.uploadImage(image, 'profile');
   }
-
+  
   uploadCoverImage(image: File): Observable<{ imageUrl: string }> {
     return this.imagesService.uploadImage(image, 'cover');
   }
-
   
 
-  
-  
   
   updateProfile(profileUpdateVM: ProfileUpdateVM): Observable<any> {
     return this.http.put(`${this.apiUrl}/edit-profile`, profileUpdateVM);

@@ -15,6 +15,7 @@ import { MenuItem } from 'primeng/api';
 import { Store } from '@ngrx/store';
 import { UserState } from '../../store/user/user.state';
 import { selectUser } from '../../store/user/user.selectors';
+import { ImagesService } from '../../services/images.service';
 
 @Component({
   selector: 'app-navbar',
@@ -63,8 +64,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   constructor(
     public authService: AuthService,
-    private store: Store<UserState>,
     private userService: UserService,
+    private imagesService: ImagesService,
+    private store: Store<UserState>,
     private router: Router
   ) {  }
 
@@ -74,7 +76,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   getAvatarUrl(imagePath: string): string {
-    return this.userService.getImageUrl(imagePath);
+    return this.imagesService.getImageUrl(imagePath);
   }
 
   ngOnDestroy() {

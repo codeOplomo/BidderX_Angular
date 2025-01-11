@@ -16,6 +16,8 @@ import { UserReducer } from './store/user/user.reducer';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
 import { isDevMode } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
+import { collectionReducer } from './store/collections/collection.reducer';
+import { CollectionEffects } from './store/collections/collection.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -30,8 +32,8 @@ export const appConfig: ApplicationConfig = {
         preset: Aura
       }
     }),
-    provideStore({ user: UserReducer }),
-    provideEffects([UserEffects]),
+    provideStore({ user: UserReducer, collection: collectionReducer }),
+    provideEffects([UserEffects, CollectionEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),

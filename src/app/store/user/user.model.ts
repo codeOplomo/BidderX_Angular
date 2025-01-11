@@ -7,6 +7,5 @@ export interface User {
     imageUrl?: string; 
     coverImageUrl?: string;
     message?: string;
-    // Add other properties as needed
   }
   

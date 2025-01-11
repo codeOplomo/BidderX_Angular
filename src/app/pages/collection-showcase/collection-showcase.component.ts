@@ -6,6 +6,11 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule, NgClass, NgFor } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ShowcaseHeaderComponent } from '../../components/showcase-header/showcase-header.component';
+import { Observable } from 'rxjs';
+import { Collection } from '../../store/collections/collection.model';
+import { select, Store } from '@ngrx/store';
+import * as CollectionActions from '../../store/collections/collection.actions';
+import { selectCollectionCoverImage, selectCollectionError, selectCollectionLoading } from '../../store/collections/collection.selectors';
 
 @Component({
   selector: 'app-collection-showcase',
@@ -16,32 +21,51 @@ import { ShowcaseHeaderComponent } from '../../components/showcase-header/showca
 })
 export class CollectionShowcaseComponent {
 
-  collection: any = { items: [] }; // Initialize `items` as an empty array
+  collection$: Observable<Collection | null>;
+  loading$: Observable<boolean>;
+  error$: Observable<any>;
 
 
   constructor(
     private route: ActivatedRoute,
-    private collectionsService: CollectionsService
-  ) {}
+    private store: Store<{ collection: Collection}>,
+  ) {
+    this.collection$ = this.store.pipe(select(selectCollectionCoverImage));
+    this.loading$ = this.store.pipe(select(selectCollectionLoading));
+    this.error$ = this.store.pipe(select(selectCollectionError));
+  }
 
   ngOnInit(): void {
     const collectionId = this.route.snapshot.paramMap.get('id');
-    this.fetchCollectionDetails(collectionId);
-  }
-
-  fetchCollectionDetails(id: string | null): void {
-    if (id) {
-      this.collectionsService.getCollectionById(id).subscribe(
-        (response) => {
-          console.log('Collection fetched:', response);
-          this.collection = response.data;
-        },
-        (error) => {
-          console.error('Error fetching collection:', error);
-        }
-      );
+    console.log('Collection ID:', collectionId); // Check if the correct ID is being passed
+    if (collectionId) {
+      this.store.dispatch(CollectionActions.loadCollection({ id: collectionId }));
     }
   }
+  
+  
+  ngOnChanges() {
+    console.log(this.collection$);  // Check if this collection is populated
+  }
+  
+
+  onImageUpdated(imageUrl: string): void {
+    this.store.dispatch(CollectionActions.updateCollectionCoverImageSuccess({ imageUrl }));
+  }
+
+  // fetchCollectionDetails(id: string | null): void {
+  //   if (id) {
+  //     this.collectionsService.getCollectionById(id).subscribe(
+  //       (response) => {
+  //         console.log('Collection fetched:', response);
+  //         this.collection = response.data;
+  //       },
+  //       (error) => {
+  //         console.error('Error fetching collection:', error);
+  //       }
+  //     );
+  //   }
+  // }
   
 
   onEditItem(item: any): void {
