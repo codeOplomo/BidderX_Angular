@@ -49,25 +49,6 @@ export class CollectionShowcaseComponent {
   }
   
 
-  onImageUpdated(imageUrl: string): void {
-    this.store.dispatch(CollectionActions.updateCollectionCoverImageSuccess({ imageUrl }));
-  }
-
-  // fetchCollectionDetails(id: string | null): void {
-  //   if (id) {
-  //     this.collectionsService.getCollectionById(id).subscribe(
-  //       (response) => {
-  //         console.log('Collection fetched:', response);
-  //         this.collection = response.data;
-  //       },
-  //       (error) => {
-  //         console.error('Error fetching collection:', error);
-  //       }
-  //     );
-  //   }
-  // }
-  
-
   onEditItem(item: any): void {
     console.log('Edit item:', item);
     // Navigate to an edit page or open a dialog

@@ -2,15 +2,14 @@ import { createAction, props } from '@ngrx/store';
 import { Collection } from './collection.model';
 
 export const updateCollectionCoverImage = createAction(
-    '[Collection] Update Cover Image',
-    props<{ imageFile: File }>()
-  );
-  
-  export const updateCollectionCoverImageSuccess                     
-    = createAction(
-    '[Collection] Update Cover Image Success',
-    props<{ imageUrl: string }>()
-  );
+  '[Collection] Update Cover Image',
+  props<{ collectionId: string }>()
+);
+
+export const updateCollectionCoverImageSuccess = createAction(
+  '[Collection] Update Cover Image Success',
+  props<{ imageUrl: string, collectionId: string }>()
+);
   
   export const updateCollectionCoverImageFailure = createAction(
     '[Collection] Update Cover Image Failure',

@@ -6,8 +6,7 @@
   An error occurred: {{ error }}
 </div>
 
-<app-showcase-header
-    (imageUpdated)="onImageUpdated($event)">
+<app-showcase-header>
   </app-showcase-header>
 
 <div *ngIf="collection$ | async as collection" class="collection-details">

@@ -1,15 +1,17 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
+import { Observable, of, Subject } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import * as UserActions from './user.actions';
 import { User } from './user.model';
+import { Action } from '@ngrx/store';
 
 @Injectable()
 export class UserEffects {
   private readonly actions$ = inject(Actions);
   private readonly userService = inject(UserService);
+  private destroy$ = new Subject<void>();
 
   loadProfile$ = createEffect(() => this.actions$.pipe(
     ofType(UserActions.loadUserProfile),
@@ -50,17 +52,24 @@ export class UserEffects {
   updateImage$ = createEffect(() =>
     this.actions$.pipe(
       ofType(UserActions.updateUserImage),
-      switchMap(({ imageFile }) => // Expecting a File object
-        this.userService.uploadProfileImage(imageFile).pipe(
-          map(response =>
-            UserActions.updateUserImageSuccess({ imageUrl: response.imageUrl })
-          ),
-          catchError(error =>
+      switchMap(({ imageFile }) =>
+        new Observable<Action>((observer) => {
+          this.userService.uploadProfileImage(
+            this.destroy$, // Provide the destroy$ subject
+            (imageUrl) => {
+              observer.next(UserActions.updateUserImageSuccess({ imageUrl }));
+              observer.complete();
+            },
+            (loading) => {
+              console.log('Loading state:', loading); // Handle loading if necessary
+            }
+          );
+        }).pipe(
+          catchError((error) =>
             of(UserActions.updateUserImageFailure({ error }))
           )
         )
       )
     )
   );
-  
 }

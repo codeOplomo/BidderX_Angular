@@ -1,6 +1,6 @@
 import { HttpClient, HttpEventType, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { filter, map, Observable } from 'rxjs';
+import { filter, map, Observable, Subject } from 'rxjs';
 import { PasswordUpdateVM } from '../models/view-models/password-update.model';
 import { ProfileUpdateVM } from '../models/view-models/profile-update.model';
 import { ApiResponse } from '../models/view-models/api-response.model';
@@ -27,15 +27,21 @@ export class UserService {
   
   
 
-  uploadProfileImage(image: File): Observable<{ imageUrl: string }> {
-    return this.imagesService.uploadImage(image, 'profile');
+  uploadProfileImage(destroy$: Subject<void>, onSuccess: (imageUrl: string) => void, onLoadingChange: (loading: boolean) => void) {
+    this.imagesService.openImageUploadDialog({
+      type: 'profile',
+      onSuccess,
+      onLoadingChange,
+    }, destroy$);
   }
   
-  uploadCoverImage(image: File): Observable<{ imageUrl: string }> {
-    return this.imagesService.uploadImage(image, 'cover');
+  uploadCoverImage(destroy$: Subject<void>, onSuccess: (imageUrl: string) => void, onLoadingChange: (loading: boolean) => void) {
+    this.imagesService.openImageUploadDialog({
+      type: 'cover',
+      onSuccess,
+      onLoadingChange,
+    }, destroy$);
   }
-  
-
   
   updateProfile(profileUpdateVM: ProfileUpdateVM): Observable<any> {
     return this.http.put(`${this.apiUrl}/edit-profile`, profileUpdateVM);

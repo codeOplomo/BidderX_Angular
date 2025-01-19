@@ -1,114 +1,34 @@
 .profile-tabs {
-    margin-top: 2rem;
-  }
-  
-  /* Tab Content Styles */
-  :host ::ng-deep .p-tabview .p-tabview-panels {
-    padding: 1.5rem;
-    background: #fff;
-    border-radius: 0 0 8px 8px;
-  }
-  
-  :host ::ng-deep .p-tabview .p-tabview-nav {
-    border: none;
-    background: transparent;
-  }
-  
-  :host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
-    background: transparent;
-    border: none;
-    color: #666;
-    padding: 1rem 1.5rem;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-  
-  :host ::ng-deep .p-tabview .p-tabview-nav li.p-highlight .p-tabview-nav-link {
-    background: #fff;
-    color: #2196F3;
-    border-radius: 8px 8px 0 0;
-  }
-  
-  /* Section Styles */
-  .about-section,
-  .products-section,
-  .policies-section,
-  .reviews-section {
-    padding: 1rem;
-  }
-  
-  h3 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 1.5rem;
-  }
-  
-  h4 {
-    font-size: 1.2rem;
-    color: #444;
-    margin-bottom: 1rem;
-  }
-  
-  /* About Section */
-  .about-content {
+  .tabs {
     display: flex;
-    flex-direction: column;
-    gap: 2rem;
-  }
-  
-  .stats {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1.5rem;
-  }
-  
-  .stat-item {
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .stat-label {
-    color: #666;
-    font-size: 0.9rem;
-  }
-  
-  .stat-value {
-    font-size: 1.2rem;
-    font-weight: 600;
-    color: #333;
-  }
-  
-  /* Policies Section */
-  .policy-items {
-    display: grid;
-    gap: 2rem;
-  }
-  
-  .policy-item {
-    background: #f8f9fa;
-    padding: 1.5rem;
-    border-radius: 8px;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    :host ::ng-deep .p-tabview .p-tabview-nav li .p-tabview-nav-link {
-      padding: 0.75rem 1rem;
+    border-bottom: 2px solid #ccc;
+    background-color: #DDD8C4;
+
+    .tab-button {
+      flex: 1;
+      padding: 10px 15px;
+      text-align: center;
+      border: none;
+      background-color: transparent;
+      cursor: pointer;
+      font-weight: bold;
+      color: #666;
+
+      &.active {
+        color: #3e1300;
+        background-color: #e25544;
+        border-bottom: 2px solid #de4332;
+      }
     }
-  
-    .stats {
-      grid-template-columns: 1fr;
-    }
-  
+  }
+
+  .tab-content {
+    padding: 15px;
+    background-color: #A9B6B1;
+    color: #3e1300;
+
     h3 {
-      font-size: 1.25rem;
-    }
-  
-    h4 {
-      font-size: 1.1rem;
+      margin-top: 0;
     }
   }
+}

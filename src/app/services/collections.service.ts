@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, Subject } from 'rxjs';
 import { ImagesService } from './images.service';
 import { Collection } from '../store/collections/collection.model';
 import { ApiResponse } from '../models/view-models/api-response.model';
@@ -21,8 +21,30 @@ export class CollectionsService {
   getCollectionById(id: string): Observable<ApiResponse<Collection>> {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
-  
-  uploadShowcaseCoverImage(image: File): Observable<{ imageUrl: string }> {
-    return this.imagesService.uploadImage(image, 'collection-cover');
+
+  getCollectionsByEmail(email: string): Observable<ApiResponse<Collection[]>> {
+    const params = new HttpParams().set('email', email);
+    return this.http.get<ApiResponse<Collection[]>>(`${this.apiUrl}/user`, { params });
   }
+  
+  uploadShowcaseCoverImage(
+    collectionId: string | null, 
+    destroy$: Subject<void>,
+    onSuccess: (imageUrl: string) => void,
+    onLoadingChange: (loading: boolean) => void
+  ) {
+    if (!collectionId) {
+      console.error('No collection ID available');
+      return;
+    }
+
+     this.imagesService.openImageUploadDialog({
+        type: 'collection-cover',
+        collectionId: collectionId,
+        onSuccess: (imageUrl) => onSuccess(imageUrl),
+        onLoadingChange: (loading) => onLoadingChange(loading),
+        onError: (error) => console.error('Error uploading image:', error)
+      }, destroy$);
+  }
+  
 }

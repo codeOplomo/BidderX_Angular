@@ -3,7 +3,7 @@ import { select, Store } from '@ngrx/store';
 import * as CollectionActions from '../../store/collections/collection.actions';
 import { ImagesService } from '../../services/images.service';
 import { CollectionsService } from '../../services/collections.service';
-import { Observable } from 'rxjs';
+import { Observable, Subject, takeUntil } from 'rxjs';
 import { Collection } from '../../store/collections/collection.model';
 import { CommonModule } from '@angular/common';
 import { selectCollectionCoverImage } from '../../store/collections/collection.selectors';
@@ -17,11 +17,12 @@ import { selectCollectionCoverImage } from '../../store/collections/collection.s
 })
 export class ShowcaseHeaderComponent implements OnInit {
 
-  // @Input() collection: Collection | null = null;
-
   @Output() imageUpdated = new EventEmitter<string>();
 
   collection$: Observable<Collection | null>;
+  private collectionId: string | null = null; 
+  coverImageLoading = false;
+  private destroy$ = new Subject<void>();
 
   constructor(private collectionsService: CollectionsService, private imagesService: ImagesService, private store: Store<{ collection: Collection}>) {
     
@@ -29,6 +30,15 @@ export class ShowcaseHeaderComponent implements OnInit {
   }
 
   ngOnInit() {
+    // Store the collection ID when the collection data is loaded
+    this.collection$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(collection => {
+      console.log('Header collection data:', collection);
+      if (collection) {
+        this.collectionId = collection.id ?? null;
+      }
+    });
   }
   
 
@@ -36,27 +46,19 @@ export class ShowcaseHeaderComponent implements OnInit {
     return this.imagesService.getImageUrl(imagePath);
   }
 
+  ngOnDestroy() {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
+
   onUpdateCoverPicture() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
+    if (!this.collectionId) {
+      console.error('No collection ID available');
+      return;
+    }
 
-    fileInput.onchange = (e: any) => {
-      const file = e.target.files[0];
-      if (file) {
-        this.collectionsService.uploadShowcaseCoverImage(file).subscribe({
-          next: ({ imageUrl }) => {
-            this.imageUpdated.emit(imageUrl);
-            this.store.dispatch(CollectionActions.updateCollectionCoverImageSuccess({ imageUrl }));
-          },
-          error: (error) => {
-            console.error('Showcase cover upload failed:', error);
-            this.store.dispatch(CollectionActions.updateCollectionCoverImageFailure({ error }));
-          }
-        });
-      }
-    };
-
-    fileInput.click();
+    this.store.dispatch(CollectionActions.updateCollectionCoverImage({ 
+      collectionId: this.collectionId 
+    }));
   }
 }

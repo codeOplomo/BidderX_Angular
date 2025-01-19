@@ -1,3 +1,5 @@
+import { Collection } from "../collections/collection.model";
+
 export interface User {
     profileIdentifier?: string;
     firstName?: string;
@@ -6,6 +8,7 @@ export interface User {
     email?: string;
     imageUrl?: string; 
     coverImageUrl?: string;
+    collections?: Collection[];
     message?: string;
   }
   

@@ -27,7 +27,10 @@ export const collectionReducer = createReducer(
   })),
   on(CollectionActions.updateCollectionCoverImageSuccess, (state, { imageUrl }) => ({
     ...state,
-    imageUrl,
+    collection: state.collection ? {
+      ...state.collection,
+      imageUrl: imageUrl
+    } : null,
     loading: false,
     error: null,
   })),

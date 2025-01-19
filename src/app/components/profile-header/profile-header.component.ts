@@ -25,6 +25,7 @@ export class ProfileHeaderComponent implements OnDestroy {
   @Input() rating?: number;
   @Input() imageLoading?: boolean;
   @Input() coverImageLoading = false;
+  private destroy$ = new Subject<void>();
 
   editItems: any[] = [
     {
@@ -38,7 +39,6 @@ export class ProfileHeaderComponent implements OnDestroy {
       command: () => this.onEditPassword()
     }
   ];
-  private destroy$ = new Subject<void>();
 
   constructor(private imageService: ImagesService, private userService: UserService, private authService: AuthService, private store: Store, private router: Router) {}
 
@@ -46,67 +46,33 @@ export class ProfileHeaderComponent implements OnDestroy {
     return this.imageService.getImageUrl(imagePath);
   }
 
-  onUpdateProfilePicture() {
-    this.handleImageUpload('profile');
-  }
-
-  onUpdateCoverPicture() {
-    this.handleImageUpload('cover');
-  }
-
-  private handleImageUpload(type: 'profile' | 'cover') {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = 'image/*';
-
-    fileInput.onchange = (e: any) => {
-      const file = e.target.files[0];
-      if (file) {
-        if (type === 'profile') {
-          this.imageLoading = true;
-        } else {
-          this.coverImageLoading = true;
-        }
-
-        const uploadMethod = type === 'profile' 
-          ? this.userService.uploadProfileImage(file)
-          : this.userService.uploadCoverImage(file);
-
-        uploadMethod.pipe(
-          takeUntil(this.destroy$)
-        ).subscribe({
-          next: ({ imageUrl }) => {
-            // Dispatch the appropriate action based on the type
-            const action = type === 'profile'
-              ? UserActions.updateUserImageSuccess({ imageUrl })
-              : UserActions.updateUserCoverImageSuccess({ coverImageUrl: imageUrl });
-            
-            this.store.dispatch(action);
-            this.store.dispatch(UserActions.loadUserProfile());
-            
-            if (type === 'profile') {
-              this.imageLoading = false;
-            } else {
-              this.coverImageLoading = false;
-            }
-          },
-          error: (error) => {
-            console.error('Upload failed:', error);
-            if (type === 'profile') {
-              this.imageLoading = false;
-              this.store.dispatch(UserActions.updateUserImageFailure({ error }));
-            } else {
-              this.coverImageLoading = false;
-              this.store.dispatch(UserActions.updateUserCoverImageFailure({ error }));
-            }
-          }
-        });
+  onUpdateProfilePicture(): void {
+    this.userService.uploadProfileImage(
+      this.destroy$,
+      (imageUrl) => {
+        console.log('Profile image updated:', imageUrl);
+        // You can update the profile image in the UI or emit an event here
+      },
+      (loading) => {
+        this.imageLoading = loading;
+        console.log('Profile image loading:', loading);
       }
-    };
-
-    fileInput.click();
+    );
   }
-    
+
+  onUpdateCoverPicture(): void {
+    this.userService.uploadCoverImage(
+      this.destroy$,
+      (imageUrl) => {
+        console.log('Cover image updated:', imageUrl);
+        // You can update the cover image in the UI or emit an event here
+      },
+      (loading) => {
+        this.coverImageLoading = loading;
+        console.log('Cover image loading:', loading);
+      }
+    );
+  }
 
     onEditProfile() {
       this.router.navigate(['/edit-profile']);

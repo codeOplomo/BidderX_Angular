@@ -7,9 +7,14 @@
 
   <!-- Profile Actions -->
   <div class="profile-actions">
-    <p-button *ngIf="isOwner()" label="Create Collection" icon="pi pi-plus" styleClass="p-button-primary"
-      (onClick)="onCreateCollection()">
+    <p-button *ngIf="isOwner()" 
+              label="Create Collection" 
+              icon="pi pi-plus" 
+              class="p-button-rounded custom-button-style" 
+              (onClick)="onCreateCollection()">
     </p-button>
-  </div>
+  </div>  
+
+  <app-profile-tabs></app-profile-tabs>
 
 </div>

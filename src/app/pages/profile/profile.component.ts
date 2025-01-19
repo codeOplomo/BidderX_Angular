@@ -40,6 +40,7 @@ import { ProfileTabsComponent } from '../../components/profile-tabs/profile-tabs
   styleUrl: './profile.component.css',
   // providers: [UserService, TabsModule, ProfileHeaderComponent, ProfileTabsComponent, TabViewModule]
 })
+
 export class ProfileComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   rating: number = 5;
@@ -47,6 +48,7 @@ export class ProfileComponent implements OnInit, OnDestroy {
   imageLoading = false;
 
   errorMessage: string = '';
+  userId: string = '';
 
   
   constructor(
@@ -62,7 +64,12 @@ export class ProfileComponent implements OnInit, OnDestroy {
     if (this.authService.checkAuthState()) {
       this.user$ = this.store.select(selectUser);
     }
-    // this.user$.subscribe(user => console.log(user));
+    this.user$.subscribe(user =>{ 
+      console.log('User data in ProfileComponent:', user);
+      if (user) {
+        this.userId = user.id; // Extract user ID from user data
+      }
+      });
 
   }
 
