@@ -7,17 +7,36 @@ import { providePrimeNG } from 'primeng/config';
 import Aura from '@primeng/themes/aura';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
+import { provideHttpClient, withInterceptors } from '@angular/common/http';
+import { headersInterceptor } from './interceptor/headers.interceptor';
+import { provideStore } from '@ngrx/store';
+import { provideEffects } from '@ngrx/effects';
+import { UserEffects } from './store/user/user.effects';
+import { UserReducer } from './store/user/user.reducer';
+import { provideStoreDevtools } from '@ngrx/store-devtools';
+import { isDevMode } from '@angular/core';
+import { TabsModule } from 'primeng/tabs';
+import { collectionReducer } from './store/collections/collection.reducer';
+import { CollectionEffects } from './store/collections/collection.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }), 
     provideRouter(routes), 
-    importProvidersFrom(MenubarModule),
+    provideHttpClient(withInterceptors([headersInterceptor])),
+    importProvidersFrom(TabsModule),
     importProvidersFrom(ButtonModule),
     provideAnimationsAsync(),
     providePrimeNG({
       theme: {
         preset: Aura
       }
-    })]
+    }),
+    provideStore({ user: UserReducer, collection: collectionReducer }),
+    provideEffects([UserEffects, CollectionEffects]),
+    provideStoreDevtools({
+      maxAge: 25,
+      logOnly: !isDevMode(),
+    })
+  ]
 };

@@ -1,0 +1,14 @@
+<div class="showcase-header">
+  <!-- Background with gradient (cover image) -->
+  <div class="header-background" 
+    [style.backgroundImage]="'url(' + getImageUrl((collection$ | async)?.imageUrl ?? '') + ')'">
+    <div class="update-cover-picture" (click)="onUpdateCoverPicture()">
+      <i class="pi pi-camera"></i>
+    </div>
+  </div>
+
+  <div *ngIf="collection$ | async as collection" class="collection-header">
+    <h1 class="header-title">{{ collection.name }}</h1>
+    <p class="header-description">{{ collection.description }}</p>
+  </div>
+</div>

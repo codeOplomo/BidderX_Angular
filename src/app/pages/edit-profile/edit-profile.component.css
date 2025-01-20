@@ -1,0 +1,41 @@
+.edit-profile-page {
+    max-width: 500px;
+    margin: 2rem auto;
+}
+  
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    column-gap: 1rem;
+    row-gap: 1.5rem;
+}
+  
+.form-group {
+    display: contents; /* Ensures the label and input are placed in separate grid cells */
+}
+  
+.form-group label {
+    text-align: right;
+    padding-right: 0.5rem;
+    align-self: center;
+}
+  
+.form-group div {
+    display: flex;
+    flex-direction: column;
+}
+  
+small {
+    color: red;
+    font-size: 0.85rem;
+}
+  
+.form-actions {
+    padding-left: 50%;
+    grid-column: span 2;
+    text-align: center;
+}
+  
+.cancel-btn, .submit-btn {
+    margin-left: 0.5rem;
+}

@@ -1,0 +1,57 @@
+<div class="profile-tabs">
+  <!-- Tabs -->
+  <div class="tabs">
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'products'" 
+      (click)="selectTab('products')">
+      Products
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'collections'" 
+      (click)="selectTab('collections')">
+      Collections
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'policies'" 
+      (click)="selectTab('policies')">
+      Policies
+    </button>
+    <button 
+      class="tab-button" 
+      [class.active]="activeTab === 'reviews'" 
+      (click)="selectTab('reviews')">
+      Reviews ({{ userData?.reviews?.length || 0 }})
+    </button>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content">
+    <ng-container [ngSwitch]="activeTab">
+      <div *ngSwitchCase="'products'">
+        <h3>Products</h3>
+        <p>Display products here...</p>
+      </div>
+      <div *ngSwitchCase="'collections'">
+        <app-collections-tab [collections]="collections"></app-collections-tab>
+      </div>
+      <div *ngSwitchCase="'policies'">
+        <h3>Policies</h3>
+        <p>{{ userData?.policies }}</p>
+      </div>
+      <div *ngSwitchCase="'reviews'">
+        <h3>Reviews</h3>
+        <div *ngIf="userData?.reviews?.length > 0; else noReviews">
+          <ul>
+            <li *ngFor="let review of userData.reviews">{{ review }}</li>
+          </ul>
+        </div>
+        <ng-template #noReviews>
+          <p>No reviews yet.</p>
+        </ng-template>
+      </div>
+    </ng-container>
+  </div>
+</div>

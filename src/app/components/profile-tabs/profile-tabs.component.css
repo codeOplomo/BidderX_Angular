@@ -1,0 +1,34 @@
+.profile-tabs {
+  .tabs {
+    display: flex;
+    border-bottom: 2px solid #ccc;
+    background-color: #DDD8C4;
+
+    .tab-button {
+      flex: 1;
+      padding: 10px 15px;
+      text-align: center;
+      border: none;
+      background-color: transparent;
+      cursor: pointer;
+      font-weight: bold;
+      color: #666;
+
+      &.active {
+        color: #3e1300;
+        background-color: #e25544;
+        border-bottom: 2px solid #de4332;
+      }
+    }
+  }
+
+  .tab-content {
+    padding: 15px;
+    background-color: #A9B6B1;
+    color: #3e1300;
+
+    h3 {
+      margin-top: 0;
+    }
+  }
+}
