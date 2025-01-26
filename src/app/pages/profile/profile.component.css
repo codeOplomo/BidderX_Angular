@@ -173,6 +173,11 @@
   }
 }
 
+/* Customize the button styles if needed */
+.custom-button-style {
+  margin: 0; /* Remove any margin applied by default */
+}
+
 .header-background {
   height: 120px;
   background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);

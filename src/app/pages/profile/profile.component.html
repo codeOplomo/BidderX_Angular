@@ -1,8 +1,6 @@
 <div class="profile-page">
   <p-card styleClass="modern-profile-card mb-4">
-    <app-profile-header
-      [user$]="user$"
-    ></app-profile-header>
+    <app-profile-header [user$]="user$"></app-profile-header>
   </p-card>
 
   <!-- Profile Actions -->
@@ -13,8 +11,15 @@
               class="p-button-rounded custom-button-style" 
               (onClick)="onCreateCollection()">
     </p-button>
+    
+    <p-button *ngIf="isOwner()" 
+              label="Create Auction" 
+              icon="pi pi-gavel" 
+              class="p-button-rounded custom-button-style" 
+              (onClick)="onCreateAuction()">
+    </p-button>
   </div>  
 
   <app-profile-tabs></app-profile-tabs>
-
 </div>
+

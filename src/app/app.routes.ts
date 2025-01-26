@@ -8,6 +8,7 @@ import { EditPasswordComponent } from './pages/edit-password/edit-password.compo
 import { ProfileComponent } from './pages/profile/profile.component';
 import { CreateCollectionComponent } from './pages/create-collection/create-collection.component';
 import { CollectionShowcaseComponent } from './pages/collection-showcase/collection-showcase.component';
+import { CreateAuctionComponent } from './pages/create-auction/create-auction.component';
 
 export const routes: Routes = [
     {
@@ -21,6 +22,7 @@ export const routes: Routes = [
             { path: 'edit-profile', component: EditProfileComponent },
             { path: 'edit-password', component: EditPasswordComponent },
             { path: 'create-collection', component: CreateCollectionComponent },
+            { path: 'create-auction', component: CreateAuctionComponent },
             { path: 'collection-showcase/:id', component: CollectionShowcaseComponent },
             // Add other routes here
         ]

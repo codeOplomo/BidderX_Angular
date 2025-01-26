@@ -1,6 +1,6 @@
 <div class="profile-tabs">
   <!-- Tabs -->
-  <div class="tabs">
+  <div class="tabs-container">
     <button 
       class="tab-button" 
       [class.active]="activeTab === 'products'" 
@@ -15,18 +15,17 @@
     </button>
     <button 
       class="tab-button" 
-      [class.active]="activeTab === 'policies'" 
-      (click)="selectTab('policies')">
-      Policies
+      [class.active]="activeTab === 'created'" 
+      (click)="selectTab('created')">
+      Created
     </button>
     <button 
       class="tab-button" 
-      [class.active]="activeTab === 'reviews'" 
-      (click)="selectTab('reviews')">
-      Reviews ({{ userData?.reviews?.length || 0 }})
+      [class.active]="activeTab === 'liked'" 
+      (click)="selectTab('liked')">
+      Liked
     </button>
   </div>
-
   <!-- Tab Content -->
   <div class="tab-content">
     <ng-container [ngSwitch]="activeTab">

@@ -12,5 +12,9 @@ export interface Collection {
     name?: string;
     description?: string;
     imageUrl?: string;
+    owner?: {
+        imageUrl?: string;
+        name?: string;
+      };
     items: CollectionItem[];
 }

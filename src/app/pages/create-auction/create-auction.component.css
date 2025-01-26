@@ -1,0 +1,151 @@
+.create-auction-page {
+    padding: 2rem;
+  }
+  
+  .create-auction-card {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .form-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+  }
+  
+  /* Image Upload Section */
+  .image-upload-section {
+    height: 100%;
+    
+    .upload-box {
+      height: 300px;
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      overflow: hidden;
+  
+      label {
+        display: block;
+        padding: 1rem;
+        font-size: 0.875rem;
+        color: #666;
+      }
+  
+      .upload-area {
+        height: calc(100% - 3rem);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+  
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+        }
+  
+        .upload-placeholder {
+          font-size: 2rem;
+          color: #ddd;
+        }
+      }
+    }
+  }
+  
+  /* Form Fields Section */
+  .form-fields-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 0;
+  
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: #666;
+    }
+  
+    input,
+    select,
+    textarea {
+      width: 100%;
+      background-color: #f3f9f2;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      transition: border-color 0.3s;
+  
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+    }
+  
+    &.full-width {
+      width: 100%;
+    }
+  }
+  
+  /* Product Selection Section */
+  .product-selection-section {
+    width: 100%;
+  }
+  
+  .explicit-content-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* New Product Fields */
+  .new-product-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+  
+  .new-product-fields {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+  
+  /* Form Rows */
+  .form-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    width: 100%;
+  }
+  
+  .auction-title-row {
+    width: 100%;
+  }
+  
+  /* Create Button */
+  .create-button {
+    width: 100%;
+    padding: 0.75rem;
+    background: #3e1300;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  
+    &:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+  
+    &:hover:not(:disabled) {
+      background: #362800;
+    }
+  }

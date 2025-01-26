@@ -1,34 +1,45 @@
 .profile-tabs {
-  .tabs {
+  .tabs-container {
     display: flex;
-    border-bottom: 2px solid #ccc;
-    background-color: #DDD8C4;
+    gap: 2rem;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    margin-bottom: 2rem;
+  }
 
-    .tab-button {
-      flex: 1;
-      padding: 10px 15px;
-      text-align: center;
-      border: none;
-      background-color: transparent;
-      cursor: pointer;
-      font-weight: bold;
-      color: #666;
+  .tab-button {
+    position: relative;
+    padding: 0.5rem 1rem;
+    border: none;
+    background: transparent;
+    color: #666;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
 
-      &.active {
-        color: #3e1300;
-        background-color: #e25544;
-        border-bottom: 2px solid #de4332;
+    &:hover {
+      color: #333;
+    }
+
+    &.active {
+      color: #000;
+
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -1.1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: #000;
       }
     }
   }
 
   .tab-content {
-    padding: 15px;
-    background-color: #A9B6B1;
-    color: #3e1300;
-
-    h3 {
-      margin-top: 0;
-    }
+    padding: 0 2rem;
   }
 }

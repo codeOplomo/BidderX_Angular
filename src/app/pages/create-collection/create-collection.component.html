@@ -1,51 +1,135 @@
 <p-toast></p-toast>
 <div class="create-collection-page">
   <p-card styleClass="create-collection-card">
-    <div class="header">
-      <h2>Create a New Collection</h2>
-      <p>Organize your items into a meaningful collection.</p>
-    </div>
     <form [formGroup]="collectionForm" (ngSubmit)="onSubmit()">
-      <div class="form-group">
-        <label for="name">Collection Name <span>*</span></label>
-        <input
-          id="name"
-          type="text"
-          class="form-control"
-          formControlName="name"
-          placeholder="Enter collection name"
-        />
-        <div *ngIf="collectionForm.get('name')?.invalid && collectionForm.get('name')?.touched">
-          <small class="error-text">Name is required.</small>
+      <div class="form-layout">
+        <!-- Left Column - Image Uploads -->
+        <div class="image-upload-section">
+          <!-- Logo Image Upload -->
+          <div class="upload-box">
+            <label>Logo image *</label>
+            <!-- <div class="upload-area" (click)="logoFileInput.click()">
+              <input
+                #logoFileInput
+                type="file"
+                hidden
+                (change)="onLogoImageSelected($event)"
+                accept="image/*"
+              />
+              <ng-container *ngIf="!logoPreview; else logoPreviewTpl">
+                <div class="upload-placeholder">
+                  <i class="pi pi-plus"></i>
+                </div>
+              </ng-container>
+              <ng-template #logoPreviewTpl>
+                <img [src]="logoPreview" alt="Logo preview" />
+              </ng-template>
+            </div> -->
+          </div>
+
+          <!-- Cover Image Upload -->
+          <div class="upload-box">
+            <label>Cover Image</label>
+            <div class="upload-area" (click)="coverFileInput.click()">
+              <input
+                #coverFileInput
+                type="file"
+                hidden
+                (change)="onCoverImageSelected($event)"
+                accept="image/*"
+              />
+              <ng-container *ngIf="!coverPreview; else coverPreviewTpl">
+                <div class="upload-placeholder">
+                  <i class="pi pi-plus"></i>
+                </div>
+              </ng-container>
+              <ng-template #coverPreviewTpl>
+                <img [src]="coverPreview" alt="Cover preview" />
+              </ng-template>
+            </div>
+          </div>
+
+          <!-- Featured Image Upload -->
+          <div class="upload-box">
+            <label>Featured Image</label>
+            <!-- <div class="upload-area" (click)="featuredFileInput.click()">
+              <input
+                #featuredFileInput
+                type="file"
+                hidden
+                (change)="onFeaturedImageSelected($event)"
+                accept="image/*"
+              />
+              <ng-container *ngIf="!featuredPreview; else featuredPreviewTpl">
+                <div class="upload-placeholder">
+                  <i class="pi pi-plus"></i>
+                </div>
+              </ng-container>
+              <ng-template #featuredPreviewTpl>
+                <img [src]="featuredPreview" alt="Featured preview" />
+              </ng-template>
+            </div> -->
+          </div>
         </div>
-      </div>
 
-      <div class="form-group">
-        <label for="description">Description</label>
-        <textarea
-          id="description"
-          rows="4"
-          class="form-control"
-          formControlName="description"
-          placeholder="Enter collection description"
-        ></textarea>
-      </div>
+        <!-- Right Column - Form Fields -->
+        <div class="form-fields-section">
+          <!-- Name and URL -->
+          <div class="form-row">
+            <div class="form-group">
+              <label for="name">Name *</label>
+              <input
+                id="name"
+                type="text"
+                class="form-control"
+                formControlName="name"
+              />
+            </div>
+          </div>
 
-      <div class="action-buttons">
-        <p-button
-          label="Cancel"
-          icon="pi pi-times"
-          styleClass="p-button-secondary"
-          type="button"
-          (click)="onCancel()"
-        ></p-button>
-        <p-button
-          label="Create Collection"
-          icon="pi pi-check"
-          styleClass="p-button-primary"
-          [disabled]="collectionForm.invalid"
-          type="submit"
-        ></p-button>
+          <!-- Category -->
+          <!-- <div class="form-group">
+            <label for="category">Category</label>
+            <div class="category-input">
+              <p-dropdown
+                [options]="categories"
+                formControlName="category"
+                [showClear]="true"
+                placeholder="Add Category"
+              ></p-dropdown>
+              <button type="button" class="add-category-btn">
+                <i class="pi pi-plus"></i>
+              </button>
+            </div>
+          </div> -->
+
+          <!-- Description -->
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              rows="4"
+              class="form-control"
+              formControlName="description"
+            ></textarea>
+          </div>
+
+
+          <!-- Explicit Content Toggle -->
+          <div class="explicit-content-toggle">
+            <p-inputSwitch formControlName="isExplicit"></p-inputSwitch>
+            <span>Explicit & sensitive content</span>
+          </div>
+
+          <!-- Submit Button -->
+          <button
+            type="submit"
+            class="create-button"
+            [disabled]="collectionForm.invalid"
+          >
+            Create
+          </button>
+        </div>
       </div>
     </form>
   </p-card>

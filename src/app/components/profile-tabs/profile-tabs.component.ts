@@ -19,7 +19,7 @@ export class ProfileTabsComponent implements OnInit {
   user$: Observable<any>;
   userEmail: string = '';
   collections: any[] = []; 
-  @Input() userData: any; // Pass user data from ProfileComponent
+  @Input() userData: any; 
   
 
   activeTab: string = 'products'; // Default active tab
@@ -32,9 +32,8 @@ export class ProfileTabsComponent implements OnInit {
     this.user$.subscribe(user =>{ 
       console.log('User data in ProfileComponent:', user);
       if (user) {
-        this.userEmail = user.email; // Extract user ID from user data
-        this.fetchUserCollections(); // Fetch user collections
-        console.log('User ID:', this.userEmail); // Debugging log
+        this.userEmail = user.email; 
+        this.fetchUserCollections(); 
       }
       });
 

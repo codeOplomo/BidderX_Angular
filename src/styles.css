@@ -1,18 +1,23 @@
 /* You can add global styles to this file, and also import other style files */
 /* Custom styling for the Edit Profile Split Button */
 /* Global custom button style for all p-button components */
+
+body {
+  background-color: #f3f9f2
+}
+
 .p-button, 
 .p-splitbutton .p-button {
-  background-color: #e25544 !important;  /* Darker brown */
-  border-color: #e25544 !important;      /* Match border to background */
+  background-color: #FFA400 !important;  /* Darker brown */
+  border-color: #FFA400 !important;      /* Match border to background */
   color: #3e1300 !important;             /* Text color */
 }
 
 /* Hover effect */
 .p-button:hover, 
 .p-splitbutton .p-button:hover {
-  background-color: #de4332 !important;  /* Slightly darker brown for hover effect */
-  border-color: #cf3f2f !important;      /* Match border on hover */
+  background-color: #cb8502 !important;  /* Slightly darker brown for hover effect */
+  border-color: #cb8502 !important;      /* Match border on hover */
   color: #3e1300 !important;             /* Keep text readable */
 }
 
@@ -27,4 +32,4 @@
   border-radius: 50px !important;  /* Customize rounded corners for all buttons */
 }
 
-  
+
