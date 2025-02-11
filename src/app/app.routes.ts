@@ -9,6 +9,7 @@ import { ProfileComponent } from './pages/profile/profile.component';
 import { CreateCollectionComponent } from './pages/create-collection/create-collection.component';
 import { CollectionShowcaseComponent } from './pages/collection-showcase/collection-showcase.component';
 import { CreateAuctionComponent } from './pages/create-auction/create-auction.component';
+import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 
 export const routes: Routes = [
     {
@@ -24,6 +25,7 @@ export const routes: Routes = [
             { path: 'create-collection', component: CreateCollectionComponent },
             { path: 'create-auction', component: CreateAuctionComponent },
             { path: 'collection-showcase/:id', component: CollectionShowcaseComponent },
+            { path: 'product-detail', component: ProductDetailComponent}
             // Add other routes here
         ]
     }

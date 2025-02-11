@@ -1,0 +1,19 @@
+<div class="tabs-section">
+    <nav class="tabs">
+      <button *ngFor="let tab of tabs" 
+              [class.active]="activeTab === tab" 
+              (click)="setActiveTab(tab)">
+        {{ tab }}
+      </button>
+    </nav>
+    <div class="tab-content" @fadeIn>
+      <div class="properties-grid" *ngIf="activeTab === 'Details'">
+        <div *ngFor="let prop of properties" 
+             class="property-card" 
+             [class]="prop.type">
+          <span class="property-label">{{ prop.label }}</span>
+          <span class="property-value">{{ prop.value }}</span>
+        </div>
+      </div>
+    </div>
+  </div>

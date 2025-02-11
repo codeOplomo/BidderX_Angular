@@ -1,4 +1,4 @@
-export type ImageType = 'profile' | 'cover' | 'collection-cover';
+export type ImageType = 'profile' | 'cover' | 'collection-cover' | 'product';
 
 export interface ImageUploadConfig {
     type: ImageType;

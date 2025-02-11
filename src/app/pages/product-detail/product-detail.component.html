@@ -1,0 +1,49 @@
+<div class="product-container">
+    
+
+    <app-product-gallery></app-product-gallery>
+    <!-- Product Info -->
+    <div class="product-info">
+
+    <app-product-info></app-product-info>
+      <div class="bid-section">
+        <div class="current-bid">
+          <span class="label">Current Bid</span>
+          <span class="value">{{ product.currentBid }}</span>
+        </div>
+        <button class="place-bid-btn">Place Bid</button>
+      </div>
+
+      <div class="collections-section">
+        <!-- Category Section -->
+        <div class="category-container">
+          <span class="category-label">Category</span>
+          <div class="category-tag">
+            <i class="fas fa-tags"></i> {{ product.category }}
+          </div>
+        </div>
+      
+        <!-- Collections Section -->
+        <h3>Collections</h3>
+        <div class="collection-grid">
+          <div class="collection-item" *ngFor="let collection of product.collections">
+            <img [src]="collection.avatar" [alt]="collection.name" class="collection-avatar" />
+            <span class="collection-name">{{ collection.name }}</span>
+          </div>
+        </div>
+      </div>
+      
+
+      <app-product-tabs></app-product-tabs>
+    </div>
+  </div>
+
+      <!-- <div class="unlockable-content">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+        </svg>
+        <span>Unlockable content included</span>
+      </div> -->
+
+      

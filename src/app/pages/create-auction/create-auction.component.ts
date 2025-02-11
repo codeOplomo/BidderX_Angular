@@ -9,37 +9,42 @@ import { AuctionsService } from '../../services/auctions.service';
 import { CreateAuctionVm } from '../../models/view-models/create-auction-vm.model';
 import { CategoriesService } from '../../services/categories.service';
 import { ProductsService } from '../../services/products.service';
-import { Observable } from 'rxjs';
+import { lastValueFrom, Observable, Subject, take, takeUntil, tap } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { selectUser } from '../../store/user/user.selectors';
 import { ProductVm } from '../../models/view-models/product-vm.model';
+import { Category } from '../../models/view-models/category.model';
+import { ImagesService } from '../../services/images.service';
 
 @Component({
   selector: 'app-create-auction',
   standalone: true,
   imports: [ToastModule, ReactiveFormsModule, CardModule, CommonModule],
   templateUrl: './create-auction.component.html',
-  styleUrl: './create-auction.component.css'
+  styleUrl: './create-auction.component.css',
+  providers: [ToastService]
 })
 export class CreateAuctionComponent {
   userEmail: string = '';
   user$: Observable<any>;
+  private destroy$ = new Subject<void>();
   auctionForm!: FormGroup;
   productPreview: string | null = null;
   showNewProductFields = false;
   isSubmitting = false;
-
+  isUploadingImage = false;
   products: ProductVm[] = [];
-  
-  categories = ['Electronics', 'Furniture', 'Clothing', 'Books'];
+  categories: Category[] = [];
 
   constructor(
-    private fb: FormBuilder, 
-    private auctionService: AuctionsService, 
+    private fb: FormBuilder,
+    private auctionService: AuctionsService,
     private categoryService: CategoriesService,
     private productService: ProductsService,
     private router: Router,
-    private store: Store
+    private store: Store,
+    private toastService: ToastService,
+    private imagesService: ImagesService
   ) {
     this.user$ = this.store.select(selectUser);
   }
@@ -47,29 +52,25 @@ export class CreateAuctionComponent {
   ngOnInit(): void {
     this.initializeForm();
     this.loadCategories();
-    this.user$.subscribe(user =>{ 
-      console.log('User data in ProfileComponent:', user);
+  
+    this.user$.pipe(takeUntil(this.destroy$)).subscribe(user => { 
+      console.log('User data:', user);
       if (user) {
         this.userEmail = user.email; 
         this.loadProducts(); 
       }
-      });
+    });
   }
 
   private initializeForm(): void {
     this.auctionForm = this.fb.group({
-      // Auction fields
       title: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.maxLength(500)]],
       startingPrice: ['', [Validators.required, Validators.min(0)]],
       startTime: ['', [Validators.required]],
-      
-      // Product selection
       createNewProduct: [false],
       existingProductId: [null],
-      category: [null],
-
-      // New product fields
+      category: [null, Validators.required],
       productTitle: [null],
       productDescription: [null],
       condition: [null],
@@ -78,32 +79,28 @@ export class CreateAuctionComponent {
       productImageUrl: [null]
     });
 
-    // Dynamic validator management
-    this.auctionForm.get('createNewProduct')?.valueChanges.subscribe(createNew => {
-      this.updateValidators(createNew);
-      this.showNewProductFields = createNew;
-    });
+    this.auctionForm.get('createNewProduct')?.valueChanges
+      .pipe(tap(this.updateValidators.bind(this)))
+      .subscribe();
   }
 
-  loadProducts() {
+  private loadProducts(): void {
     if (!this.userEmail) return;
-    this.productService.getAvailableUserProductsByEmail(this.userEmail).subscribe({
-      next: (response) => {
-        this.products = response.data; // Set the collections array
-        console.log('Fetched products:', this.products); // Debugging log
-      },
-      error: (err) => {
-        console.error('Error fetching products by user ID:', err);
-      },
-    });
+    this.productService.getAvailableUserProductsByEmail(this.userEmail)
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => this.products = response.data,
+        error: (err) => console.error('Error fetching products:', err),
+      });
   }
-  
 
   private loadCategories(): void {
-    this.categoryService.getCategories().subscribe({
-      next: (categories) => this.categories = categories,
-      error: (err) => console.error('Failed to load categories', err)
-    });
+    this.categoryService.getCategories()
+      .pipe(take(1))
+      .subscribe({
+        next: (response) => this.categories = response.data,
+        error: (err) => console.error('Failed to load categories', err),
+      });
   }
 
   async onSubmit(): Promise<void> {
@@ -111,94 +108,118 @@ export class CreateAuctionComponent {
       this.markFormGroupTouched(this.auctionForm);
       return;
     }
-
+  
     this.isSubmitting = true;
     const formValue = this.auctionForm.value;
-    
+  
     const request: CreateAuctionVm = {
       title: formValue.title,
       description: formValue.description,
       startTime: new Date(formValue.startTime).toISOString(),
       startingPrice: BigInt(formValue.startingPrice).toString(),
-      isInstantAuction: false, // You might want to add this to form
-      auctionDurationInHours: 48, // Default or from form
-      ...(formValue.createNewProduct ? {
-        productTitle: formValue.productTitle,
-        productDescription: formValue.productDescription,
-        condition: formValue.condition,
-        manufacturer: formValue.manufacturer,
-        productionDate: new Date(formValue.productionDate).toISOString(), 
-        productImageUrl: this.productPreview || "",
-        categoryId: formValue.category
-      } : {
-        existingProductId: formValue.existingProductId
-      })
+      isInstantAuction: false,
+      auctionDurationInHours: 48,
+      ...(formValue.createNewProduct
+        ? {
+            productTitle: formValue.productTitle,
+            productDescription: formValue.productDescription,
+            condition: formValue.condition,
+            manufacturer: formValue.manufacturer,
+            productionDate: new Date(formValue.productionDate).toISOString(),
+            productImageUrl: this.productPreview || "",
+            categoryId: formValue.category
+          }
+        : { existingProductId: formValue.existingProductId })
     };
-
+  
     try {
-      const response = await this.auctionService.createAuction(request).toPromise();
-      if (response && response.data && response.data.id) {
+      const response = await lastValueFrom(this.auctionService.createAuction(request));
+      if (response?.data?.id) {
+        this.toastService.showSuccess('Success', 'Auction created successfully!');
         this.router.navigate(['/auctions', response.data.id]);
-      } else {
-        console.error('Unexpected response structure:', response);
-        // Handle unexpected response
       }
     } catch (error) {
       console.error('Auction creation failed', error);
-      // Handle error (e.g., show a toast message)
+      this.toastService.showError('Error', 'Failed to create auction. Please try again.');
     } finally {
       this.isSubmitting = false;
     }
-    
   }
 
-  private markFormGroupTouched(formGroup: FormGroup) {
+  private markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
-      if (control instanceof FormGroup) {
-        this.markFormGroupTouched(control);
-      }
+      if (control instanceof FormGroup) this.markFormGroupTouched(control);
     });
   }
 
   private updateValidators(createNew: boolean): void {
     const productFields = [
-      'productTitle', 'productDescription', 'condition', 
+      'productTitle', 'productDescription', 'condition',
       'manufacturer', 'productionDate', 'category'
     ];
-    
-    if (createNew) {
-      productFields.forEach(field => {
-        this.auctionForm.get(field)?.setValidators([Validators.required]);
-      });
-      this.auctionForm.get('existingProductId')?.clearValidators();
-    } else {
-      productFields.forEach(field => {
-        this.auctionForm.get(field)?.clearValidators();
-      });
-      this.auctionForm.get('existingProductId')?.setValidators([Validators.required]);
+  
+    productFields.forEach(field => {
+      const control = this.auctionForm.get(field);
+      if (control) {
+        control.setValidators(createNew ? [Validators.required] : null);
+        control.updateValueAndValidity();
+        if (!createNew) {
+          control.setValue(null);
+        }
+      }
+    });
+  
+    const existingProductControl = this.auctionForm.get('existingProductId');
+    if (existingProductControl) {
+      existingProductControl.setValidators(createNew ? null : [Validators.required]);
+      existingProductControl.updateValueAndValidity();
+      if (createNew) {
+        existingProductControl.setValue(null);
+      }
     }
-    
-    this.auctionForm.updateValueAndValidity();
   }
 
   onCreateNewProductToggle(): void {
     this.showNewProductFields = this.auctionForm.get('createNewProduct')?.value;
-    if (!this.showNewProductFields) {
-      this.productPreview = null;
-    }
+    if (!this.showNewProductFields) this.productPreview = null;
   }
 
-  onProductImageSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = () => {
-        this.productPreview = reader.result as string;
-      };
-      reader.readAsDataURL(file);
-    }
+  onUpdateProductImage(event: Event): void {
+    event.stopPropagation(); // Stop event propagation
+  
+    const fileInput = event.target as HTMLInputElement;
+    const file = fileInput.files?.[0];
+    if (!file) return;
+  
+    // Create local preview immediately
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.productPreview = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  
+    // Handle upload through ProductService
+    this.productService.uploadProductImage(
+      this.destroy$,
+      (imageUrl) => {
+        console.log('Product image updated:', imageUrl);
+        this.productPreview = imageUrl; // Update preview with server URL
+        this.auctionForm.patchValue({ productImageUrl: imageUrl });
+        this.toastService.showSuccess('Success', 'Product image uploaded successfully');
+      },
+      (loading) => {
+        this.isUploadingImage = loading;
+        if (loading) {
+          console.log('Uploading product image...');
+        }
+      }
+    );
   }
+  
 
-
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
+  }
 }

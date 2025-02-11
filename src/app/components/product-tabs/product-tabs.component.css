@@ -1,0 +1,79 @@
+.tabs-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .tabs {
+    display: flex;
+    gap: 1.5rem; /* Increased spacing between tabs */
+    background: rgba(255, 255, 255, 0.8); /* Background color for the tabs container */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px; /* Rounded corners for the container */
+    padding: 0.5rem; /* Increased padding for the container */
+  }
+  
+  .tabs button {
+    border: none;
+    background-color: #ffffff;
+    padding: 1.3rem 2.6rem; /* Increased padding for better spacing */
+    cursor: pointer;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    position: relative;
+    border-radius: 4px; /* Rounded corners for buttons */
+  }
+  
+  .tabs button:hover {
+    color: #000; /* Darker text on hover */
+    background: rgba(0, 0, 0, 0.05); /* Subtle hover background */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Slightly larger shadow on hover */
+  }
+  
+  .tabs button.active {
+    color: #ffffff; /* White text for active tab */
+    background-color: #FFA400; /* Orange background for active tab */
+    font-weight: 600; /* Bold text for active tab */
+    box-shadow: 0 4px 8px rgba(255, 164, 0, 0.2); /* Shadow for active tab */
+  }
+  
+  .tabs button.active::after {
+    content: '';
+    position: absolute;
+    left: 0;
+  }
+  
+  .properties-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 1.5rem;
+    padding: 1rem 0;
+  }
+  
+  .property-card {
+    position: relative;
+    padding: 1.5rem;
+    background: #fff; /* White background */
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    transition: all 0.3s ease;
+  }
+  
+  .property-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15); /* Slightly larger shadow on hover */
+  }
+  
+  .property-label {
+    display: block;
+    color: #666; /* Neutral text color */
+    font-size: 0.875rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .property-value {
+    display: block;
+    color: #000; /* Dark text for values */
+    font-weight: 600;
+    font-size: 1.25rem;
+  }

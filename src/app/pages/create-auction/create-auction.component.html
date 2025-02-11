@@ -7,7 +7,7 @@
                     <div class="upload-box">
                         <label>Product Image *</label>
                         <div class="upload-area" (click)="productFileInput.click()">
-                            <input #productFileInput type="file" hidden (change)="onProductImageSelected($event)"
+                            <input #productFileInput type="file" hidden (change)="onUpdateProductImage($event)"
                                 accept="image/*" />
                             <ng-container *ngIf="!productPreview; else productPreviewTpl">
                                 <div class="upload-placeholder">
@@ -57,7 +57,7 @@
                             <div class="form-group">
                                 <label for="category">Category *</label>
                                 <select id="category" class="form-control" formControlName="category">
-                                    <option *ngFor="let category of categories" [value]="category">{{ category }}
+                                    <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}
                                     </option>
                                 </select>
                             </div>
@@ -82,9 +82,8 @@
                         <!-- Product Dropdown -->
                         <div class="form-group product-selection-field" *ngIf="!showNewProductFields">
                             <label for="productSelect">Select Product</label>
-                            <select id="productSelect" class="form-control" formControlName="selectedProduct">
-                                <option *ngFor="let product of products" [value]="product.id">{{ product.title }}
-                                </option>
+                            <select id="productSelect" class="form-control" formControlName="existingProductId">
+                                <option *ngFor="let product of products" [value]="product.id">{{ product.title }}</option>
                             </select>
                         </div>
 
