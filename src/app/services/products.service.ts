@@ -4,6 +4,7 @@ import { map, Observable, Subject } from 'rxjs';
 import { ProductVm } from '../models/view-models/product-vm.model';
 import { ApiResponse } from '../models/view-models/api-response.model';
 import { ImagesService } from './images.service';
+import { ProductVM } from '../models/view-models/product-vm';
 
 @Injectable({
   providedIn: 'root'
@@ -19,13 +20,20 @@ export class ProductsService {
     return this.http.get<ApiResponse<ProductVm[]>>(`${this.apiUrl}/user`, { params });
   }
 
+  createProduct(productData: ProductVM): Observable<ApiResponse<ProductVm>> {
+    return this.http.post<ApiResponse<ProductVm>>(`${this.apiUrl}/create`, productData);
+  }
+
   uploadProductImage(
+    type: 'product-featured',
+    productId: string,
     destroy$: Subject<void>,
     onSuccess: (imageUrl: string) => void,
     onLoadingChange: (loading: boolean) => void
   ): void {
     this.imagesService.openImageUploadDialog({
-      type: 'product',
+      type: type,
+      productId: productId,
       onSuccess,
       onLoadingChange,
       onError: (error) => console.error('Error uploading product image:', error)

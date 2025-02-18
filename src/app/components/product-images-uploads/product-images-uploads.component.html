@@ -1,0 +1,38 @@
+<div class="image-upload-section" *ngIf="showNewProductFields">
+  <div class="upload-box" *ngFor="let image of productImages; let i = index">
+    <label>
+      <ng-container *ngIf="i === 0; else featuredLabel">
+        Product Image **
+      </ng-container>
+      <ng-template #featuredLabel>
+        Featured Image {{ i }}
+      </ng-template>
+    </label>
+    <div class="upload-area" (click)="triggerFileInput(i, $event)">
+        <input 
+            #productFileInputs 
+            type="file" 
+            hidden 
+            (change)="onUpdateProductImage($event, i)" 
+            accept="image/*"
+        />
+        <ng-container *ngIf="!image.preview; else productPreviewTpl">
+            <div class="upload-placeholder">
+                <i class="pi pi-plus"></i>
+            </div>
+        </ng-container>
+        <ng-template #productPreviewTpl>
+            <div class="image-container">
+                <img [src]="image.preview" alt="Product preview" />
+                <span class="remove-badge" (click)="removeImage(i); $event.stopPropagation()">
+                    <i class="pi pi-times"></i>
+                </span>
+            </div>
+        </ng-template>
+    </div>
+  </div>
+</div>
+
+<div class="image-upload-section" *ngIf="!showNewProductFields">
+  <!-- Empty placeholder to maintain grid layout -->
+</div>

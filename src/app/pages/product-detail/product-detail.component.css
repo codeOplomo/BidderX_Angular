@@ -136,22 +136,7 @@
     border-radius: 12px;
   }
   
-  .category-label {
-    font-size: 0.875rem;
-    font-weight: 600;
-    color: #3e1300;
-  }
-  
-  .category-tag {
-    background: #A9B6B1;
-    padding: 0.5rem 1rem;
-    border-radius: 16px;
-    font-weight: 600;
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-  }
-  
+
   .category-tag i {
     font-size: 1rem;
   }

@@ -4,71 +4,46 @@
             <div class="form-layout">
                 <!-- Left Column - Image Upload -->
                 <div class="image-upload-section" *ngIf="showNewProductFields">
-                    <div class="upload-box">
-                        <label>Product Image *</label>
-                        <div class="upload-area" (click)="productFileInput.click()">
-                            <input #productFileInput type="file" hidden (change)="onUpdateProductImage($event)"
+                    <div class="upload-box" *ngFor="let image of productImages; let i = index">
+                        <label>
+                            <ng-container *ngIf="i === 0; else featuredLabel">
+                                Product Image **
+                            </ng-container>
+                            <ng-template #featuredLabel>
+                                Featured Image {{ i }}
+                            </ng-template>
+                        </label>
+                        <div class="upload-area" (click)="input.click()">
+                            <input #input type="file" [hidden]="true" (change)="onUpdateProductImage($event, i)"
                                 accept="image/*" />
-                            <ng-container *ngIf="!productPreview; else productPreviewTpl">
+                            <ng-container *ngIf="!image.preview; else productPreviewTpl">
                                 <div class="upload-placeholder">
                                     <i class="pi pi-plus"></i>
                                 </div>
                             </ng-container>
                             <ng-template #productPreviewTpl>
-                                <img [src]="productPreview" alt="Product preview" />
+                                <div class="image-container">
+                                    <img [src]="image.preview" alt="Product preview" />
+                                    <span class="remove-badge" (click)="removeImage(i); $event.stopPropagation()">
+                                        <i class="pi pi-times"></i>
+                                    </span>
+                                </div>
                             </ng-template>
                         </div>
                     </div>
                 </div>
+
                 <div class="image-upload-section" *ngIf="!showNewProductFields">
                     <!-- Empty placeholder to maintain grid layout -->
                 </div>
+
 
                 <!-- Right Column - Form Fields -->
                 <div class="form-fields-section">
 
                     <!-- New Product Fields -->
-                    <div class="new-product-section" *ngIf="showNewProductFields">
-                        <div class="new-product-fields">
-                            <div class="form-group">
-                                <label for="productTitle">Product Title *</label>
-                                <input id="productTitle" type="text" class="form-control"
-                                    formControlName="productTitle" />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="manufacturer">Manufacturer *</label>
-                                <input id="manufacturer" type="text" class="form-control"
-                                    formControlName="manufacturer" />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="condition">Condition *</label>
-                                <input id="condition" type="text" class="form-control" formControlName="condition" />
-                            </div>
-                        </div>
-
-                        <div class="form-group-row">
-                            <div class="form-group">
-                                <label for="productionDate">Production Date *</label>
-                                <input type="date" id="productionDate" class="form-control"
-                                    formControlName="productionDate">
-                            </div>
-                            <div class="form-group">
-                                <label for="category">Category *</label>
-                                <select id="category" class="form-control" formControlName="category">
-                                    <option *ngFor="let category of categories" [value]="category.id">{{ category.name }}
-                                    </option>
-                                </select>
-                            </div>
-                        </div>
-
-                        <div class="form-group full-width">
-                            <label for="productDescription">Product Description *</label>
-                            <textarea id="productDescription" rows="4" class="form-control"
-                                formControlName="productDescription"></textarea>
-                        </div>
-                    </div>
+                    <app-product-form *ngIf="showNewProductFields" [parentForm]="auctionForm">
+                    </app-product-form>
 
                     <div class="form-group-row">
                         <!-- Common Auction Fields -->
@@ -83,7 +58,8 @@
                         <div class="form-group product-selection-field" *ngIf="!showNewProductFields">
                             <label for="productSelect">Select Product</label>
                             <select id="productSelect" class="form-control" formControlName="existingProductId">
-                                <option *ngFor="let product of products" [value]="product.id">{{ product.title }}</option>
+                                <option *ngFor="let product of products" [value]="product.id">{{ product.title }}
+                                </option>
                             </select>
                         </div>
 
@@ -94,6 +70,12 @@
                             <label for="startTime">Start Time</label>
                             <input id="startTime" type="datetime-local" class="form-control"
                                 formControlName="startTime" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="duration">Auction Duration (hours)</label>
+                            <input id="duration" type="number" class="form-control"
+                                formControlName="auctionDurationInHours" />
                         </div>
 
                         <div class="form-group">
@@ -109,13 +91,21 @@
                             formControlName="description"></textarea>
                     </div>
 
-                    
+
                     <!-- Product Selection Toggle -->
                     <div class="product-selection-section">
                         <div class="explicit-content-toggle">
-                            <input type="checkbox" id="createNewProduct" formControlName="createNewProduct"
-                                (change)="onCreateNewProductToggle()" />
+                            <input type="checkbox" id="createNewProduct" formControlName="createNewProduct" />
                             <label for="createNewProduct">Create New Product</label>
+
+
+                            <div class="form-group">
+                                <label for="isInstantAuction">
+                                    <input id="isInstantAuction" type="checkbox" formControlName="isInstantAuction" />
+                                    Instant Auction
+                                </label>
+                            </div>
+
                         </div>
                     </div>
 

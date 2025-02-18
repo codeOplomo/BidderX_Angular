@@ -15,18 +15,22 @@ export class ImagesService {
 
   constructor(private http: HttpClient, private store: Store) {}
 
-  uploadImage(image: File, type: string, collectionId?: string): Observable<{ imageUrl: string }> {
+  uploadImage(image: File, type: string, collectionId?: string, productId?: string): Observable<{ imageUrl: string }> {
     const formData = new FormData();
     formData.append('image', image);
     formData.append('type', type);
     if (collectionId) {
       formData.append('collectionId', collectionId);
     }
+    if (productId) {
+      formData.append('productId', productId);
+    }
 
     return this.http.post<{ data: string }>(`${this.apiUrl}/upload`, formData).pipe(
       map(response => ({
         imageUrl: this.getImageUrl(response.data),
-        collectionId
+        collectionId,
+        productId
       }))
     );
   }

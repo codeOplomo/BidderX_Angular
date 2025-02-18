@@ -1,0 +1,52 @@
+ /* New Product Fields */
+ .new-product-section {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    width: 100%;
+  }
+  
+  .new-product-fields {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+  }
+
+  .form-group-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    width: 100%;
+  }
+
+  .form-group {
+    margin-bottom: 0;
+  
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: #666;
+    }
+  
+    input,
+    select,
+    textarea {
+      width: 100%;
+      background-color: #f3f9f2;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      transition: border-color 0.3s;
+  
+      &:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+    }
+  
+    &.full-width {
+      width: 100%;
+    }
+  }
