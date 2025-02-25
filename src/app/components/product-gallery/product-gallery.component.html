@@ -1,26 +1,59 @@
-<div class="product-gallery">
-    <!-- Thumbnail Gallery -->
-    <div class="thumbnail-gallery">
-      <button 
-        *ngFor="let thumb of thumbnails; let i = index"
-        class="thumbnail-btn"
-        [class.active]="selectedThumb === i"
-        (click)="selectThumbnail(i)"
+<div
+  class="grid grid-cols-1 md:grid-cols-[auto,1fr] gap-6 h-fit sticky top-8"
+  *ngIf="product"
+>
+  <!-- Thumbnail Gallery -->
+  <div
+    class="flex flex-row md:flex-col order-2 md:order-none gap-4 overflow-x-auto pb-2"
+  >
+    <button
+      *ngFor="let thumb of thumbnails; let i = index"
+      (click)="selectThumbnail(i)"
+      [ngClass]="[
+        'w-20 h-20 rounded-[12px] overflow-hidden p-0 cursor-pointer transition-transform duration-200 ease-in-out hover:-translate-y-[2px]',
+        selectedThumb === i ? 'shadow-[0_0_0_6px_#A9B6B1]' : ''
+      ]"
+    >
+      <img
+        [src]="getImageUrl(thumb)"
+        [alt]="'Thumbnail ' + (i + 1)"
+        class="w-full h-full object-cover"
+      />
+      <!--
+      Optionally, if you want a thumbnail overlay effect, you can add:
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-[rgba(0,0,0,0.2)] to-[rgba(0,0,0,0.4)] opacity-0 hover:opacity-100 transition-opacity duration-200 ease-in-out"
+      ></div>
+      -->
+    </button>
+  </div>
+
+  <!-- Main Image -->
+  <div
+    class="relative w-full aspect-[16/11] rounded-[20px] border-[12px] border-[#A9B6B1] overflow-hidden bg-[rgba(255,255,255,0.05)] backdrop-blur-[10px] group order-1 md:order-none"
+  >
+    <img
+      [src]="getImageUrl(selectedImage)"
+      [alt]="product.title"
+      class="w-full h-full object-cover block transition-transform duration-300 ease-in-out group-hover:scale-[1.02]"
+    />
+    <div
+      class="absolute inset-0 bg-gradient-to-b from-transparent to-[rgba(0,0,0,0.4)] opacity-0 group-hover:opacity-100 transition-opacity duration-200 ease-in-out flex items-end justify-end p-4"
+    >
+      <button
+        class="bg-[rgba(255,255,255,0.1)] border-0 rounded-full w-10 h-10 flex items-center justify-center text-white cursor-pointer backdrop-blur-[5px] transition-all duration-200 ease-in-out hover:bg-[rgba(255,255,255,0.2)] hover:scale-110"
       >
-        <img [src]="thumb" [alt]="'Thumbnail ' + (i + 1)" />
-        <div class="thumbnail-overlay"></div>
+        <svg
+          width="24"
+          height="24"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+        </svg>
       </button>
     </div>
-
-    <!-- Main Image -->
-    <div class="main-image-container" @fadeIn>
-      <img [src]="selectedImage" [alt]="product.title" class="main-image" />
-      <div class="image-overlay">
-        <button class="zoom-btn">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
-          </svg>
-        </button>
-      </div>
-    </div>
   </div>
+</div>

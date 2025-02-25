@@ -1,56 +1,79 @@
-<div class="profile-tabs">
-  <!-- Tabs -->
-  <div class="tabs-container">
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'products'" 
-      (click)="selectTab('products')">
-      Products
+<div class="mt-24 px-8">
+  <nav class="flex gap-8 border-b border-slate-200 sticky top-0 bg-slate-50">
+    <button *ngFor="let tab of items" class="px-4 py-3 transition-all" [ngClass]="{
+        'border-b-2 border-slate-800 font-medium': activeTab === tab.toLowerCase(),
+        'hover:border-b-2 hover:border-slate-300': activeTab !== tab.toLowerCase()
+      }" (click)="selectTab(tab.toLowerCase())">
+      {{ tab }}
     </button>
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'collections'" 
-      (click)="selectTab('collections')">
-      Collections
-    </button>
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'created'" 
-      (click)="selectTab('created')">
-      Created
-    </button>
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'liked'" 
-      (click)="selectTab('liked')">
-      Liked
-    </button>
-  </div>
-  <!-- Tab Content -->
-  <div class="tab-content">
+  </nav>
+
+  <div class="tab-content fade-in">
     <ng-container [ngSwitch]="activeTab">
-      <div *ngSwitchCase="'products'">
-        <h3>Products</h3>
-        <p>Display products here...</p>
-      </div>
-      <div *ngSwitchCase="'collections'">
-        <app-collections-tab [collections]="collections"></app-collections-tab>
-      </div>
-      <div *ngSwitchCase="'policies'">
-        <h3>Policies</h3>
-        <p>{{ userData?.policies }}</p>
-      </div>
-      <div *ngSwitchCase="'reviews'">
-        <h3>Reviews</h3>
-        <div *ngIf="userData?.reviews?.length > 0; else noReviews">
-          <ul>
-            <li *ngFor="let review of userData.reviews">{{ review }}</li>
-          </ul>
+      <!-- Auctions Tab -->
+      <div *ngSwitchCase="'auctions'" class="mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <app-auction-card *ngFor="let auction of auctions" [auction]="auction" (likeToggled)="onLikeToggled($event)"
+            class="hover:scale-[1.02] transition-transform">
+          </app-auction-card>
         </div>
-        <ng-template #noReviews>
-          <p>No reviews yet.</p>
+        <ng-template #noAuctions>
+          <p class="text-center text-slate-500 py-8">No auctions available</p>
         </ng-template>
       </div>
+
+
+      <!-- Collections Tab -->
+      <div *ngSwitchCase="'collections'" class="mt-8">
+        <app-collections-tab [collections]="collections"></app-collections-tab>
+      </div>
+
+      <!-- Products Tab -->
+      <div *ngSwitchCase="'products'" class="mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div *ngFor="let product of products"
+            class="bg-white rounded-xl shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
+            <img [src]="getImageUrl(product.imageUrl)" class="w-full h-48 object-cover rounded-t-xl"
+              alt="Product image">
+
+
+            <div class="p-4">
+              <h3 class="font-semibold text-lg truncate">{{ product.title }}</h3>
+              <div class="mt-4 flex justify-between items-center">
+                <span class="text-2xl font-bold text-slate-800">{{ product.currentBid | currency }}</span>
+                <button class="bg-slate-800 text-white px-4 py-2 rounded-lg hover:bg-slate-700 transition-colors">
+                  View
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      
+
+      
+
+      <!-- Liked Tab -->
+      <div *ngSwitchCase="'liked'" class="mt-8">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <app-auction-card *ngFor="let auction of likedAuctions" [auction]="auction"
+            (likeToggled)="onLikeToggled($event)" class="hover:scale-[1.02] transition-transform">
+          </app-auction-card>
+        </div>
+      </div>
     </ng-container>
+
+    <p-paginator *ngIf="totalRecords > 0" (onPageChange)="onPageChange($event)" [first]="first" [rows]="rows"
+      [totalRecords]="totalRecords" [showCurrentPageReport]="true" [showPageLinks]="false"
+      [showJumpToPageDropdown]="false" currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+      class="mt-8 border-t border-slate-200 pt-4">
+    </p-paginator>
   </div>
+
+  <!-- Optional Floating Action Button -->
+  <button *ngIf="activeTab === 'products'"
+    class="fixed bottom-8 right-8 bg-slate-800 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-shadow hover:bg-slate-700">
+    <span class="material-icons">add</span>
+  </button>
 </div>

@@ -10,6 +10,9 @@ import { CreateCollectionComponent } from './pages/create-collection/create-coll
 import { CollectionShowcaseComponent } from './pages/collection-showcase/collection-showcase.component';
 import { CreateAuctionComponent } from './pages/create-auction/create-auction.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
+import { authGuard } from './guards/auth.guard';
+import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
+import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
 
 export const routes: Routes = [
     {
@@ -19,14 +22,20 @@ export const routes: Routes = [
             { path: 'login', component: LoginComponent },
             { path: 'register', component: RegisterComponent },
             { path: 'verification', component: VerifyComponent},
-            { path: 'profile', component: ProfileComponent },
-            { path: 'edit-profile', component: EditProfileComponent },
-            { path: 'edit-password', component: EditPasswordComponent },
-            { path: 'create-collection', component: CreateCollectionComponent },
-            { path: 'create-auction', component: CreateAuctionComponent },
-            { path: 'collection-showcase/:id', component: CollectionShowcaseComponent },
-            { path: 'product-detail', component: ProductDetailComponent}
-            // Add other routes here
+            { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+            { path: 'edit-profile', component: EditProfileComponent, canActivate: [authGuard] },
+            { path: 'edit-password', component: EditPasswordComponent, canActivate: [authGuard] },
+            { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard] },
+            { path: 'create-auction', component: CreateAuctionComponent, canActivate: [authGuard] },
+            { path: 'collection-showcase/:id', component: CollectionShowcaseComponent},
+            { path: 'product-detail/:id', component: ProductDetailComponent}
         ]
-    }
+    },
+    {
+        path: 'dashboard',
+        component: DashboardLayoutComponent,
+        children: [
+            { path: '', component: AdminDashboardComponent}
+        ]
+    },
 ];

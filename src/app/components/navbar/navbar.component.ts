@@ -27,7 +27,6 @@ import { ImagesService } from '../../services/images.service';
     ButtonModule,
     RippleModule,
     NgIf,
-    NgClass,
     RouterModule,
     AvatarModule,
     BadgeModule

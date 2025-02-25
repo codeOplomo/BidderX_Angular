@@ -1,12 +1,18 @@
-import { ProductVm } from "./product-vm.model";
+import { ProductVM } from "./product-vm";
+import { ProfileVM } from "./profile";
 
 export interface AuctionVm {
     id: string;  // UUID string
     title: string;
     description: string;
-    startTime: string;  // ISO string for LocalDateTime
-    endTime: string;    // ISO string for LocalDateTime
+    startTime: string;
+    endTime: string; 
     startingPrice: string;
-    currentPrice: string;
-    product: ProductVm;
+    currentBid: string;
+    product: ProductVM;
+    reactionsCount: number;
+    totalBidders: number;
+    totalBids: number;
+    likedByCurrentUser: boolean;
+    bidders: ProfileVM[];
 }

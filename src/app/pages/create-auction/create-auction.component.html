@@ -1,121 +1,117 @@
-<div class="create-auction-page">
-    <p-card styleClass="create-auction-card">
-        <form [formGroup]="auctionForm" (ngSubmit)="onSubmit()">
-            <div class="form-layout">
-                <!-- Left Column - Image Upload -->
-                <div class="image-upload-section" *ngIf="showNewProductFields">
-                    <div class="upload-box" *ngFor="let image of productImages; let i = index">
-                        <label>
-                            <ng-container *ngIf="i === 0; else featuredLabel">
-                                Product Image **
-                            </ng-container>
-                            <ng-template #featuredLabel>
-                                Featured Image {{ i }}
-                            </ng-template>
-                        </label>
-                        <div class="upload-area" (click)="input.click()">
-                            <input #input type="file" [hidden]="true" (change)="onUpdateProductImage($event, i)"
-                                accept="image/*" />
-                            <ng-container *ngIf="!image.preview; else productPreviewTpl">
-                                <div class="upload-placeholder">
-                                    <i class="pi pi-plus"></i>
-                                </div>
-                            </ng-container>
-                            <ng-template #productPreviewTpl>
-                                <div class="image-container">
-                                    <img [src]="image.preview" alt="Product preview" />
-                                    <span class="remove-badge" (click)="removeImage(i); $event.stopPropagation()">
-                                        <i class="pi pi-times"></i>
-                                    </span>
-                                </div>
-                            </ng-template>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="image-upload-section" *ngIf="!showNewProductFields">
-                    <!-- Empty placeholder to maintain grid layout -->
-                </div>
-
-
-                <!-- Right Column - Form Fields -->
-                <div class="form-fields-section">
-
-                    <!-- New Product Fields -->
-                    <app-product-form *ngIf="showNewProductFields" [parentForm]="auctionForm">
-                    </app-product-form>
-
-                    <div class="form-group-row">
-                        <!-- Common Auction Fields -->
-                        <div class="auction-title-row">
-                            <div class="form-group">
-                                <label for="title">Auction Title *</label>
-                                <input id="title" type="text" class="form-control" formControlName="title" />
-                            </div>
-                        </div>
-
-                        <!-- Product Dropdown -->
-                        <div class="form-group product-selection-field" *ngIf="!showNewProductFields">
-                            <label for="productSelect">Select Product</label>
-                            <select id="productSelect" class="form-control" formControlName="existingProductId">
-                                <option *ngFor="let product of products" [value]="product.id">{{ product.title }}
-                                </option>
-                            </select>
-                        </div>
-
-                    </div>
-
-                    <div class="form-group-row">
-                        <div class="form-group">
-                            <label for="startTime">Start Time</label>
-                            <input id="startTime" type="datetime-local" class="form-control"
-                                formControlName="startTime" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="duration">Auction Duration (hours)</label>
-                            <input id="duration" type="number" class="form-control"
-                                formControlName="auctionDurationInHours" />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="startingPrice">Start Price</label>
-                            <input id="startingPrice" type="number" class="form-control"
-                                formControlName="startingPrice" />
-                        </div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <label for="description">Auction Description *</label>
-                        <textarea id="description" rows="4" class="form-control"
-                            formControlName="description"></textarea>
-                    </div>
-
-
-                    <!-- Product Selection Toggle -->
-                    <div class="product-selection-section">
-                        <div class="explicit-content-toggle">
-                            <input type="checkbox" id="createNewProduct" formControlName="createNewProduct" />
-                            <label for="createNewProduct">Create New Product</label>
-
-
-                            <div class="form-group">
-                                <label for="isInstantAuction">
-                                    <input id="isInstantAuction" type="checkbox" formControlName="isInstantAuction" />
-                                    Instant Auction
-                                </label>
-                            </div>
-
-                        </div>
-                    </div>
-
-                    <div class="form-group full-width">
-                        <button type="submit" class="create-button" [disabled]="auctionForm.invalid">
-                            Create Auction
-                        </button>
-                    </div>
-                </div>
+<p-toast></p-toast>
+<div class="p-4" style="background: linear-gradient(135deg, #f3f9f2 0%, #f3f9f2 100%);">
+  <p-card class="max-w-[1200px] mx-auto">
+    <form [formGroup]="auctionForm" (ngSubmit)="onSubmit()">
+      <div class="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8">
+        <!-- Left Column (Always maintains space) -->
+        <div class="flex flex-col gap-6">
+          <ng-container *ngIf="showNewProductFields; else emptySpace">
+            <div *ngFor="let image of productImages; let i = index" 
+                 class="h-[300px] border-2 border-dashed border-gray-300 rounded-lg overflow-hidden relative">
+              <label class="block p-4 text-sm text-gray-600">
+                <ng-container *ngIf="i === 0; else featuredLabel">
+                  Product Image **
+                </ng-container>
+                <ng-template #featuredLabel>
+                  Featured Image {{ i }}
+                </ng-template>
+              </label>
+              <div class="h-[calc(100%-3rem)] flex items-center justify-center cursor-pointer" 
+                   (click)="input.click()">
+                <input #input type="file" hidden (change)="onUpdateProductImage($event, i)" accept="image/*">
+                <ng-container *ngIf="!image.preview; else productPreviewTpl">
+                  <div class="text-4xl text-gray-300">
+                    <i class="pi pi-plus"></i>
+                  </div>
+                </ng-container>
+                <ng-template #productPreviewTpl>
+                  <div class="relative w-full h-full">
+                    <img [src]="image.preview" alt="Product preview" class="w-full h-full object-cover">
+                    <span class="absolute top-2 right-2 bg-white/90 rounded-full w-6 h-6 flex items-center justify-center cursor-pointer shadow-sm hover:scale-105 transition-all"
+                          (click)="removeImage(i); $event.stopPropagation()">
+                      <i class="pi pi-times text-sm text-gray-600 hover:text-red-500"></i>
+                    </span>
+                  </div>
+                </ng-template>
+              </div>
             </div>
-        </form>
-    </p-card>
+          </ng-container>
+
+          <ng-template #emptySpace>
+            <!-- <div class="h-[300px] border-2 border-dashed border-gray-300 rounded-lg bg-transparent"></div> -->
+          </ng-template>
+        </div>
+
+        <!-- Right Column (Form Fields) -->
+        <div class="flex flex-col gap-6">
+          <app-product-form *ngIf="showNewProductFields" [parentForm]="auctionForm"></app-product-form>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="w-full">
+              <label class="block mb-2 text-sm text-gray-600">Auction Title *</label>
+              <input type="text" 
+                     class="w-full bg-[#f3f9f2] p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                     formControlName="title">
+            </div>
+
+            <div *ngIf="!showNewProductFields" class="w-full">
+              <label class="block mb-2 text-sm text-gray-600">Select Product</label>
+              <select class="w-full bg-[#f3f9f2] p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                      formControlName="existingProductId">
+                <option *ngFor="let product of products" [value]="product.id">{{ product.title }}</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="w-full">
+              <label class="block mb-2 text-sm text-gray-600">Start Time</label>
+              <input type="datetime-local" 
+                     class="w-full bg-[#f3f9f2] p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                     formControlName="startTime">
+            </div>
+
+            <div *ngIf="!auctionForm.get('isInstantAuction')?.value" class="w-full">
+              <label class="block mb-2 text-sm text-gray-600">Auction Duration (hours)</label>
+              <input type="number" 
+                     class="w-full bg-[#f3f9f2] p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                     formControlName="auctionDurationInHours">
+            </div>
+
+            <div class="w-full">
+              <label class="block mb-2 text-sm text-gray-600">Start Price</label>
+              <input type="number" 
+                     class="w-full bg-[#f3f9f2] p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                     formControlName="startingPrice">
+            </div>
+          </div>
+
+          <div class="w-full">
+            <label class="block mb-2 text-sm text-gray-600">Auction Description *</label>
+            <textarea rows="4" 
+                      class="w-full bg-[#f3f9f2] p-3 border border-gray-300 rounded-lg text-sm focus:border-blue-500 focus:outline-none"
+                      formControlName="description"></textarea>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <label class="flex items-center gap-2 text-sm text-gray-600">
+              <input type="checkbox" formControlName="createNewProduct">
+              Create New Product
+            </label>
+            
+            <label class="flex items-center gap-2 text-sm text-gray-600 ml-4">
+              <input type="checkbox" formControlName="isInstantAuction">
+              Instant Auction
+            </label>
+          </div>
+
+          <button type="submit" 
+                  class="w-full bg-[#3e1300] text-white p-3 rounded-lg text-sm hover:bg-[#362800] transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                  [disabled]="auctionForm.invalid">
+            Create Auction
+          </button>
+        </div>
+      </div>
+    </form>
+  </p-card>
 </div>

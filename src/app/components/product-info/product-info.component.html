@@ -1,24 +1,59 @@
 
-<div class="product-header">
-    <div class="title-section">
-      <h1>{{ product.title }}</h1>
-      <p class="subtitle">{{ product.subtitle }}
-        <i class="fas fa-tags"></i> <span class="category-btn">{{ product.category }}</span>
-      </p>
-    </div>
-    <div class="action-buttons">
-      <button class="like-btn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-        </svg>
-        <span class="like-count">{{ product.likes }}</span>
-      </button>
-      <button class="more-btn">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="1" />
-          <circle cx="19" cy="12" r="1" />
-          <circle cx="5" cy="12" r="1" />
-        </svg>
-      </button>
-    </div>
+<div class="flex justify-between items-center p-6 rounded-[12px]">
+  <!-- Title Section -->
+  <div>
+    <h1
+      class="text-[2.8rem] font-extrabold m-0 bg-gradient-to-br from-[#3e1300] to-[#ff6700] bg-clip-text text-transparent tracking-[1px]"
+    >
+      {{ product?.title }}
+    </h1>
+    <p
+      class="text-base text-[#64748b] font-medium flex items-center gap-2 flex-wrap"
+    >
+      {{ product?.description }}
+      <i class="fas fa-tags"></i>
+      <span
+        class="bg-[#A9B6B1] rounded-[12px] p-3 text-white cursor-pointer flex items-center gap-2 backdrop-blur-[5px] transition-all duration-200 ease-in-out hover:bg-[#FFA400] hover:-translate-y-[2px]"
+      >
+        {{ category }}
+      </span>
+    </p>
   </div>
+
+  <!-- Action Buttons -->
+  <div class="flex gap-4">
+    <button
+      class="bg-[#A9B6B1] rounded-[12px] p-3 text-white cursor-pointer flex items-center gap-2 backdrop-blur-[5px] transition-all duration-200 ease-in-out hover:bg-[#FFA400] hover:-translate-y-[2px]"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <path
+          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+        />
+      </svg>
+      <!-- <span class="like-count">{{ product.likes }}</span> -->
+    </button>
+    <button
+      class="bg-[#A9B6B1] rounded-[12px] p-3 text-white cursor-pointer flex items-center gap-2 backdrop-blur-[5px] transition-all duration-200 ease-in-out hover:bg-[#FFA400] hover:-translate-y-[2px]"
+    >
+      <svg
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+      >
+        <circle cx="12" cy="12" r="1" />
+        <circle cx="19" cy="12" r="1" />
+        <circle cx="5" cy="12" r="1" />
+      </svg>
+    </button>
+  </div>
+</div>

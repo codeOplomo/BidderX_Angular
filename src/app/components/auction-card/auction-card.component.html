@@ -1,0 +1,81 @@
+<p-card class="product-style-one">
+    <div class="card-thumbnail">
+      <img [src]="getImageUrl(auction.product.imageUrl)"/>
+      
+      <div 
+        class="countdown" 
+        *ngIf="auction.endTime" 
+        [attr.data-date]="auction.endTime"
+      >
+        <div class="countdown-container days">
+          <span class="countdown-value">{{ countdown.days }}</span>
+          <span class="countdown-heading">D's</span>
+        </div>
+        :
+        <div class="countdown-container hours">
+          <span class="countdown-value">{{ countdown.hours }}</span>
+          <span class="countdown-heading">H's</span>
+        </div>
+        :
+        <div class="countdown-container minutes">
+          <span class="countdown-value">{{ countdown.minutes }}</span>
+          <span class="countdown-heading">Min's</span>
+        </div>
+        :
+        <div class="countdown-container seconds">
+          <span class="countdown-value">{{ countdown.seconds }}</span>
+          <span class="countdown-heading">Sec</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card-content">
+        <h4 class="title">
+            <a (click)="goToProductDetail(auction.product.id)" class="no-underline">{{ auction.title }}</a>
+          </h4>
+          
+          
+      <p>{{ auction.description }}</p>
+
+      <div class="bidder-info">
+        <div class="bidder-avatars">
+            <div class="avatar-group">
+                <p-avatar 
+                  *ngFor="let bidder of auction?.bidders" 
+                  [image]="bidder?.imageUrl" 
+                  pTooltip="{{ bidder?.profileIdentifier }}" 
+                  tooltipPosition="top" 
+                  size="normal" 
+                  shape="circle">
+                </p-avatar>
+              </div>
+              
+              
+              <span class="bidder-count">{{ auction.bidders.length || 0 }}+ Place Bid</span>
+
+          </div>
+          
+
+        <div class="bid-details">
+          <div class="current-bid">
+            <span class="label">Current Bid</span>
+            <span class="amount">{{ auction.currentBid }} WETH</span>
+          </div>
+
+          <div class="like-container">
+            <button
+              class="like-button"
+              (click)="toggleLike()"
+              [ngClass]="{ 'liked': isLiked }"
+            >
+              <i
+                class="pi"
+                [ngClass]="{ 'pi-heart-fill': isLiked, 'pi-heart': !isLiked }"
+              ></i>
+              <span>{{ likes }}</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </p-card>

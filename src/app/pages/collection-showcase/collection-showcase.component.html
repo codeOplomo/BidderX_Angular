@@ -1,20 +1,21 @@
-<div *ngIf="loading$ | async" class="loading">
-  Loading collection...
-</div>
+<div *ngIf="collection$ | async as collection" class="w-full rounded-xl shadow-lg overflow-hidden" style="background: linear-gradient(135deg, #f3f9f2 0%, #f3f9f2 100%);">
+    <app-showcase-header (imageUpdated)="handleImageUpdate($event)"></app-showcase-header>
 
-<div *ngIf="error$ | async as error" class="error">
-  An error occurred: {{ error }}
-</div>
+  <div class="p-8">
+      <div *ngIf="loading$ | async" class="flex items-center justify-center h-[200px]">
+          <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+      </div>
 
-<app-showcase-header>
-  </app-showcase-header>
+      <div *ngIf="error$ | async as error" class="text-red-500 text-center p-4 rounded-lg bg-red-50">
+          <span class="material-symbols-outlined text-3xl mb-2">error</span>
+          <p>{{ error }}</p>
+      </div>
 
-<div *ngIf="collection$ | async as collection" class="collection-details">
-  <h1>{{ collection.name }}</h1>
-  <p>{{ collection.description }}</p>
-  <div *ngFor="let item of collection.items">
-    <h3>{{ item.name }}</h3>
-    <p>{{ item.description }}</p>
-    <img *ngIf="item.imageUrl" [src]="item.imageUrl" alt="Item Image">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <app-product-card
+              *ngFor="let product of collection.items"
+              [product]="product"
+          ></app-product-card>
+      </div>
   </div>
 </div>

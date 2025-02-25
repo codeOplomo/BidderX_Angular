@@ -1,9 +1,13 @@
+import { Category } from "../../models/view-models/category.model";
 
 
 export interface CollectionItem {
     id?: string;
-    name?: string;
+    title?: string;
     description?: string;
+    condition?: string;
+    manufacturer?: string;
+    category?: Category;
     imageUrl?: string
 }
 

@@ -13,11 +13,12 @@ import { Store } from '@ngrx/store';
 import { selectUser } from '../../store/user/user.selectors';
 import { ProductVm } from '../../models/view-models/product-vm.model';
 import { ProductFormComponent } from "../../components/product-form/product-form.component";
+import { ProductVM } from '../../models/view-models/product-vm';
 
 @Component({
   selector: 'app-create-auction',
   standalone: true,
-  imports: [ToastModule, ReactiveFormsModule, CardModule, CommonModule, ProductFormComponent],
+  imports: [ToastModule, ReactiveFormsModule, CardModule, CommonModule, ProductFormComponent, ToastModule],
   templateUrl: './create-auction.component.html',
   styleUrl: './create-auction.component.css',
   providers: [ToastService]
@@ -29,7 +30,7 @@ export class CreateAuctionComponent {
   auctionForm!: FormGroup;
   showNewProductFields = false;
   isSubmitting = false;
-  products: ProductVm[] = [];
+  products: ProductVM[] = [];
   productFiles: File[] = [];
   productImages: { file: File | null, preview: string | null }[] = [{ file: null, preview: null }];
 
@@ -39,6 +40,8 @@ export class CreateAuctionComponent {
     private fb: FormBuilder,
     private auctionService: AuctionsService,
     private productService: ProductsService,
+    private toastService: ToastService,
+    private router: Router,
     private store: Store,
   ) {
     this.user$ = this.store.select(selectUser);
@@ -65,6 +68,7 @@ export class CreateAuctionComponent {
       auctionDurationInHours: [null],
       createNewProduct: [false],
       existingProductId: [null],
+      collectionId: [null],
       category: [null],
       productTitle: [null],
       productDescription: [null],
@@ -101,14 +105,17 @@ export class CreateAuctionComponent {
       startTime: new Date(this.auctionForm.value.startTime).toISOString(),
       startingPrice: BigInt(this.auctionForm.value.startingPrice).toString(),
       isInstantAuction: this.auctionForm.value.isInstantAuction,
-      auctionDurationInHours: this.auctionForm.value.auctionDurationInHours || 0,
+      auctionDurationInHours: this.auctionForm.value.isInstantAuction
+    ? null
+    : this.auctionForm.value.auctionDurationInHours,
       ...(this.auctionForm.value.createNewProduct ? {
         productTitle: this.auctionForm.value.productTitle,
         productDescription: this.auctionForm.value.productDescription,
         condition: this.auctionForm.value.condition,
         manufacturer: this.auctionForm.value.manufacturer,
         productionDate: new Date(this.auctionForm.value.productionDate).toISOString(),
-        categoryId: this.auctionForm.value.category
+        categoryId: this.auctionForm.value.category,
+        collectionId: this.auctionForm.value.collectionId
       } : { existingProductId: this.auctionForm.value.existingProductId })
     };
     
@@ -127,9 +134,18 @@ export class CreateAuctionComponent {
       const response = await lastValueFrom(
         this.auctionService.createAuction(formData)
       );
-      // Handle success...
+      this.toastService.showSuccess(
+        'Auction Created', 
+        'Your auction was created successfully!'
+      );
+
+      const productId = response.data.product.id;
+      this.router.navigate(['/product-detail', productId]);
     } catch (error) {
-      // Handle error...
+      this.toastService.showError(
+        'Creation Failed', 
+        'There was an error creating your auction. Please try again.'
+      );
     } finally {
       this.isSubmitting = false;
     }
@@ -141,7 +157,7 @@ export class CreateAuctionComponent {
       .pipe(take(1))
       .subscribe({
         next: (response) => {
-          this.products = response.data;
+          this.products = response.data.content;
           if (this.products.length === 0) {
             this.auctionForm.get('createNewProduct')?.setValue(true);
             this.showNewProductFields = true;

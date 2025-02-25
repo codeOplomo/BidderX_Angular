@@ -1,4 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { ProductVM } from '../../models/view-models/product-vm';
+import { CategoriesService } from '../../services/categories.service';
+import { Category } from '../../models/view-models/category.model';
+import { ApiResponse } from '../../models/view-models/api-response.model';
+
 
 @Component({
   selector: 'app-product-info',
@@ -7,18 +12,28 @@ import { Component } from '@angular/core';
   templateUrl: './product-info.component.html',
   styleUrl: './product-info.component.css'
 })
-export class ProductInfoComponent {
+export class ProductInfoComponent implements OnChanges {
+  @Input() product: ProductVM | null = null;
+  category: string = '';
 
-  product = {
-    title: 'The Amazing Game',
-    currentBid: '0.11wETH',
-    subtitle: '#22 Portal, Info below',
-    category: 'Category',
-    royalties: '10% royalties',
-    likes: 33,
-    collections: [
-      { name: 'Brodband', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/det.PNG-ZZUQHKgwFQ1Er5hrAXAm337qQpK1Gr.png' },
-      { name: 'Brodband', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/det.PNG-ZZUQHKgwFQ1Er5hrAXAm337qQpK1Gr.png' }
-    ]
-  };
+  constructor(private categoriesService: CategoriesService) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['product'] && this.product) {
+      this.loadCategory();
+    }
+  }
+
+  loadCategory(): void {
+    if (!this.product) return;
+
+    this.categoriesService.getCategoryById(this.product.categoryId).subscribe({
+      next: (response: ApiResponse<Category>) => {
+        this.category = response.data.name;
+      },
+      error: () => {
+        this.category = 'Unknown';
+      }
+    });
+  }
 }

@@ -25,7 +25,7 @@
           <ng-container *ngFor="let item of collection.items.slice(0, 3); trackBy: trackByItem">
             <div class="product-image">
               <img 
-                [src]="item.imageUrl || '/assets/placeholder-item.jpg'" 
+                [src]="getImageUrl(item.imageUrl)" 
                 [alt]="item.name"
               />
             </div>

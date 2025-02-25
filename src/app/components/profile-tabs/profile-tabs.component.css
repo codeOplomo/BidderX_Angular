@@ -1,45 +1,17 @@
-.profile-tabs {
-  .tabs-container {
-    display: flex;
-    gap: 2rem;
-    padding: 1rem 2rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-    background: white;
-    margin-bottom: 2rem;
+
+.fade-in {
+  animation: fadeInAnimation 300ms ease-in;
+}
+
+@keyframes fadeInAnimation {
+  from {
+    opacity: 0;
   }
-
-  .tab-button {
-    position: relative;
-    padding: 0.5rem 1rem;
-    border: none;
-    background: transparent;
-    color: #666;
-    font-weight: 500;
-    cursor: pointer;
-    transition: all 0.2s ease;
-
-    &:hover {
-      color: #333;
-    }
-
-    &.active {
-      color: #000;
-
-      &::after {
-        content: '';
-        position: absolute;
-        bottom: -1.1rem;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 4px;
-        height: 4px;
-        border-radius: 50%;
-        background: #000;
-      }
-    }
+  to {
+    opacity: 1;
   }
+}
 
-  .tab-content {
-    padding: 0 2rem;
-  }
+.tab-content {
+  padding: 1.5rem 0;
 }

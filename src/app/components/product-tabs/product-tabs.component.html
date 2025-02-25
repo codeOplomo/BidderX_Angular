@@ -1,19 +1,38 @@
-<div class="tabs-section">
-    <nav class="tabs">
-      <button *ngFor="let tab of tabs" 
-              [class.active]="activeTab === tab" 
-              (click)="setActiveTab(tab)">
-        {{ tab }}
-      </button>
-    </nav>
-    <div class="tab-content" @fadeIn>
-      <div class="properties-grid" *ngIf="activeTab === 'Details'">
-        <div *ngFor="let prop of properties" 
-             class="property-card" 
-             [class]="prop.type">
-          <span class="property-label">{{ prop.label }}</span>
-          <span class="property-value">{{ prop.value }}</span>
-        </div>
+<div class="flex flex-col gap-6">
+  <!-- Tabs container -->
+  <nav class="flex gap-6 bg-white/80 shadow-[0_4px_10px_rgba(0,0,0,0.1)] rounded-lg p-2">
+    <button
+      *ngFor="let tab of tabs"
+      (click)="setActiveTab(tab)"
+      [ngClass]="
+        activeTab === tab
+          ? 'text-white bg-[#FFA400] font-semibold shadow-[0_4px_8px_rgba(255,164,0,0.2)]'
+          : ''
+      "
+      class="border-0 bg-white py-[1.3rem] px-[2.6rem] cursor-pointer text-base transition-all duration-200 relative rounded hover:text-black hover:bg-[rgba(0,0,0,0.05)] hover:shadow-[0_4px_8px_rgba(0,0,0,0.15)]"
+    >
+      {{ tab }}
+    </button>
+  </nav>
+
+  <!-- Tab content -->
+  <div class="tab-content" @fadeIn>
+    <div
+      *ngIf="activeTab === 'Details'"
+      class="grid gap-6 py-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]"
+    >
+      <div
+        *ngFor="let prop of properties"
+        [ngClass]="prop.type"
+        class="relative p-6 bg-white rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[0_4px_8px_rgba(0,0,0,0.15)]"
+      >
+        <span class="block text-gray-600 text-sm mb-2">
+          {{ prop.label }}
+        </span>
+        <span class="block text-black font-semibold text-xl">
+          {{ prop.value }}
+        </span>
       </div>
     </div>
   </div>
+</div>

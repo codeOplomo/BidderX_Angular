@@ -19,4 +19,5 @@ export interface CreateAuctionVM {
     featuredImageUrls?: string;
 
     categoryId?: string; 
+    collectionId?: string;
 }

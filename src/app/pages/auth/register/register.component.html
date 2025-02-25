@@ -1,140 +1,144 @@
-<div class="flex align-items-center justify-content-center h-screen" style="background-color: rgb(191, 191, 191);">
-    
-    <p-card header="Create Your Account" subheader="Join our platform today">
+<div class="flex justify-center items-center min-h-screen p-8">
+    <div class="flex flex-col md:flex-row bg-white rounded-lg shadow-lg w-full max-w-[1000px] overflow-hidden">
+      <!-- Left Column - Registration Form -->
+      <div class="flex-1 p-10 border-b border-gray-200 md:border-b-0 md:border-r">
+        <h2 class="text-2xl font-semibold mb-6 text-gray-800">Sign up</h2>
+        
         <form [formGroup]="registerForm" id="registerForm" (ngSubmit)="onRegister()">
-            <div class="login-content">
-                <!-- Registration Inputs -->
-                <div class="input-section">
-
-                    <!-- First Name Input -->
-                    <div class="input-container">
-                        <span class="p-input-icon-left">
-                            <p-iconfield>
-                                <input pInputText formControlName="firstName" placeholder="First Name" class="w-full" />
-                                <p-inputicon class="pi pi-user"></p-inputicon>
-                            </p-iconfield>
-                            <div *ngIf="isFieldInvalid('firstName')" class="text-right">
-                                <small class="p-error block">
-                                    {{ getErrorMessage('firstName') }}
-                                </small>
-                            </div>
-                        </span>
-                    </div>
-
-                    <!-- Last Name Input -->
-                    <div class="input-container">
-                        <span class="p-input-icon-left">
-                            <p-iconfield>
-                                <input pInputText formControlName="lastName" placeholder="Last Name" class="w-full" />
-                                <p-inputicon class="pi pi-user"></p-inputicon>
-                            </p-iconfield>
-                            <div *ngIf="isFieldInvalid('lastName')" class="text-right">
-                                <small class="p-error block">
-                                    {{ getErrorMessage('lastName') }}
-                                </small>
-                            </div>
-                        </span>
-                    </div>
-
-                    <!-- Email Input -->
-                    <div class="input-container">
-                        <span class="p-input-icon-left">
-                            <p-iconfield>
-                                <input pInputText formControlName="email" placeholder="Email" class="w-full" />
-                                <p-inputicon class="pi pi-envelope"></p-inputicon>
-                            </p-iconfield>
-                            <div *ngIf="isFieldInvalid('email')" class="text-right">
-                                <small class="p-error block">
-                                    {{ getErrorMessage('email') }}
-                                </small>
-                            </div>
-                        </span>
-                    </div>
-
-                    <!-- Profile Identifier Input -->
-                    <div class="input-container">
-                        <span class="p-input-icon-left">
-                            <p-iconfield>
-                                <input pInputText formControlName="profileIdentifier" placeholder="Profile Identifier"
-                                    class="w-full" />
-                                <p-inputicon class="pi pi-id-card"></p-inputicon>
-                            </p-iconfield>
-                            <div *ngIf="isFieldInvalid('profileIdentifier')" class="text-right">
-                                <small class="p-error block">
-                                    {{ getErrorMessage('profileIdentifier') }}
-                                </small>
-                            </div>
-                        </span>
-                    </div>
-
-                    <!-- Password Input -->
-                    <div class="input-container">
-                        <span class="p-input-icon-left">
-                            <p-password formControlName="password" [toggleMask]="true" placeholder="Password"
-                                class="w-full"></p-password>
-                            <div *ngIf="isFieldInvalid('password')" class="text-right">
-                                <small class="p-error block">
-                                    {{ getErrorMessage('password') }}
-                                </small>
-                            </div>
-                        </span>
-                    </div>
-
-                    <!-- Confirm Password Input -->
-                    <div class="input-container">
-                        <span class="p-input-icon-left w-full">
-                            <p-password formControlName="confirmPassword" [toggleMask]="true"
-                                placeholder="Confirm Password" class="w-full" [feedback]="false"></p-password>
-                            <div *ngIf="isFieldInvalid('confirmPassword')" class="text-right w-full mb-2">
-                                <small class="p-error block text-right">
-                                    {{ getErrorMessage('confirmPassword') }}
-                                </small>
-                            </div>
-                            <div *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')"
-                                class="text-right w-full mb-2">
-                                <small class="p-error block text-right">
-                                    Passwords do not match.
-                                </small>
-                            </div>
-                        </span>
-                    </div>
-
-
-                    <!-- Phone Number Input -->
-                    <div class="input-container">
-                        <span class="p-input-icon-left">
-                            <p-iconfield>
-                                <input pInputText formControlName="phoneNumber" placeholder="Phone Number"
-                                    class="w-full" />
-                                <p-inputicon class="pi pi-phone"></p-inputicon>
-                            </p-iconfield>
-                            <div *ngIf="isFieldInvalid('phoneNumber')" class="text-right">
-                                <small class="p-error block">
-                                    {{ getErrorMessage('phoneNumber') }}
-                                </small>
-                            </div>
-                        </span>
-                    </div>
-
-
-                </div>
-
-                <!-- Register Button -->
-                <div class="flex align-items-center justify-content-center w-full">
-                    <button pButton type="submit" label="Register" [loading]="loading" class="w-full"></button>
-                </div>
-
-                <!-- Footer-like Section -->
-                <div class="login-footer mt-3">
-                    <p-divider></p-divider>
-                    <div class="footer-links-container flex justify-content-between align-items-center mt-3">
-                        <p-button label="Already have an account?" [link]="true" routerLink="/login"></p-button>
-                        <p-button label="Need Help?" [link]="true"></p-button>
-                    </div>
-                </div>
-
+          <!-- First name Input -->
+          <div class="mb-6">
+            <label for="firstName" class="block mb-2 font-medium text-gray-700">First name</label>
+            <input pInputText 
+                   id="firstName"
+                   formControlName="firstName" 
+                   class="w-full p-3 border border-gray-300 rounded text-base" />
+            <div *ngIf="isFieldInvalid('firstName')" class="mt-1">
+              <small class="p-error">{{ getErrorMessage('firstName') }}</small>
             </div>
+          </div>
+    
+          <!-- Last name Input -->
+          <div class="mb-6">
+            <label for="lastName" class="block mb-2 font-medium text-gray-700">Last name</label>
+            <input pInputText 
+                   id="lastName"
+                   formControlName="lastName" 
+                   class="w-full p-3 border border-gray-300 rounded text-base" />
+            <div *ngIf="isFieldInvalid('lastName')" class="mt-1">
+              <small class="p-error">{{ getErrorMessage('lastName') }}</small>
+            </div>
+          </div>
+    
+          <!-- Email Input -->
+          <div class="mb-6">
+            <label for="email" class="block mb-2 font-medium text-gray-700">Email address</label>
+            <input pInputText 
+                   id="email"
+                   formControlName="email" 
+                   class="w-full p-3 border border-gray-300 rounded text-base" />
+            <div *ngIf="isFieldInvalid('email')" class="mt-1">
+              <small class="p-error">{{ getErrorMessage('email') }}</small>
+            </div>
+          </div>
+    
+          <!-- Profile Identifier Input -->
+          <div class="mb-6">
+            <label for="profileIdentifier" class="block mb-2 font-medium text-gray-700">Profile Identifier</label>
+            <input pInputText 
+                   id="profileIdentifier"
+                   formControlName="profileIdentifier" 
+                   class="w-full p-3 border border-gray-300 rounded text-base" />
+            <div *ngIf="isFieldInvalid('profileIdentifier')" class="mt-1">
+              <small class="p-error">{{ getErrorMessage('profileIdentifier') }}</small>
+            </div>
+          </div>
+    
+          <!-- Create Password Input -->
+          <div class="mb-6">
+            <label for="password" class="block mb-2 font-medium text-gray-700">Create Password</label>
+            <input pInputText 
+                   id="password"
+                   type="password"
+                   formControlName="password" 
+                   class="w-full p-3 border border-gray-300 rounded text-base" />
+            <div *ngIf="isFieldInvalid('password')" class="mt-1">
+              <small class="p-error">{{ getErrorMessage('password') }}</small>
+            </div>
+          </div>
+    
+          <!-- Confirm Password Input -->
+          <div class="mb-6">
+            <label for="confirmPassword" class="block mb-2 font-medium text-gray-700">Re Password</label>
+            <input pInputText 
+                   id="confirmPassword"
+                   type="password"
+                   formControlName="confirmPassword" 
+                   class="w-full p-3 border border-gray-300 rounded text-base" />
+            <div *ngIf="isFieldInvalid('confirmPassword')" class="mt-1">
+              <small class="p-error">{{ getErrorMessage('confirmPassword') }}</small>
+            </div>
+            <div *ngIf="registerForm.get('confirmPassword')?.hasError('passwordMismatch')" class="mt-1">
+              <small class="p-error">Passwords do not match.</small>
+            </div>
+          </div>
+    
+          <!-- Phone Number Input (optional) -->
+          <div class="mb-6">
+            <label for="phoneNumber" class="block mb-2 font-medium text-gray-700">Phone Number</label>
+            <input pInputText 
+                   id="phoneNumber"
+                   formControlName="phoneNumber" 
+                   class="w-full p-3 border border-gray-300 rounded text-base" />
+            <div *ngIf="isFieldInvalid('phoneNumber')" class="mt-1">
+              <small class="p-error">{{ getErrorMessage('phoneNumber') }}</small>
+            </div>
+          </div>
+    
+          <!-- Terms Checkbox -->
+          <div class="mb-6">
+            <p-checkbox formControlName="termsAccepted" label="Allow to all terms & condition"></p-checkbox>
+            <div *ngIf="isFieldInvalid('termsAccepted')" class="mt-1">
+              <small class="p-error">You must accept the terms and conditions.</small>
+            </div>
+          </div>
+    
+          <!-- Register Buttons -->
+          <div class="flex gap-4">
+            <button pButton type="submit" label="Sign Up" class="flex-1 bg-[#0099ff] border-0" [loading]="loading"></button>
+            <button pButton type="button" label="Log In" class="flex-1 bg-[#2a3042] border-0" routerLink="/login"></button>
+          </div>
         </form>
-    </p-card>
-</div>
-<p-toast></p-toast>
+      </div>
+    
+      <!-- Right Column - Alternative Registration Methods -->
+      <div class="flex-1 p-10 bg-[#fafafa]">
+        <h3 class="text-xl font-semibold mb-3 text-gray-800">Another way to sign up</h3>
+        <p class="text-gray-600 mb-6">Lorem ipsum dolor sit, amet sectetur adipisicing elit. Cumque.</p>
+    
+        <!-- Social Registration Buttons -->
+        <div class="flex flex-col gap-4">
+          <button pButton type="button" class="flex items-center justify-start py-3 px-4 border border-gray-300 rounded w-full text-gray-800 bg-white">
+            <i class="pi pi-google mr-3 text-[#dd4b39]"></i>
+            <span>Log in with Google</span>
+          </button>
+          
+          <button pButton type="button" class="flex items-center justify-start py-3 px-4 border border-gray-300 rounded w-full text-gray-800 bg-white">
+            <i class="pi pi-facebook mr-3 text-[#3b5998]"></i>
+            <span>Log in with Facebook</span>
+          </button>
+          
+          <button pButton type="button" class="flex items-center justify-start py-3 px-4 border border-gray-300 rounded w-full text-gray-800 bg-white">
+            <i class="pi pi-twitter mr-3 text-[#1da1f2]"></i>
+            <span>Log in with Twitter</span>
+          </button>
+          
+          <button pButton type="button" class="flex items-center justify-start py-3 px-4 border border-gray-300 rounded w-full text-gray-800 bg-white">
+            <i class="pi pi-linkedin mr-3 text-[#0077b5]"></i>
+            <span>Log in with LinkedIn</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <p-toast></p-toast>
+  

@@ -1,14 +1,28 @@
-<div class="showcase-header">
-  <!-- Background with gradient (cover image) -->
-  <div class="header-background" 
-    [style.backgroundImage]="'url(' + getImageUrl((collection$ | async)?.imageUrl ?? '') + ')'">
-    <div class="update-cover-picture" (click)="onUpdateCoverPicture()">
-      <i class="pi pi-camera"></i>
-    </div>
+<div class="relative overflow-hidden rounded-t-xl group">
+  <div class="absolute inset-0 bg-gradient-to-b from-[rgba(42,157,143,0.1)] to-[rgba(38,70,83,0.1)] group-hover:opacity-100 transition-opacity duration-300"></div>
+  <img
+    [src]="getImageUrl((collection$ | async)?.imageUrl || '') || '/assets/placeholder.jpg'"
+    [alt]="(collection$ | async)?.name"
+    class="w-full h-[300px] object-cover"
+  >
+  <!-- Integrated update cover image icon -->
+  <div 
+    class="absolute top-4 right-4 bg-white/20 hover:bg-white/40 p-2 rounded-full cursor-pointer transition"
+    (click)="onUpdateCoverPicture()">
+    <i class="pi pi-camera text-white text-xl"></i>
   </div>
-
-  <div *ngIf="collection$ | async as collection" class="collection-header">
-    <h1 class="header-title">{{ collection.name }}</h1>
-    <p class="header-description">{{ collection.description }}</p>
+  <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/50 to-transparent">
+    <div class="flex items-center gap-4">
+      <img
+        [src]="getImageUrl((collection$ | async)?.owner?.imageUrl || '') || '/assets/placeholder.jpg'"
+        [alt]="(collection$ | async)?.owner?.name"
+        class="w-12 h-12 rounded-full border-2 border-white"
+      >
+      <div>
+        <h1 class="text-3xl font-bold text-white mb-2">{{ (collection$ | async)?.name }}</h1>
+        <p class="text-white/80">{{ (collection$ | async)?.description }}</p>
+        <p class="text-sm text-white/60 mt-2">Curated by {{ (collection$ | async)?.owner?.name }}</p>
+      </div>
+    </div>
   </div>
 </div>

@@ -44,7 +44,8 @@ export class CollectionsTabComponent implements OnInit {
     return item?.id || index; // Use the item ID, fallback to index if no ID
   }
 
-  getImageUrl(imagePath: string): string {
-    return this.imagesService.getImageUrl(imagePath) || this.defaultAvatar;
+  getImageUrl(imageUrl?: string): string {
+    return imageUrl?.trim() ? this.imagesService.getImageUrl(imageUrl) : 'https://picsum.photos/400/300?random=1';
   }
+  
 }

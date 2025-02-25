@@ -4,6 +4,7 @@ import { Observable, Subject } from 'rxjs';
 import { ImagesService } from './images.service';
 import { Collection } from '../store/collections/collection.model';
 import { ApiResponse } from '../models/view-models/api-response.model';
+import { PaginatedApiResponse } from '../models/view-models/paginated-api-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,9 +23,20 @@ export class CollectionsService {
     return this.http.get<any>(`${this.apiUrl}/${id}`);
   }
 
-  getCollectionsByEmail(email: string): Observable<ApiResponse<Collection[]>> {
-    const params = new HttpParams().set('email', email);
-    return this.http.get<ApiResponse<Collection[]>>(`${this.apiUrl}/user`, { params });
+  getCollectionsByEmail(
+    email: string, 
+    page: number = 0, 
+    size: number = 12,
+  ): Observable<ApiResponse<PaginatedApiResponse<Collection>>> {
+    const params = new HttpParams()
+      .set('email', email)
+      .set('page', page.toString())
+      .set('size', size.toString());
+    
+    return this.http.get<ApiResponse<PaginatedApiResponse<Collection>>>(
+      `${this.apiUrl}/user`, 
+      { params }
+    );
   }
   
   uploadShowcaseCoverImage(

@@ -1,77 +1,95 @@
-<div class="edit-profile-page p-card">
-    <h2>Edit Profile</h2>
+<div class="max-w-[500px] mx-auto my-8 p-card">
+    <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
   
-    <form [formGroup]="editProfileForm" (ngSubmit)="onSubmit()" class="form-grid">
-        <div class="form-group">
-            <label for="profileIdentifier">Profile Identifier</label>
-            <div>
-                <input 
-                    pInputText 
-                    id="profileIdentifier" 
-                    formControlName="profileIdentifier"
-                />
-                <small *ngIf="f['profileIdentifier'].invalid && f['profileIdentifier'].touched">
-                    Profile Identifier is required and must be at least 3 characters.
-                </small>
-            </div>
+    <form
+      [formGroup]="editProfileForm"
+      (ngSubmit)="onSubmit()"
+      class="grid grid-cols-[1fr_2fr] gap-x-4 gap-y-6"
+    >
+      <!-- Profile Identifier -->
+      <div class="contents">
+        <label for="profileIdentifier" class="text-right pr-2 self-center">
+          Profile Identifier
+        </label>
+        <div class="flex flex-col">
+          <input
+            pInputText
+            id="profileIdentifier"
+            formControlName="profileIdentifier"
+          />
+          <small
+            *ngIf="f['profileIdentifier'].invalid && f['profileIdentifier'].touched"
+            class="text-red-500 text-[0.85rem]"
+          >
+            Profile Identifier is required and must be at least 3 characters.
+          </small>
         </div>
-
-        <div class="form-group">
-            <label for="firstName">First Name</label>
-            <div>
-                <input 
-                    pInputText 
-                    id="firstName" 
-                    formControlName="firstName"
-                />
-                <small *ngIf="f['firstName'].invalid && f['firstName'].touched">
-                    First name must be 2-50 characters long.
-                </small>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="lastName">Last Name</label>
-            <div>
-                <input 
-                    pInputText 
-                    id="lastName" 
-                    formControlName="lastName"
-                />
-                <small *ngIf="f['lastName'].invalid && f['lastName'].touched">
-                    Last name must be 2-50 characters long.
-                </small>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <label for="phoneNumber">Phone Number</label>
-            <div>
-                <input 
-                    pInputText 
-                    id="phoneNumber" 
-                    formControlName="phoneNumber"
-                />
-                <small *ngIf="f['phoneNumber'].invalid && f['phoneNumber'].touched">
-                    Phone number must be numeric and can include a leading '+'.
-                </small>
-            </div>
-        </div>
+      </div>
   
-        <div class="form-actions">
-            <p-button 
-                label="Cancel" 
-                severity="secondary" 
-                (click)="onCancel()"
-                class="cancel-btn"
-            ></p-button>
-            <button 
-                pButton 
-                label="Save Changes" 
-                class="p-button-primary submit-btn" 
-                [disabled]="editProfileForm.invalid || isLoading"
-            ></button>
+      <!-- First Name -->
+      <div class="contents">
+        <label for="firstName" class="text-right pr-2 self-center">
+          First Name
+        </label>
+        <div class="flex flex-col">
+          <input pInputText id="firstName" formControlName="firstName" />
+          <small
+            *ngIf="f['firstName'].invalid && f['firstName'].touched"
+            class="text-red-500 text-[0.85rem]"
+          >
+            First name must be 2-50 characters long.
+          </small>
         </div>
+      </div>
+  
+      <!-- Last Name -->
+      <div class="contents">
+        <label for="lastName" class="text-right pr-2 self-center">
+          Last Name
+        </label>
+        <div class="flex flex-col">
+          <input pInputText id="lastName" formControlName="lastName" />
+          <small
+            *ngIf="f['lastName'].invalid && f['lastName'].touched"
+            class="text-red-500 text-[0.85rem]"
+          >
+            Last name must be 2-50 characters long.
+          </small>
+        </div>
+      </div>
+  
+      <!-- Phone Number -->
+      <div class="contents">
+        <label for="phoneNumber" class="text-right pr-2 self-center">
+          Phone Number
+        </label>
+        <div class="flex flex-col">
+          <input pInputText id="phoneNumber" formControlName="phoneNumber" />
+          <small
+            *ngIf="f['phoneNumber'].invalid && f['phoneNumber'].touched"
+            class="text-red-500 text-[0.85rem]"
+          >
+            Phone number must be numeric and can include a leading '+'.
+          </small>
+        </div>
+      </div>
+  
+      <!-- Form Actions -->
+      <div class="col-span-2 pl-[50%] text-center">
+        <p-button
+          label="Cancel"
+          severity="secondary"
+          (click)="onCancel()"
+          class="ml-2"
+        ></p-button>
+        <button
+          pButton
+          label="Save Changes"
+          class="p-button-primary ml-2"
+          [disabled]="editProfileForm.invalid || isLoading"
+        ></button>
+      </div>
     </form>
     <p-toast></p-toast>
-</div>
+  </div>
+  

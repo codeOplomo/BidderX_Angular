@@ -14,6 +14,11 @@ import { ButtonModule } from 'primeng/button';
 import { ProductGalleryComponent } from '../../components/product-gallery/product-gallery.component';
 import { ProductInfoComponent } from "../../components/product-info/product-info.component";
 import { ProductTabsComponent } from "../../components/product-tabs/product-tabs.component";
+import { ActivatedRoute, Router } from '@angular/router';
+import { ProductVM } from '../../models/view-models/product-vm';
+import { ProductsService } from '../../services/products.service';
+import { catchError, of, switchMap } from 'rxjs';
+import { ImagesService } from '../../services/images.service';
 
 
 @Component({
@@ -24,21 +29,41 @@ import { ProductTabsComponent } from "../../components/product-tabs/product-tabs
   styleUrl: './product-detail.component.css'
 })
 export class ProductDetailComponent {
+  product: ProductVM | null = null;
+  loading = true;
+  error: string | null = null;
 
-  product = {
-    title: 'The Amazing Game',
-    currentBid: '0.11wETH',
-    subtitle: '#22 Portal, Info below',
-    category: 'Category',
-    royalties: '10% royalties',
-    likes: 33,
-    collections: [
-      { name: 'Brodband', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/det.PNG-ZZUQHKgwFQ1Er5hrAXAm337qQpK1Gr.png' },
-      { name: 'Brodband', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/det.PNG-ZZUQHKgwFQ1Er5hrAXAm337qQpK1Gr.png' }
-    ]
-  };
+  constructor(
+    private route: ActivatedRoute,
+    private productService: ProductsService,
+    private imagesService: ImagesService,
+    private router: Router,
+    ) {}
 
-  
+    ngOnInit(): void {
+      this.route.params.pipe(
+        switchMap(params => {
+          const productId = params['id'];
+          return this.productService.getProductById(productId).pipe(
+            catchError(error => {
+              this.error = 'Failed to load product';
+              this.loading = false;
+              return of(null);
+            })
+          );
+        })
+      ).subscribe(response => {
+        if (response?.data) {
+          this.product = response.data;
+        } else {
+          this.error = 'Product not found';
+        }
+        this.loading = false;
+      });
+    }
 
+    getImageUrl(imagePath: string): string {
+      return this.imagesService.getImageUrl(imagePath);
+    }
 
 }

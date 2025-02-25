@@ -1,36 +1,57 @@
-<div class="product-container">
-    
+<div
+  class="grid grid-cols-1 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)] gap-8 w-full mx-auto p-8 text-white min-h-screen bg-gradient-to-br from-[#f3f9f2] to-[#f3f9f2]"
+>
+  <app-product-gallery [product]="product"></app-product-gallery>
 
-    <app-product-gallery></app-product-gallery>
-    <!-- Product Info -->
-    <div class="product-info">
+  <!-- Product Info -->
+  <div class="flex flex-col gap-8">
+    <app-product-info [product]="product"></app-product-info>
 
-    <app-product-info></app-product-info>
-      <div class="bid-section">
-        <div class="current-bid">
-          <span class="label">Current Bid</span>
-          <span class="value">{{ product.currentBid }}</span>
-        </div>
-        <button class="place-bid-btn">Place Bid</button>
+    <!-- Bid Section -->
+    <div
+      class="flex justify-between items-center p-6 rounded-2xl bg-white/80 shadow-md backdrop-blur-sm"
+    >
+      <div class="flex flex-col gap-2">
+        <span class="text-sm text-[#3e1300]">Current Bid</span>
+        <span class="text-2xl font-semibold text-[#cb8502]">
+          {{ product?.currentBid }}
+        </span>
       </div>
-
-      <div class="collections-section">
-        
-      
-        <!-- Collections Section -->
-        <h3>Collections</h3>
-        <div class="collection-grid">
-          <div class="collection-item" *ngFor="let collection of product.collections">
-            <img [src]="collection.avatar" [alt]="collection.name" class="collection-avatar" />
-            <span class="collection-name">{{ collection.name }}</span>
-          </div>
-        </div>
-      </div>
-      
-
-      <app-product-tabs></app-product-tabs>
+      <button
+        class="bg-[#FFA400] text-white rounded-xl py-3 px-6 font-semibold cursor-pointer transition-all duration-200 ease hover:bg-[#cb8502] hover:-translate-y-[2px]"
+      >
+        Place Bid
+      </button>
     </div>
+
+    <!-- Collections Section -->
+    <div class="p-6 rounded-2xl">
+      <h3 class="text-sm text-[#3e1300]">Collections</h3>
+      <div
+        class="grid grid-cols-[repeat(auto-fill,minmax(120px,max-content))] gap-2 justify-center"
+      >
+        <div
+          *ngFor="let collection of product?.collections"
+          class="group flex flex-col items-center gap-3 py-2 px-4 rounded-xl transition-all duration-200 ease cursor-pointer"
+        >
+          <img
+            [src]="getImageUrl(collection.imageUrl)"
+            [alt]="collection.name"
+            class="w-12 h-12 rounded-full border-[3px] border-[#A9B6B1] object-cover transition-transform duration-200 ease-in-out group-hover:scale-110"
+          />
+          <span
+            class="font-semibold text-sm text-center transition-colors duration-200 ease group-hover:text-[#FFA400]"
+          >
+            {{ collection.name }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <app-product-tabs></app-product-tabs>
   </div>
+</div>
+
 
       <!-- <div class="unlockable-content">
         <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

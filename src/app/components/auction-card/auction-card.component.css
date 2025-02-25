@@ -1,0 +1,159 @@
+.product-style-one {
+    .title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        /* line-height: 1.4;  */
+        transition: all 0.6s ease-in-out;
+    }
+    
+    .title:hover {
+        color: #FFA400;
+    }
+    
+
+    .card-thumbnail {
+        position: relative;
+        height: 250px;
+        border-radius: 0.5rem;
+        overflow: hidden;
+
+        img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        &:hover img {
+            transform: scale(1.1);
+        }
+
+        .countdown {
+            position: absolute;
+            display: flex;
+            bottom: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            cursor: pointer;
+            padding: 5px 8px;
+            border-radius: 5px;
+            z-index: 2;
+            background-color: rgba(255, 255, 255, 0.85);
+
+            .countdown-container {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                margin: 0 4px;
+
+                .countdown-value {
+                    font-weight: bold;
+                    font-size: 1rem;
+                }
+
+                .countdown-heading {
+                    font-size: 0.8rem;
+                }
+            }
+        }
+    }
+
+    .card-content {
+        padding: 1rem;
+    }
+
+    .bidder-info {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+        .bidder-avatars {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+
+            .avatar-group {
+                display: flex;
+                margin-right: 0.5rem;
+
+                .avatar {
+                    width: 24px;
+                    height: 24px;
+                    border-radius: 50%;
+                    border: 2px solid var(--surface-card);
+                    background-color: var(--primary-color);
+                    margin-left: -8px;
+
+                    &:first-child {
+                        margin-left: 0;
+                    }
+                }
+            }
+
+            .bidder-count {
+                font-size: 0.875rem;
+                color: var(--text-color-secondary);
+            }
+        }
+
+        .bid-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            .current-bid {
+                display: flex;
+                flex-direction: column;
+
+                .label {
+                    font-size: 0.875rem;
+                    color: var(--text-color-secondary);
+                }
+
+                .amount {
+                    font-size: 1.125rem;
+                    font-weight: 600;
+                    color: var(--primary-color);
+                }
+            }
+
+            .like-container {
+                .like-button {
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    padding: 0.5rem;
+                    border: none;
+                    background: none;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                }
+
+                .like-button i {
+                    font-size: 1.25rem;
+                    color: #666;
+                    transition: all 0.2s ease;
+                }
+
+                .like-button.liked i {
+                    color: #FFA400;
+                }
+
+                .like-button:hover i {
+                    transform: scale(1.1);
+                }
+
+                .like-button span {
+                    font-size: 0.875rem;
+                    color: #666;
+                }
+            }
+        }
+    }
+}

@@ -1,5 +1,7 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, Input, SimpleChanges } from '@angular/core';
+import { ProductVM } from '../../models/view-models/product-vm';
+import { ImagesService } from '../../services/images.service';
 
 @Component({
   selector: 'app-product-gallery',
@@ -9,27 +11,25 @@ import { Component } from '@angular/core';
   styleUrl: './product-gallery.component.css'
 })
 export class ProductGalleryComponent {
-
+  @Input() product: ProductVM | null = null;
   selectedThumb = 0;
+  thumbnails: string[] = [];
 
-  product = {
-    title: 'The Amazing Game',
-    currentBid: '0.11wETH',
-    subtitle: '#22 Portal, Info below',
-    category: 'Category',
-    royalties: '10% royalties',
-    likes: 33,
-    collections: [
-      { name: 'Brodband', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/det.PNG-ZZUQHKgwFQ1Er5hrAXAm337qQpK1Gr.png' },
-      { name: 'Brodband', avatar: 'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/det.PNG-ZZUQHKgwFQ1Er5hrAXAm337qQpK1Gr.png' }
-    ]
-  };
+  constructor(private imagesService: ImagesService) {}
 
-  thumbnails = [
-    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/det.PNG-ZZUQHKgwFQ1Er5hrAXAm337qQpK1Gr.png',
-    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/det.PNG-ZZUQHKgwFQ1Er5hrAXAm337qQpK1Gr.png',
-    'https://hebbkx1anhila5yf.public.blob.vercel-storage.com/det.PNG-ZZUQHKgwFQ1Er5hrAXAm337qQpK1Gr.png'
-  ];
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['product'] && this.product) {
+      this.loadThumbnails();
+    }
+  }
+
+  getImageUrl(imagePath: string): string {
+    return this.imagesService.getImageUrl(imagePath);
+  }
+
+  loadThumbnails(): void {
+    this.thumbnails = [this.product!.imageUrl, ...(this.product!.featuredImages || [])];
+  }
 
   get selectedImage(): string {
     return this.thumbnails[this.selectedThumb];

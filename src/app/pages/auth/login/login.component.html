@@ -1,53 +1,76 @@
-<div class="flex align-items-center justify-content-center h-screen" style="background-color: rgb(191, 191, 191);">
-  <p-card header="Welcome Back" subheader="">
-    <form [formGroup]="loginForm" id="loginForm" (ngSubmit)="onLogin()">
-      <div class="login-content">
+<div class="flex justify-center items-center min-h-screen p-8">
+  <div class="flex flex-col md:flex-row bg-white rounded-lg shadow-lg w-full max-w-[1000px] overflow-hidden">
+    <!-- Left Column - Login Form -->
+    <div class="flex-1 p-10 border-b border-gray-200 md:border-b-0 md:border-r">
+      <h2 class="text-2xl font-semibold mb-6 text-gray-800">Login</h2>
+      
+      <form [formGroup]="loginForm" id="loginForm" (ngSubmit)="onLogin()">
         <!-- Email Input -->
-        <div class="input-section">
-          <span class="p-input-icon-left w-full">
-            <p-iconfield>
-              <input pInputText formControlName="email" placeholder="Email" class="w-full" />
-              <p-inputicon class="pi pi-envelope"></p-inputicon>
-            </p-iconfield>
-          <!-- Email Error Messages -->
-          <div *ngIf="isFieldInvalid('email')" class="text-right w-full mb-2">
-            <small class="p-error block text-right">
-              {{ getErrorMessage('email') }}
-            </small>
-          </div>
-          </span>
-
-          <!-- Password Input -->
-          <span class="p-input-icon-left w-full">
-            <p-password formControlName="password" [toggleMask]="true" placeholder="Password" class="w-full"></p-password>
-          <!-- Password Error Messages -->
-          <div *ngIf="isFieldInvalid('password')" class="text-right w-full mb-2">
-            <small class="p-error block text-right">
-              {{ getErrorMessage('password') }}
-            </small>
-          </div>
-          </span>
-
-          <!-- Login Button -->
-          <div class="flex align-items-center justify-content-center w-full">
-            <button pButton type="submit" label="Login" [loading]="loading" class="w-full"></button>
+        <div class="mb-6">
+          <label for="email" class="block mb-2 font-medium text-gray-700">Email address</label>
+          <input pInputText 
+                 id="email"
+                 formControlName="email" 
+                 class="w-full p-3 border border-gray-300 rounded text-base" />
+          <div *ngIf="isFieldInvalid('email')" class="mt-1">
+            <small class="p-error">{{ getErrorMessage('email') }}</small>
           </div>
         </div>
 
-        <!-- Footer-like Section -->
-        <!-- Footer Section -->
-<div class="login-footer mt-3">
-  <p-divider></p-divider>
-  <div class="footer-links-container flex justify-content-between align-items-center mt-3">
-    <p-button label="Create Account" [link]="true" routerLink="/register"></p-button>
-    <p-button label="Need Help?" [link]="true"></p-button>
-  </div>
-</div>
+        <!-- Password Input -->
+        <div class="mb-6">
+          <label for="password" class="block mb-2 font-medium text-gray-700">Password</label>
+          <input pInputText 
+                 id="password"
+                 type="password"
+                 formControlName="password" 
+                 class="w-full p-3 border border-gray-300 rounded text-base" />
+          <div *ngIf="isFieldInvalid('password')" class="mt-1">
+            <small class="p-error">{{ getErrorMessage('password') }}</small>
+          </div>
+        </div>
 
+        <!-- Remember Me Checkbox -->
+        <div class="mb-6">
+          <p-checkbox formControlName="rememberMe" label="Remember me later"></p-checkbox>
+        </div>
+
+        <!-- Login Buttons -->
+        <div class="flex gap-4">
+          <button pButton type="submit" label="Log In" class="flex-1 bg-[#0099ff] border-0"></button>
+          <button pButton type="button" label="Sign Up" class="flex-1 bg-[#2a3042] border-0" (click)="navigateToRegister()"></button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Right Column - Alternative Login Methods -->
+    <div class="flex-1 p-10 bg-[#fafafa]">
+      <h3 class="text-xl font-semibold mb-3 text-gray-800">Another way to log in</h3>
+      <p class="text-gray-600 mb-6">Lorem ipsum dolor sit, amet sectetur adipisicing elit. Cumque.</p>
+
+      <!-- Social Login Buttons -->
+      <div class="flex flex-col gap-4">
+        <button pButton type="button" class="flex items-center justify-start py-3 px-4 border border-gray-300 rounded w-full text-gray-800 bg-white">
+          <i class="pi pi-google mr-3 text-[#dd4b39]"></i>
+          <span>Log in with Google</span>
+        </button>
+        
+        <button pButton type="button" class="flex items-center justify-start py-3 px-4 border border-gray-300 rounded w-full text-gray-800 bg-white">
+          <i class="pi pi-facebook mr-3 text-[#3b5998]"></i>
+          <span>Log in with Facebook</span>
+        </button>
+        
+        <button pButton type="button" class="flex items-center justify-start py-3 px-4 border border-gray-300 rounded w-full text-gray-800 bg-white">
+          <i class="pi pi-twitter mr-3 text-[#1da1f2]"></i>
+          <span>Log in with Twitter</span>
+        </button>
+        
+        <button pButton type="button" class="flex items-center justify-start py-3 px-4 border border-gray-300 rounded w-full text-gray-800 bg-white">
+          <i class="pi pi-linkedin mr-3 text-[#0077b5]"></i>
+          <span>Log in with LinkedIn</span>
+        </button>
       </div>
-    </form>
-  </p-card>
+    </div>
+  </div>
   <p-toast></p-toast>
 </div>
-
-  

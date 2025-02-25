@@ -82,6 +82,13 @@ export class ProfileHeaderComponent implements OnDestroy {
       this.router.navigate(['/edit-password']);
     }
   
+    onCreateCollection() {
+      this.router.navigate(['/create-collection']);
+    }
+  
+    onCreateAuction() {
+      this.router.navigate(['/create-auction']);
+    }
   isOwner(): boolean {
     return this.authService.hasRole('OWNER');
   }
