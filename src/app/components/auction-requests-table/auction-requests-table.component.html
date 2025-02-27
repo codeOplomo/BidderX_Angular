@@ -1,0 +1,56 @@
+<div class="overflow-x-auto">
+    <table class="w-full">
+      <thead>
+        <tr class="border-b border-slate-200 dark:border-slate-700">
+          <th class="text-left pb-4 px-2">Auction Title</th>
+          <th class="text-left pb-4 px-2">Product</th>
+          <th class="text-left pb-4 px-2">Seller</th>
+          <th class="text-left pb-4 px-2">Duration</th>
+          <th class="text-right pb-4 px-2">Type</th>
+          <th class="text-right pb-4 px-2">Starting Price</th>
+          <th class="text-center pb-4 px-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let auction of auctionRequests" 
+            class="border-b border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 cursor-pointer"
+            (click)="onRowClick(auction)">
+          <td class="py-4 px-2">{{ auction.title }}</td>
+          <td class="py-4 px-2">{{ auction.product.title }}</td>
+          <td class="py-4 px-2">{{ auction.product.ownerEmail }}</td>
+          <td class="py-4 px-2">{{ auction.duration }}</td>
+          <td class="py-4 px-2 text-right">{{ auction.type }}</td>
+          <td class="py-4 px-2 text-right">{{ auction.startingPrice }}</td>
+          <td class="py-4 px-2 flex justify-center space-x-2">
+            <!-- Approve Icon -->
+            <mat-icon 
+                class="cursor-pointer text-blue-500" 
+                (click)="onApprove(auction, $event)">
+              check_circle
+            </mat-icon>
+            <!-- Reject Icon -->
+            <mat-icon 
+                class="cursor-pointer text-red-500" 
+                (click)="onReject(auction, $event)">
+              cancel
+            </mat-icon>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+   
+    
+  
+  <div *ngIf="auctionRequests.length === 0" class="text-center py-8 text-gray-500">
+    No pending auction requests at this time.
+  </div>
+  
+  <!-- Paginator -->
+  <mat-paginator [length]="totalItems"
+                 [pageSize]="pageSize"
+                 [pageIndex]="currentPage"
+                 [pageSizeOptions]="[5, 10, 25]"
+                 (page)="onPageChange($event)">
+  </mat-paginator>

@@ -1,7 +1,7 @@
 <div class="relative overflow-hidden rounded-t-xl group">
   <div class="absolute inset-0 bg-gradient-to-b from-[rgba(42,157,143,0.1)] to-[rgba(38,70,83,0.1)] group-hover:opacity-100 transition-opacity duration-300"></div>
   <img
-    [src]="getImageUrl((collection$ | async)?.imageUrl || '') || '/assets/placeholder.jpg'"
+    [src]="getImageUrl((collection$ | async)?.imageUrl || '') || 'https://picsum.photos/400/300?random=1'"
     [alt]="(collection$ | async)?.name"
     class="w-full h-[300px] object-cover"
   >
@@ -14,7 +14,7 @@
   <div class="absolute bottom-0 left-0 right-0 p-8 bg-gradient-to-t from-black/50 to-transparent">
     <div class="flex items-center gap-4">
       <img
-        [src]="getImageUrl((collection$ | async)?.owner?.imageUrl || '') || '/assets/placeholder.jpg'"
+        [src]="getImageUrl((collection$ | async)?.owner?.imageUrl || '') || 'https://picsum.photos/400/300?random=1'"
         [alt]="(collection$ | async)?.owner?.name"
         class="w-12 h-12 rounded-full border-2 border-white"
       >

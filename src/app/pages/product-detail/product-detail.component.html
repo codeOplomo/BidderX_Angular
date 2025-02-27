@@ -49,6 +49,11 @@
     </div>
 
     <app-product-tabs></app-product-tabs>
+
+    <app-place-bid-card 
+    *ngIf="shouldShowBidCard()"
+    
+  ></app-place-bid-card>
   </div>
 </div>
 

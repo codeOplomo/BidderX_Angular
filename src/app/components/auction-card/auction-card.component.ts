@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, EventEmitter, Input, OnDestroy, OnInit, Output, SimpleChanges } from '@angular/core';
 import { AuctionVm } from '../../models/view-models/auction-vm.model';
 import { CommonModule } from '@angular/common';
 import { ImagesService } from '../../services/images.service';
@@ -7,13 +7,16 @@ import { AuctionRectionsService } from '../../services/auction-rections.service'
 import { AvatarModule } from 'primeng/avatar';
 import { TooltipModule } from 'primeng/tooltip';
 import { Router, RouterModule } from '@angular/router';
+import { Subject, takeUntil } from 'rxjs';
+import { CountdownService } from '../../services/countdown.service';
 
 @Component({
   selector: 'app-auction-card',
   standalone: true,
   imports: [CommonModule, CardModule, AvatarModule, TooltipModule, RouterModule],
   templateUrl: './auction-card.component.html',
-  styleUrl: './auction-card.component.css'
+  styleUrl: './auction-card.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AuctionCardComponent implements OnInit, OnDestroy {
   @Input() auction!: AuctionVm;
@@ -28,17 +31,24 @@ export class AuctionCardComponent implements OnInit, OnDestroy {
   likes: number = 0;
   isLiked: boolean = false;
   private intervalId: any;
+  private destroy$ = new Subject<void>();
 
   constructor(
     private imagesService: ImagesService,
     private auctionReactionsService: AuctionRectionsService,
+    private countdownService: CountdownService,
+    private cd: ChangeDetectorRef,
     private router: Router
   ) {}
 
   ngOnInit(): void {
-    if (this.auction && this.auction.endTime) {
-      this.startCountdown();
+    if (this.auction?.endTime) {
+      this.updateCountdown(); // Initial update
+      this.countdownService.tick$
+        .pipe(takeUntil(this.destroy$))
+        .subscribe(() => this.updateCountdown());
     }
+
     this.auction = {
       ...this.auction,
       bidders: this.auction.bidders || [] // Fallback to empty array if undefined
@@ -90,9 +100,8 @@ export class AuctionCardComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.intervalId) {
-      clearInterval(this.intervalId);
-    }
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   private startCountdown(): void {
@@ -103,13 +112,17 @@ export class AuctionCardComponent implements OnInit, OnDestroy {
   }
 
   private updateCountdown(): void {
+    const endTimeStr = this.auction.endTime!.endsWith('Z') 
+      ? this.auction.endTime! 
+      : `${this.auction.endTime}Z`; // Append 'Z' for UTC
+    const endDate = new Date(endTimeStr);
+    const endTime = endDate.getTime();
     const now = new Date().getTime();
-    const endTime = new Date(this.auction.endTime!).getTime();
     const distance = endTime - now;
 
     if (distance < 0) {
       this.countdown = { days: 0, hours: 0, minutes: 0, seconds: 0 };
-      clearInterval(this.intervalId);
+      this.cd.markForCheck(); // Trigger change detection
       return;
     }
 
@@ -117,6 +130,7 @@ export class AuctionCardComponent implements OnInit, OnDestroy {
     this.countdown.hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
     this.countdown.minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
     this.countdown.seconds = Math.floor((distance % (1000 * 60)) / 1000);
+    this.cd.markForCheck(); // Trigger change detection for OnPush
   }
 
   

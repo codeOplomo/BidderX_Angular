@@ -11,8 +11,8 @@ import { CollectionShowcaseComponent } from './pages/collection-showcase/collect
 import { CreateAuctionComponent } from './pages/create-auction/create-auction.component';
 import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
 import { authGuard } from './guards/auth.guard';
-import { AdminDashboardComponent } from './pages/admin-dashboard/admin-dashboard.component';
 import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
+import { AuctionsDashComponent } from './pages/auctions-dash/auctions-dash.component';
 
 export const routes: Routes = [
     {
@@ -35,7 +35,7 @@ export const routes: Routes = [
         path: 'dashboard',
         component: DashboardLayoutComponent,
         children: [
-            { path: '', component: AdminDashboardComponent}
+            { path: '', component: AuctionsDashComponent}
         ]
     },
 ];

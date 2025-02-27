@@ -1,7 +1,6 @@
 export interface CreateAuctionVM {
     title: string;
     description: string;
-    startTime: string; 
     startingPrice: string; 
     isInstantAuction: boolean;
     auctionDurationInHours: number; 

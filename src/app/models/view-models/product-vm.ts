@@ -1,3 +1,4 @@
+import { Category } from "./category.model";
 import { CollectionVM } from "./collection-vm";
 
 export interface ProductVM {
@@ -7,7 +8,7 @@ export interface ProductVM {
     condition: string;
     manufacturer: string;
     productionDate: string;
-    categoryId: string;
+    category: Category;
     ownerEmail?: string;
     imageUrl: string;
     featuredImages?: string[];

@@ -97,7 +97,7 @@ export class LoginComponent implements OnInit {
   
       this.authService.login(loginData).subscribe({
         next: () => {
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.errorMessage = err.error?.message || 'Login failed. Please check your credentials.';

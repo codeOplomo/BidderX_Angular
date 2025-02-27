@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AdminDashboardComponent } from './admin-dashboard.component';
+import { RejectDialogComponent } from './reject-dialog.component';
 
-describe('AdminDashboardComponent', () => {
-  let component: AdminDashboardComponent;
-  let fixture: ComponentFixture<AdminDashboardComponent>;
+describe('RejectDialogComponent', () => {
+  let component: RejectDialogComponent;
+  let fixture: ComponentFixture<RejectDialogComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminDashboardComponent]
+      imports: [RejectDialogComponent]
     })
     .compileComponents();
 
-    fixture = TestBed.createComponent(AdminDashboardComponent);
+    fixture = TestBed.createComponent(RejectDialogComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

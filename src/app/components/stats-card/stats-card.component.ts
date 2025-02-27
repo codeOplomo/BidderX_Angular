@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-stats-card',
@@ -8,8 +8,8 @@ import { Component } from '@angular/core';
   styleUrl: './stats-card.component.css'
 })
 export class StatsCardComponent {
-  totalAuctions: number = 157;
-  pendingRequests: number = 12;
-  activeUsers: number = 2453;
-  totalRevenue: number = 134500;
+  @Input() totalAuctions: number = 0;
+  @Input() pendingRequests: number = 0;
+  @Input() activeUsers: number = 0;
+  @Input() totalRevenue: number = 0;
 }

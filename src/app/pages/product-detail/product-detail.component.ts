@@ -19,12 +19,13 @@ import { ProductVM } from '../../models/view-models/product-vm';
 import { ProductsService } from '../../services/products.service';
 import { catchError, of, switchMap } from 'rxjs';
 import { ImagesService } from '../../services/images.service';
+import { PlaceBidCardComponent } from "../../components/place-bid-card/place-bid-card.component";
 
 
 @Component({
   selector: 'app-product-detail',
   standalone: true,
-  imports: [ProductGalleryComponent, ReactiveFormsModule, CommonModule, TabViewModule, DividerModule, TagModule, BadgeModule, MenuModule, AvatarModule, CardModule, ImageModule, ButtonModule, ProductInfoComponent, ProductTabsComponent],
+  imports: [ProductGalleryComponent, ReactiveFormsModule, CommonModule, TabViewModule, DividerModule, TagModule, BadgeModule, MenuModule, AvatarModule, CardModule, ImageModule, ButtonModule, ProductInfoComponent, ProductTabsComponent, PlaceBidCardComponent],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.css'
 })
@@ -62,6 +63,18 @@ export class ProductDetailComponent {
       });
     }
 
+
+    shouldShowBidCard(): boolean {
+      if (!this.product) return false;
+      
+      const now = new Date();
+      const startTime = new Date();
+      
+      // Only show if auction has started
+      return now >= startTime;
+    }
+
+    
     getImageUrl(imagePath: string): string {
       return this.imagesService.getImageUrl(imagePath);
     }

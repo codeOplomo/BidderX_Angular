@@ -7,6 +7,8 @@ export interface AuctionVm {
     description: string;
     startTime: string;
     endTime: string; 
+    duration: number;
+    type: string;
     startingPrice: string;
     currentBid: string;
     product: ProductVM;

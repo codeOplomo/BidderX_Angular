@@ -63,7 +63,6 @@ export class CreateAuctionComponent {
       title: ['', [Validators.required, Validators.maxLength(100)]],
       description: ['', [Validators.required, Validators.maxLength(500)]],
       startingPrice: ['', [Validators.required, Validators.min(0)]],
-      startTime: ['', [Validators.required]],
       isInstantAuction: [false],
       auctionDurationInHours: [null],
       createNewProduct: [false],
@@ -102,7 +101,6 @@ export class CreateAuctionComponent {
     const vm: CreateAuctionVM = {
       title: this.auctionForm.value.title,
       description: this.auctionForm.value.description,
-      startTime: new Date(this.auctionForm.value.startTime).toISOString(),
       startingPrice: BigInt(this.auctionForm.value.startingPrice).toString(),
       isInstantAuction: this.auctionForm.value.isInstantAuction,
       auctionDurationInHours: this.auctionForm.value.isInstantAuction
@@ -215,14 +213,6 @@ export class CreateAuctionComponent {
     this.auctionForm.get('description')?.setValidators([Validators.required, Validators.maxLength(500)]);
     this.auctionForm.get('startingPrice')?.setValidators([Validators.required, Validators.min(0)]);
   
-    // For non-instant auctions, require a start time
-    // (You might still want a startTime even for instant auctions, so adjust this as needed.)
-    if (!isInstantAuction) {
-      this.auctionForm.get('startTime')?.setValidators([Validators.required]);
-    } else {
-      // Optionally, if you want to auto-set the start time or leave it optional, you can clear its validators.
-      this.auctionForm.get('startTime')?.clearValidators();
-    }
   
     if (createNewProduct) {
       // New product validators
