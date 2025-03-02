@@ -19,6 +19,7 @@ import { ToastService } from '../../services/toast.service';
 export class CreateCollectionComponent implements OnInit {
   collectionForm!: FormGroup;
   errorMessage: string = '';
+  coverPreview: string | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -52,6 +53,9 @@ export class CreateCollectionComponent implements OnInit {
     }
   }
   
+  onCoverImageSelected(event: any) {
+    // Similar to logo image handling
+  }
 
   onCancel(): void {
     this.router.navigate(['/profile']);

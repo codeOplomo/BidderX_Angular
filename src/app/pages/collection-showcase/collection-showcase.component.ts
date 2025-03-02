@@ -11,11 +11,13 @@ import { Collection } from '../../store/collections/collection.model';
 import { select, Store } from '@ngrx/store';
 import * as CollectionActions from '../../store/collections/collection.actions';
 import { selectCollectionCoverImage, selectCollectionError, selectCollectionLoading } from '../../store/collections/collection.selectors';
+import { ProductCardComponent } from '../../components/product-card/product-card.component';
+import { ImagesService } from '../../services/images.service';
 
 @Component({
   selector: 'app-collection-showcase',
   standalone: true,
-  imports: [CardModule, ButtonModule, ReactiveFormsModule, CommonModule, ShowcaseHeaderComponent],
+  imports: [CardModule, ButtonModule, ReactiveFormsModule, CommonModule, ShowcaseHeaderComponent, ProductCardComponent],
   templateUrl: './collection-showcase.component.html',
   styleUrl: './collection-showcase.component.css'
 })
@@ -27,6 +29,7 @@ export class CollectionShowcaseComponent {
 
 
   constructor(
+    private imagesService: ImagesService,
     private route: ActivatedRoute,
     private store: Store<{ collection: Collection}>,
   ) {
@@ -37,7 +40,6 @@ export class CollectionShowcaseComponent {
 
   ngOnInit(): void {
     const collectionId = this.route.snapshot.paramMap.get('id');
-    console.log('Collection ID:', collectionId); // Check if the correct ID is being passed
     if (collectionId) {
       this.store.dispatch(CollectionActions.loadCollection({ id: collectionId }));
     }
@@ -45,7 +47,7 @@ export class CollectionShowcaseComponent {
   
   
   ngOnChanges() {
-    console.log(this.collection$);  // Check if this collection is populated
+    console.log(this.collection$);  
   }
   
 
@@ -58,5 +60,13 @@ export class CollectionShowcaseComponent {
     console.log('Delete item:', item);
     // Implement delete functionality
   }
+
+  getImageUrl(imagePath: string): string {
+    return this.imagesService.getImageUrl(imagePath);
+  }
+
+  handleImageUpdate(newImageUrl: string): void {
+  }
+  
 
 }

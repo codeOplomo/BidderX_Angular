@@ -1,30 +1,50 @@
 /* You can add global styles to this file, and also import other style files */
 /* Custom styling for the Edit Profile Split Button */
 /* Global custom button style for all p-button components */
-.p-button, 
-.p-splitbutton .p-button {
-  background-color: #e25544 !important;  /* Darker brown */
-  border-color: #e25544 !important;      /* Match border to background */
-  color: #3e1300 !important;             /* Text color */
+
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* :root {
+  --serif: 'Crimson Pro', serif;
+  --sans-serif: 'DM Sans', sans-serif;
 }
 
-/* Hover effect */
-.p-button:hover, 
-.p-splitbutton .p-button:hover {
-  background-color: #de4332 !important;  /* Slightly darker brown for hover effect */
-  border-color: #cf3f2f !important;      /* Match border on hover */
-  color: #3e1300 !important;             /* Keep text readable */
+body {
+  background-color: #f3f9f2
 }
 
-/* Focus state */
+
+
 .p-button:focus, 
 .p-splitbutton .p-button:focus {
-  box-shadow: none !important;  /* Optionally remove the focus outline */
+  box-shadow: none !important;  
 }
 
-/* Optional: Customize rounded button for all p-buttons */
+
+
 .p-button-rounded {
-  border-radius: 50px !important;  /* Customize rounded corners for all buttons */
+  border-radius: 50px !important; 
 }
 
-  
+
+.p-button.p-button-primary {
+  background-color: #FFA400 !important; 
+  border-color: #FFA400 !important;
+  color: #3e1300 !important;
+}
+
+
+.p-button.p-button-secondary {
+  background-color: #A9B6B1 !important; 
+  border-color: #A9B6B1 !important;
+  color: #3e1300 !important;
+}
+
+
+ */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

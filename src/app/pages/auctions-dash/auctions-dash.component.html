@@ -1,0 +1,40 @@
+<p-toast></p-toast>
+<app-stats-card 
+  [totalAuctions]="stats.totalAuctions"
+  [pendingRequests]="stats.pendingRequests"
+  [activeUsers]="stats.activeUsers"
+  [totalRevenue]="stats.totalRevenue">
+</app-stats-card>
+
+<div class="grid grid-cols-1 gap-6">
+  <!-- Auction requests table -->
+  <div class="bg-white dark:bg-slate-800 p-6 rounded-xl shadow-sm">
+    <h2 class="text-xl font-bold mb-6">Pending Auction Requests</h2>
+
+    <app-auction-requests-table [auctionRequests]="auctionRequests" [currentPage]="currentPage" [pageSize]="pageSize"
+      [totalItems]="totalItems" (pageChange)="onPageChange($event)" (approve)="approveAuction($event)"
+      (reject)="openRejectDialog($event)" (viewDetails)="openAuctionDetails($event)"></app-auction-requests-table>
+
+  </div>
+
+  <!-- Quick actions -->
+  <div class="bg-white dark:bg-slate-800 p-6 rounded-xl">
+    <h2 class="text-xl font-bold mb-6">Quick Actions</h2>
+    <div class="flex flex-col gap-4">
+      <button class="w-full py-3 px-4 bg-[#8B5A2B] text-white rounded-lg hover:bg-[#8B5A2B]/90 transition-colors"
+        (click)="newAuction()">
+        New Auction
+      </button>
+      <button
+        class="w-full py-3 px-4 border border-[#8B5A2B] text-[#8B5A2B] rounded-lg hover:bg-[#8B5A2B]/10 transition-colors"
+        (click)="approveRequests()">
+        Approve Requests
+      </button>
+      <button
+        class="w-full py-3 px-4 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+        (click)="generateReport()">
+        Generate Report
+      </button>
+    </div>
+  </div>
+</div>

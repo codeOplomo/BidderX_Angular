@@ -2,7 +2,6 @@ import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { select, Store } from '@ngrx/store';
 import * as CollectionActions from '../../store/collections/collection.actions';
 import { ImagesService } from '../../services/images.service';
-import { CollectionsService } from '../../services/collections.service';
 import { Observable, Subject, takeUntil } from 'rxjs';
 import { Collection } from '../../store/collections/collection.model';
 import { CommonModule } from '@angular/common';
@@ -24,7 +23,7 @@ export class ShowcaseHeaderComponent implements OnInit {
   coverImageLoading = false;
   private destroy$ = new Subject<void>();
 
-  constructor(private collectionsService: CollectionsService, private imagesService: ImagesService, private store: Store<{ collection: Collection}>) {
+  constructor(private imagesService: ImagesService, private store: Store<{ collection: Collection}>) {
     
     this.collection$ = this.store.pipe(select(selectCollectionCoverImage));
   }

@@ -1,0 +1,12 @@
+<div class="avatar-container">
+    <img
+      *ngIf="imageUrl"
+      [src]="imageUrl"
+      [alt]="name"
+      class="avatar-image"
+    />
+    <div *ngIf="!imageUrl" class="avatar-fallback">
+      {{initials}}
+    </div>
+  </div>
+  

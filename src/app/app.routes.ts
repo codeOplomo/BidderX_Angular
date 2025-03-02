@@ -8,6 +8,11 @@ import { EditPasswordComponent } from './pages/edit-password/edit-password.compo
 import { ProfileComponent } from './pages/profile/profile.component';
 import { CreateCollectionComponent } from './pages/create-collection/create-collection.component';
 import { CollectionShowcaseComponent } from './pages/collection-showcase/collection-showcase.component';
+import { CreateAuctionComponent } from './pages/create-auction/create-auction.component';
+import { ProductDetailComponent } from './pages/product-detail/product-detail.component';
+import { authGuard } from './guards/auth.guard';
+import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
+import { AuctionsDashComponent } from './pages/auctions-dash/auctions-dash.component';
 
 export const routes: Routes = [
     {
@@ -17,12 +22,20 @@ export const routes: Routes = [
             { path: 'login', component: LoginComponent },
             { path: 'register', component: RegisterComponent },
             { path: 'verification', component: VerifyComponent},
-            { path: 'profile', component: ProfileComponent },
-            { path: 'edit-profile', component: EditProfileComponent },
-            { path: 'edit-password', component: EditPasswordComponent },
-            { path: 'create-collection', component: CreateCollectionComponent },
-            { path: 'collection-showcase/:id', component: CollectionShowcaseComponent },
-            // Add other routes here
+            { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+            { path: 'edit-profile', component: EditProfileComponent, canActivate: [authGuard] },
+            { path: 'edit-password', component: EditPasswordComponent, canActivate: [authGuard] },
+            { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard], data: { roles: ['OWNER'] } },
+            { path: 'create-auction', component: CreateAuctionComponent, canActivate: [authGuard], data: { roles: ['OWNER'] } },
+            { path: 'collection-showcase/:id', component: CollectionShowcaseComponent},
+            { path: 'product-detail/:id', component: ProductDetailComponent}
         ]
-    }
+    },
+    {
+        path: 'dashboard',
+        component: DashboardLayoutComponent,
+        children: [
+            { path: '', component: AuctionsDashComponent}
+        ]
+    },
 ];

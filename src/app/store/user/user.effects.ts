@@ -13,6 +13,7 @@ export class UserEffects {
   private readonly userService = inject(UserService);
   private destroy$ = new Subject<void>();
 
+  
   loadProfile$ = createEffect(() => this.actions$.pipe(
     ofType(UserActions.loadUserProfile),
     switchMap(() => this.userService.getProfile().pipe(

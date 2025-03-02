@@ -28,9 +28,7 @@ import { Toast } from 'primeng/toast';
     PasswordModule, 
     FormsModule, 
     InputGroupAddonModule, 
-    DividerModule, 
-    IconField, 
-    InputIcon
+    DividerModule,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
@@ -95,13 +93,11 @@ export class LoginComponent implements OnInit {
       const loginData = { email, password };
   
       this.loading = true;
-      this.errorMessage = ''; // Clear any previous error messages
+      this.errorMessage = ''; 
   
       this.authService.login(loginData).subscribe({
         next: () => {
-          // Successful login 
-          // Token is now stored in the service's login method
-          this.router.navigate(['/profile']);
+          this.router.navigate(['/dashboard']);
         },
         error: (err) => {
           this.errorMessage = err.error?.message || 'Login failed. Please check your credentials.';
@@ -112,20 +108,7 @@ export class LoginComponent implements OnInit {
     }
   }
   
-
-  // private redirectBasedOnRole(role: string) {
-  //   switch(role) {
-  //     case 'ADMIN':
-  //       this.router.navigate(['/admin-dashboard']);
-  //       break;
-  //     case 'OWNER':
-  //       this.router.navigate(['/owner-dashboard']);
-  //       break;
-  //     case 'BIDDER':
-  //       this.router.navigate(['/bidder-dashboard']);
-  //       break;
-  //     default:
-  //       this.router.navigate(['/']);
-  //   }
-  // }
+  navigateToRegister(): void {
+    this.router.navigate(['/register']);
+  }
 }

@@ -178,12 +178,4 @@ export class AuthService {
     }
   }
   
-  // private isValidToken(token: string): boolean {
-  //   try {
-  //     const decoded = this.decodeToken(token);
-  //     return decoded && decoded.exp > Date.now() / 1000;
-  //   } catch {
-  //     return false;
-  //   }
-  // }
 }

@@ -1,0 +1,62 @@
+/* Logo and Brand Styling */
+.logo-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  
+    .logo-icon {
+      fill: var(--primary-color);
+    }
+  
+    .brand-title {
+      font-size: 1.75rem;
+      font-weight: bold;
+      color: var(--text-primary);
+    }
+  }
+  
+  /* User Menu and Authentication Area */
+  .user-container {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  
+    .user-dropdown-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      border: none;
+      padding: 0.5rem;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+  
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.05);
+      }
+  
+      .user-name {
+        font-weight: 500;
+        color: var(--text-primary);
+      }
+  
+      i.pi {
+        font-size: 1rem;
+        color: var(--text-secondary);
+      }
+    }
+  
+    .get-started-btn {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      border-radius: 4px;
+      transition: background-color 0.3s ease;
+  
+      &:hover {
+        background-color: var(--primary-color-dark);
+      }
+    }
+  }
+  

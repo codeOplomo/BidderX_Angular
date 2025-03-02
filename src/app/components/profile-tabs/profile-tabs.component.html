@@ -1,57 +1,105 @@
-<div class="profile-tabs">
-  <!-- Tabs -->
-  <div class="tabs">
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'products'" 
-      (click)="selectTab('products')">
-      Products
-    </button>
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'collections'" 
-      (click)="selectTab('collections')">
-      Collections
-    </button>
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'policies'" 
-      (click)="selectTab('policies')">
-      Policies
-    </button>
-    <button 
-      class="tab-button" 
-      [class.active]="activeTab === 'reviews'" 
-      (click)="selectTab('reviews')">
-      Reviews ({{ userData?.reviews?.length || 0 }})
-    </button>
+<div class="mt-16 sm:mt-24 px-2 sm:px-4 md:px-8">
+  <!-- Responsive Tab Navigation -->
+  <div class="overflow-x-auto pb-2">
+    <nav class="flex gap-2 sm:gap-4 md:gap-8 bg-white/80 shadow-[0_4px_10px_rgba(0_0_0_0.1)] rounded-lg p-1.5 sm:p-2 sticky top-0 border border-[#A9B6B1]/30 sm:border-2 font-lato min-w-max">
+      <button 
+        *ngFor="let tab of itemsToShow" 
+        class="py-1 sm:py-[0.5rem] px-3 sm:px-[1.8rem] cursor-pointer text-xs sm:text-sm md:text-base transition-all duration-200 relative rounded whitespace-nowrap"
+        [ngClass]="{ 
+          'text-white bg-[#FFA400] font-semibold shadow-[0_2px_4px_rgba(255_164_0_0.2)] sm:shadow-[0_4px_8px_rgba(255_164_0_0.2)] hover:bg-[#FF8C00] hover:shadow-[0_3px_6px_rgba(255_164_0_0.3)] sm:hover:shadow-[0_6px_12px_rgba(255_164_0_0.3)]': activeTab === tab,
+          'bg-[#F2F2F2] text-black hover:bg-[#A9B6B1] hover:shadow-[0_2px_4px_rgba(0_0_0_0.15)] sm:hover:shadow-[0_4px_8px_rgba(0_0_0_0.15)] hover:translate-y-[-1px] sm:hover:translate-y-[-2px]': activeTab !== tab
+        }" 
+        (click)="selectTab(tab)">
+        {{ tab | titlecase }}
+      </button>
+    </nav>
+    
   </div>
 
-  <!-- Tab Content -->
-  <div class="tab-content">
+  <div class="tab-content fade-in">
     <ng-container [ngSwitch]="activeTab">
-      <div *ngSwitchCase="'products'">
-        <h3>Products</h3>
-        <p>Display products here...</p>
+      <!-- Auctions Tab -->
+      <div *ngSwitchCase="'auctions'" class="mt-4 sm:mt-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          <app-auction-card *ngFor="let auction of auctions" [auction]="auction" (likeToggled)="onLikeToggled($event)"
+            class="hover:scale-[1.02] transition-transform">
+          </app-auction-card>
+        </div>
+        <ng-template #noAuctions>
+          <p class="text-center text-slate-500 py-4 sm:py-8">No auctions available</p>
+        </ng-template>
       </div>
-      <div *ngSwitchCase="'collections'">
+
+      <!-- Collections Tab -->
+      <div *ngSwitchCase="'collections'" class="mt-4 sm:mt-8">
         <app-collections-tab [collections]="collections"></app-collections-tab>
       </div>
-      <div *ngSwitchCase="'policies'">
-        <h3>Policies</h3>
-        <p>{{ userData?.policies }}</p>
-      </div>
-      <div *ngSwitchCase="'reviews'">
-        <h3>Reviews</h3>
-        <div *ngIf="userData?.reviews?.length > 0; else noReviews">
-          <ul>
-            <li *ngFor="let review of userData.reviews">{{ review }}</li>
-          </ul>
+
+      <!-- Products Tab -->
+      <!-- <div *ngSwitchCase="'products'" class="mt-4 sm:mt-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          <div *ngFor="let product of products"
+            class="bg-white rounded-xl shadow-lg hover:scale-[1.02] transition-transform cursor-pointer">
+            <img [src]="getImageUrl(product.imageUrl)" class="w-full h-36 sm:h-48 object-cover rounded-t-xl"
+              alt="Product image">
+
+            <div class="p-3 sm:p-4 border-t-2 sm:border-t-4 border-[#FFA400]">
+              <h3 class="font-playfair text-sm sm:text-base text-[#3e1300]">{{ product.title }}</h3>
+              <div class="mt-2 sm:mt-4 flex justify-between items-center">
+                <span class="text-lg sm:text-2xl font-bold text-[#FFA400]">{{ product.currentBid | currency }}</span>
+                <button class="bg-slate-800 text-white text-xs sm:text-sm px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg hover:bg-slate-700 transition-colors">
+                  View
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <ng-template #noReviews>
-          <p>No reviews yet.</p>
+      </div> -->
+
+      <!-- Liked Tab -->
+      <div *ngSwitchCase="'liked'" class="mt-4 sm:mt-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          <app-auction-card *ngFor="let auction of likedAuctions" [auction]="auction"
+            (likeToggled)="onLikeToggled($event)" class="hover:scale-[1.02] transition-transform">
+          </app-auction-card>
+        </div>
+      </div>
+
+      <!-- Victory items-->
+      <div *ngSwitchCase="'victories'" class="mt-4 sm:mt-8">
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+          <app-auction-card 
+            *ngFor="let auction of victories" 
+            [auction]="auction"
+            (likeToggled)="onLikeToggled($event)"
+            class="hover:scale-[1.02] transition-transform">
+          </app-auction-card>
+        </div>
+        <ng-template #noVictories>
+          <p class="text-center text-slate-500 py-4 sm:py-8">No victory items yet</p>
         </ng-template>
       </div>
     </ng-container>
+
+    <div class="mt-8 sm:mt-12 mb-4 sm:mb-6"></div>
+    
+    <p-paginator 
+      *ngIf="totalRecords > 0" 
+      (onPageChange)="onPageChange($event)" 
+      [first]="first" 
+      [rows]="rows"
+      [totalRecords]="totalRecords" 
+      [showCurrentPageReport]="true" 
+      [showPageLinks]="false"
+      [showJumpToPageDropdown]="false" 
+      currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+      class="mt-8 sm:mt-12 border-t border-slate-200 pt-4 sm:pt-6 text-xs sm:text-sm">
+    </p-paginator>
   </div>
+
+  <!-- Optional Floating Action Button - Made more responsive -->
+  <button *ngIf="activeTab === 'products'"
+    class="fixed bottom-4 sm:bottom-8 right-4 sm:right-8 bg-slate-800 text-white p-3 sm:p-4 rounded-full shadow-lg hover:shadow-xl transition-shadow hover:bg-slate-700">
+    <span class="material-icons text-sm sm:text-base">add</span>
+  </button>
 </div>

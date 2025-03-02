@@ -1,0 +1,19 @@
+<div class="bg-white rounded-lg shadow-md hover:-translate-y-1 transition-transform duration-300 group">
+  <div class="relative aspect-square overflow-hidden rounded-t-lg">
+      <img
+          [src]="getImageUrl(product.imageUrl ?? '') || '/assets/placeholder.jpg'"
+          [alt]="product.title"
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+      >
+      <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+  </div>
+  <div class="p-4">
+      <h3 class="font-semibold text-lg mb-1">{{ product.title }}</h3>
+      <p class="text-sm text-gray-600 mb-2">{{ product.description }}</p>
+      <div class="flex items-center gap-2 text-xs text-gray-500">
+          <span class="px-2 py-1 bg-gray-100 rounded-full">{{ product.condition }}</span>
+          <span class="px-2 py-1 bg-gray-100 rounded-full">{{ product.manufacturer }}</span>
+          <span class="px-2 py-1 bg-gray-100 rounded-full">{{ product.category?.name }}</span>
+      </div>
+  </div>
+</div>

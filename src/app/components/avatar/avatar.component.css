@@ -1,0 +1,29 @@
+.avatar-container {
+    position: relative;
+    display: inline-block;
+    border-radius: 50%; /* rounded-full */
+    overflow: hidden;
+  }
+  
+  .avatar-image {
+    width: 100%;   /* w-full */
+    height: 100%;  /* h-full */
+    object-fit: cover; /* object-cover */
+  }
+  
+  .avatar-fallback {
+    display: flex;           /* flex */
+    width: 100%;             /* w-full */
+    height: 100%;            /* h-full */
+    align-items: center;     /* items-center */
+    justify-content: center; /* justify-center */
+    background-color: #f4f4f5; /* bg-zinc-100 */
+  }
+  
+  /* Dark mode using prefers-color-scheme */
+  @media (prefers-color-scheme: dark) {
+    .avatar-fallback {
+      background-color: #27272a; /* dark:bg-zinc-800 */
+    }
+  }
+  
