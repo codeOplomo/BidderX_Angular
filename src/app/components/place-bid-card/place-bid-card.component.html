@@ -1,4 +1,10 @@
 <div class="flex flex-col gap-8 p-6 rounded-2xl bg-white/80 shadow-md backdrop-blur-sm">
+  <div *ngIf="auction?.status === 'PENDING'" class="text-center p-4 text-[#3e1300]">
+    <i class="fas fa-clock text-2xl mb-2"></i>
+    <p class="font-medium">This auction is awaiting approval</p>
+    <p class="text-sm">Check back later when it's approved</p>
+  </div>
+  <ng-container *ngIf="auction?.status === 'APPROVED'">
     <!-- Auction Status & Countdown -->
     <div class="flex flex-col gap-4 mb-6">
       <!-- Winning Bid -->
@@ -78,6 +84,7 @@
         Minimum bid:  SwETH
       </div>
     </div>
+  </ng-container>
   </div>
 
 <!--   

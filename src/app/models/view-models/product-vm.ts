@@ -10,6 +10,7 @@ export interface ProductVM {
     productionDate: string;
     category: Category;
     ownerEmail?: string;
+    auctionId?: string;
     imageUrl: string;
     featuredImages?: string[];
 

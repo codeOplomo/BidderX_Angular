@@ -17,9 +17,11 @@ import { ProductTabsComponent } from "../../components/product-tabs/product-tabs
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductVM } from '../../models/view-models/product-vm';
 import { ProductsService } from '../../services/products.service';
-import { catchError, of, switchMap } from 'rxjs';
+import { catchError, of, switchMap, tap } from 'rxjs';
 import { ImagesService } from '../../services/images.service';
 import { PlaceBidCardComponent } from "../../components/place-bid-card/place-bid-card.component";
+import { AuctionVm } from '../../models/view-models/auction-vm.model';
+import { AuctionsService } from '../../services/auctions.service';
 
 
 @Component({
@@ -31,6 +33,7 @@ import { PlaceBidCardComponent } from "../../components/place-bid-card/place-bid
 })
 export class ProductDetailComponent {
   product: ProductVM | null = null;
+  auction: AuctionVm | null = null;
   loading = true;
   error: string | null = null;
 
@@ -38,6 +41,7 @@ export class ProductDetailComponent {
     private route: ActivatedRoute,
     private productService: ProductsService,
     private imagesService: ImagesService,
+    private auctionsService: AuctionsService,
     private router: Router,
     ) {}
 
@@ -45,36 +49,45 @@ export class ProductDetailComponent {
       this.route.params.pipe(
         switchMap(params => {
           const productId = params['id'];
-          return this.productService.getProductById(productId).pipe(
-            catchError(error => {
-              this.error = 'Failed to load product';
-              this.loading = false;
-              return of(null);
-            })
-          );
+          return this.productService.getProductById(productId);
+        }),
+        tap(response => {
+          if (response?.data) {
+            this.product = response.data;
+          } else {
+            this.error = 'Product not found';
+          }
+          this.loading = false;
+        }),
+        switchMap(() => {
+          // Only fetch auction if auctionId exists on the product
+          if (this.product?.auctionId) {
+            return this.auctionsService.getAuctionById(this.product.auctionId);
+          }
+          return of(null);
         })
-      ).subscribe(response => {
-        if (response?.data) {
-          this.product = response.data;
-        } else {
-          this.error = 'Product not found';
+      ).subscribe(auctionResponse => {
+        if (auctionResponse?.data) {
+          this.auction = auctionResponse.data;
         }
-        this.loading = false;
+      }, error => {
+        console.error('Error fetching auction:', error);
       });
     }
 
 
-    shouldShowBidCard(): boolean {
-      if (!this.product) return false;
-      
-      const now = new Date();
-      const startTime = new Date();
-      
-      // Only show if auction has started
-      return now >= startTime;
+     getAuctionTypeDisplay(type: string | undefined): string {
+      if (!type) return 'Standard Auction';
+      switch (type.toUpperCase()) {
+        case 'TIMED':
+          return 'Timed Auction';
+        case 'INSTANT':
+          return 'Buy It Now';
+        default:
+          return type;
+      }
     }
-
-    
+  
     getImageUrl(imagePath: string): string {
       return this.imagesService.getImageUrl(imagePath);
     }

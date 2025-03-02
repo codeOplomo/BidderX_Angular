@@ -15,6 +15,16 @@ export class ProductGalleryComponent {
   selectedThumb = 0;
   thumbnails: string[] = [];
 
+  // In your component class
+showLightbox = false;
+
+openLightbox(): void {
+  this.showLightbox = true;
+}
+
+closeLightbox(): void {
+  this.showLightbox = false;
+}
   constructor(private imagesService: ImagesService) {}
 
   ngOnChanges(changes: SimpleChanges): void {

@@ -12,6 +12,11 @@ import * as UserActions from '../../store/user/user.actions';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ImagesService } from '../../services/images.service';
+import { WalletVM } from '../../models/view-models/wallet-vm';
+import { WalletService } from '../../services/wallet.service';
+import { MatDialog } from '@angular/material/dialog';
+import { ProfileVM } from '../../models/view-models/profile';
+import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
 
 @Component({
   selector: 'app-profile-header',
@@ -21,11 +26,12 @@ import { ImagesService } from '../../services/images.service';
   styleUrl: './profile-header.component.css'
 })
 export class ProfileHeaderComponent implements OnDestroy {
-  @Input() user$?: Observable<any>;
+  @Input() user$?: Observable<ProfileVM>;
   @Input() rating?: number;
   @Input() imageLoading?: boolean;
   @Input() coverImageLoading = false;
   private destroy$ = new Subject<void>();
+  wallet$!: Observable<WalletVM>;
 
   editItems: any[] = [
     {
@@ -40,7 +46,40 @@ export class ProfileHeaderComponent implements OnDestroy {
     }
   ];
 
-  constructor(private imageService: ImagesService, private userService: UserService, private authService: AuthService, private store: Store, private router: Router) {}
+  constructor(
+    private imageService: ImagesService, 
+    private userService: UserService, 
+    private authService: AuthService,
+    private walletService: WalletService, 
+    private dialog: MatDialog,
+    private store: Store, 
+    private router: Router
+  ) {}
+
+  loadWallet() {
+    this.wallet$ = this.walletService.getWallet();
+  }
+
+  openDepositDialog(): void {
+    const dialogRef = this.dialog.open(DepositDialogComponent, {
+      width: '400px',
+      data: { currentBalance: this.wallet$ ? (this.wallet$ as any).balance : 0 }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.walletService.depositFunds(result.amount).subscribe({
+          next: () => {
+            this.loadWallet(); // Refresh wallet data
+            // Show success notification
+          },
+          error: (err) => {
+            // Handle error
+          }
+        });
+      }
+    });
+  }
 
   getImageUrl(imagePath: string): string {
     return this.imageService.getImageUrl(imagePath);

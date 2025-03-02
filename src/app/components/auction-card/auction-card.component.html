@@ -1,24 +1,29 @@
-<div class="relative group max-w-[450px] w-full">
-  <!-- Card Thumbnail -->
-  <div class="relative h-[300px] rounded-lg overflow-hidden">
-    <img [src]="getImageUrl(auction.product.imageUrl)"
-      class="w-full h-full object-cover block transition-transform duration-300 group-hover:scale-110" />
+<div class="relative group max-w-[350px] w-full bg-white/90 rounded-lg shadow-lg border-2 border-[#A9B6B1]/30 hover:shadow-xl transition-all duration-300">
+  <!-- Pending Badge -->
+  <div *ngIf="auction.status === 'PENDING'" 
+     class="absolute top-0 right-0 m-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded z-50">
+  Pending
+</div>
 
-    <!-- Hover Overlay with Place Bid Button -->
-    <div class="absolute inset-0 flex items-center justify-center bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto">
-      <button 
-        (click)="goToProductDetail(auction.product.id)"
-        class="bg-amber-400 text-white px-6 py-3 rounded-lg hover:bg-amber-500 transition-colors text-lg font-semibold"
-      >
+  <!-- Card Thumbnail -->
+  <div class="relative h-[300px] rounded-t-lg overflow-hidden">
+    <img [src]="getImageUrl(auction.product.imageUrl)"
+         class="w-full h-full object-cover block transition-transform duration-300 group-hover:scale-110" />
+
+    <!-- Hover Overlay with Place Bid Button (only if auction is not pending) -->
+    <div *ngIf="auction.status === 'APPROVED'"
+         class="absolute inset-0 flex items-center justify-center bg-[#3e1300]/70 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none group-hover:pointer-events-auto backdrop-blur-sm">
+      <button (click)="goToProductDetail(auction.product.id)"
+              class="bg-[#FFA400] text-white px-6 py-3 rounded-lg hover:bg-[#FF8C00] transition-colors text-lg font-semibold shadow-md hover:shadow-lg">
         Place Bid
       </button>
     </div>
-    
-    <!-- Countdown -->
+
+    <!-- Countdown (remains unchanged) -->
     <div *ngIf="auction.endTime" [attr.data-date]="auction.endTime"
-      class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-6 z-10">
+         class="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex items-center gap-4 z-10">
       <!-- Days -->
-      <div class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg p-3 shadow-lg shadow-black/10">
+      <div class="flex flex-col items-center bg-[#3e1300]/80 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-[#A9B6B1]/20">
         <span class="text-2xl font-bold mb-1 text-white">{{ countdown.days }}</span>
         <span class="text-xs font-medium text-gray-300">Days</span>
       </div>
@@ -26,7 +31,7 @@
       <span class="text-xl font-bold text-white/80">:</span>
 
       <!-- Hours -->
-      <div class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg p-3 shadow-lg shadow-black/10">
+      <div class="flex flex-col items-center bg-[#3e1300]/80 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-[#A9B6B1]/20">
         <span class="text-2xl font-bold mb-1 text-white">{{ countdown.hours }}</span>
         <span class="text-xs font-medium text-gray-300">Hrs</span>
       </div>
@@ -34,7 +39,7 @@
       <span class="text-xl font-bold text-white/80">:</span>
 
       <!-- Minutes -->
-      <div class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg p-3 shadow-lg shadow-black/10">
+      <div class="flex flex-col items-center bg-[#3e1300]/80 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-[#A9B6B1]/20">
         <span class="text-2xl font-bold mb-1 text-white">{{ countdown.minutes }}</span>
         <span class="text-xs font-medium text-gray-300">Mins</span>
       </div>
@@ -42,7 +47,7 @@
       <span class="text-xl font-bold text-white/80">:</span>
 
       <!-- Seconds -->
-      <div class="flex flex-col items-center bg-white/10 backdrop-blur-sm rounded-lg p-3 shadow-lg shadow-black/10">
+      <div class="flex flex-col items-center bg-[#3e1300]/80 backdrop-blur-sm rounded-lg p-3 shadow-lg border border-[#A9B6B1]/20">
         <span class="text-2xl font-bold mb-1 text-white">{{ countdown.seconds }}</span>
         <span class="text-xs font-medium text-gray-300">Secs</span>
       </div>
@@ -50,44 +55,43 @@
   </div>
 
   <!-- Card Content -->
-  <div class="p-4">
+  <div class="p-5 bg-gradient-to-b from-white to-[#f3f9f2]/50 rounded-b-lg">
     <!-- Title -->
-    <h4
-      class="text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer transition-all duration-600 hover:text-amber-400">
+    <h4 class="text-lg font-semibold whitespace-nowrap overflow-hidden text-ellipsis cursor-pointer transition-all duration-300 text-[#3e1300] hover:text-[#FFA400]">
       <a (click)="goToProductDetail(auction.product.id)" class="no-underline">{{ auction.title }}</a>
     </h4>
 
     <!-- Description -->
-    <p>{{ auction.description }}</p>
+    <p class="text-slate-700 mt-2 text-sm">{{ auction.description }}</p>
 
     <!-- Bidder Info -->
-    <div class="mt-4 pt-4 border-t border-white/10">
+    <div class="mt-4 pt-4 border-t border-[#A9B6B1]/30">
       <!-- Bidder Avatars -->
       <div class="flex items-center gap-2 mb-2">
         <div class="flex mr-2">
           <p-avatar *ngFor="let bidder of auction?.bidders" [image]="bidder?.imageUrl"
-            pTooltip="{{ bidder?.profileIdentifier }}" tooltipPosition="top" size="normal" shape="circle"
-            class="w-6 h-6 rounded-full border-2 border-surface-card bg-primary-color -ml-2 first:ml-0">
+                    pTooltip="{{ bidder?.profileIdentifier }}" tooltipPosition="top" size="normal" shape="circle"
+                    class="w-6 h-6 rounded-full border-2 border-white bg-[#A9B6B1] -ml-2 first:ml-0">
           </p-avatar>
         </div>
-        <span class="text-sm text-gray-400">{{ auction.bidders.length || 0 }}+ Place Bid</span>
+        <span class="text-sm text-slate-500">{{ auction.bidders.length || 0 }}+ Place Bid</span>
       </div>
 
       <!-- Bid Details -->
       <div class="flex justify-between items-center">
         <div class="flex flex-col">
-          <span class="text-sm text-gray-400">Current Bid</span>
-          <span class="text-lg font-semibold text-primary-color">{{ auction.currentBid }} WETH</span>
+          <span class="text-sm text-slate-500">Current Bid</span>
+          <span class="text-lg font-semibold text-[#FFA400]">{{ auction.currentBid }} WETH</span>
         </div>
 
         <!-- Like Container -->
         <div>
-          <button
-            class="flex items-center gap-2 p-2 border-none bg-transparent cursor-pointer transition-all duration-200"
-            (click)="toggleLike()" [ngClass]="{ 'text-amber-400': isLiked }">
+          <button class="flex items-center gap-2 p-2 border-none bg-transparent cursor-pointer transition-all duration-200"
+                  (click)="toggleLike()"
+                  [ngClass]="{ 'text-[#FFA400]': isLiked, 'text-slate-400': !isLiked }">
             <i class="pi text-xl transition-all duration-200 hover:scale-110"
-              [ngClass]="{ 'pi-heart-fill': isLiked, 'pi-heart': !isLiked }"></i>
-            <span class="text-sm text-gray-500">{{ likes }}</span>
+               [ngClass]="{ 'pi-heart-fill': isLiked, 'pi-heart': !isLiked }"></i>
+            <span class="text-sm" [ngClass]="{ 'text-[#FFA400]': isLiked, 'text-slate-500': !isLiked }">{{ likes }}</span>
           </button>
         </div>
       </div>

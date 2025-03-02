@@ -32,7 +32,6 @@ import { ProfileTabsComponent } from '../../components/profile-tabs/profile-tabs
     MenuModule,
     HttpClientModule,
     ButtonModule,
-    NgIf,
     ProfileTabsComponent,
     TabsModule
   ],
@@ -83,16 +82,4 @@ export class ProfileComponent implements OnInit, OnDestroy {
     this.destroy$.complete();
   }
 
-  isOwner(): boolean {
-    return this.authService.hasRole('OWNER');
-  }
-
-
-  onCreateCollection() {
-    this.router.navigate(['/create-collection']);
-  }
-
-  onCreateAuction() {
-    this.router.navigate(['/create-auction']);
-  }
 }

@@ -15,10 +15,27 @@ export class AuctionsService {
 
   constructor(private http: HttpClient) {}
 
+  getAuctionById(auctionId: string): Observable<ApiResponse<AuctionVm>> {
+    return this.http.get<ApiResponse<AuctionVm>>(`${this.apiUrl}/${auctionId}`);
+  }
+  
+
   getAuctionsStats(): Observable<ApiResponse<AuctionStats>> {
     return this.http.get<ApiResponse<AuctionStats>>(`${this.apiUrl}/stats`);
   }
 
+  getUserWonAuctionsByEmail(
+    email: string,
+    page: number = 0,
+    size: number = 12
+  ): Observable<ApiResponse<PaginatedApiResponse<AuctionVm>>> {
+    const params = new HttpParams()
+      .set('email', email)
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<ApiResponse<PaginatedApiResponse<AuctionVm>>>(`${this.apiUrl}/victories`, { params });
+  }
   
   getPendingAuctions(page: number = 0, size: number = 10): Observable<ApiResponse<PaginatedApiResponse<AuctionVm>>> {
     const params = new HttpParams()

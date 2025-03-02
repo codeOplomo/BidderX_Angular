@@ -25,8 +25,8 @@ export const routes: Routes = [
             { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
             { path: 'edit-profile', component: EditProfileComponent, canActivate: [authGuard] },
             { path: 'edit-password', component: EditPasswordComponent, canActivate: [authGuard] },
-            { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard] },
-            { path: 'create-auction', component: CreateAuctionComponent, canActivate: [authGuard] },
+            { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard], data: { roles: ['OWNER'] } },
+            { path: 'create-auction', component: CreateAuctionComponent, canActivate: [authGuard], data: { roles: ['OWNER'] } },
             { path: 'collection-showcase/:id', component: CollectionShowcaseComponent},
             { path: 'product-detail/:id', component: ProductDetailComponent}
         ]

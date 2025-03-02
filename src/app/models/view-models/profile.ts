@@ -1,3 +1,5 @@
+import { WalletVM } from "./wallet-vm";
+
 export interface ProfileVM {
     email: string;
     profileIdentifier: string;
@@ -5,4 +7,6 @@ export interface ProfileVM {
     firstName: string;
     lastName: string;
     imageUrl: string;
+    coverImageUrl: string;
+    wallet?: WalletVM;
 }
