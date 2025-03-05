@@ -3,6 +3,8 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { WalletVM } from '../models/view-models/wallet-vm';
 import { DepositRequest } from '../models/view-models/deposit-request';
+import { ConnectWalletRequest } from '../models/view-models/connect-wallet-request';
+import { ApiResponse } from '../models/view-models/api-response.model';
 
 @Injectable({
   providedIn: 'root'
@@ -12,12 +14,14 @@ export class WalletService {
 
   constructor(private http: HttpClient) { }
 
-  depositFunds(amount: number): Observable<WalletVM> {
-    const request: DepositRequest = { amount };
-    return this.http.post<WalletVM>(`${this.apiUrl}/deposit`, request);
+  connectWallet(request: ConnectWalletRequest): Observable<ApiResponse<WalletVM>> {
+    return this.http.post<ApiResponse<WalletVM>>(`${this.apiUrl}/connect`, request);
   }
 
-  getWallet(): Observable<WalletVM> {
-    return this.http.get<WalletVM>(`${this.apiUrl}`);
+  getWallet(): Observable<ApiResponse<WalletVM>> {
+    return this.http.get<ApiResponse<WalletVM>>(`${this.apiUrl}`);
+  }
+  depositFunds(request: DepositRequest): Observable<ApiResponse<WalletVM>> {
+    return this.http.post<ApiResponse<WalletVM>>(`${this.apiUrl}/deposit`, request);
   }
 }

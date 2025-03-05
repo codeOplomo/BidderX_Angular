@@ -4,8 +4,8 @@ import { Observable, of, Subject } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import * as UserActions from './user.actions';
-import { User } from './user.model';
 import { Action } from '@ngrx/store';
+import { ProfileVM } from '../../models/view-models/profile';
 
 @Injectable()
 export class UserEffects {
@@ -17,7 +17,10 @@ export class UserEffects {
   loadProfile$ = createEffect(() => this.actions$.pipe(
     ofType(UserActions.loadUserProfile),
     switchMap(() => this.userService.getProfile().pipe(
-      map(user => UserActions.loadUserProfileSuccess({ user })),
+      // Extract the .data property from the API response
+      map(apiResponse => UserActions.loadUserProfileSuccess({ 
+        user: apiResponse.data  // This is the actual ProfileVM
+      })),
       catchError(error => of(UserActions.loadUserProfileFailure({ error })))
     ))
   ));
@@ -32,13 +35,14 @@ export class UserEffects {
       return this.userService.updateProfile(profileData).pipe(
         // Map the API response to match the User interface
         map(response => {
-          const updatedUser: User = {
+          const updatedUser: ProfileVM = {
             profileIdentifier: response.data.profileIdentifier,
             firstName: response.data.firstName,
             lastName: response.data.lastName,
             phoneNumber: response.data.phoneNumber,
             email: response.data.email,
-            imageUrl: response.data.imageUrl
+            imageUrl: response.data.imageUrl,
+            hasWallet: response.data.hasWallet,
           };
           return UserActions.updateUserProfileSuccess({ user: updatedUser });
         }),

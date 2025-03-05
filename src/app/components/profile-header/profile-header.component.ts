@@ -1,5 +1,5 @@
 import { Component, Input, OnDestroy } from '@angular/core';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { catchError, map, Observable, of, Subject, takeUntil, tap } from 'rxjs';
 import { UserService } from '../../services/user.service';
 import { SplitButtonModule } from 'primeng/splitbutton';
 import { TagModule } from 'primeng/tag';
@@ -8,20 +8,24 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
 import { Store } from '@ngrx/store';
-import * as UserActions from '../../store/user/user.actions';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ImagesService } from '../../services/images.service';
 import { WalletVM } from '../../models/view-models/wallet-vm';
 import { WalletService } from '../../services/wallet.service';
-import { MatDialog } from '@angular/material/dialog';
 import { ProfileVM } from '../../models/view-models/profile';
-import { DepositDialogComponent } from '../deposit-dialog/deposit-dialog.component';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { DialogModule } from 'primeng/dialog';
+import { DropdownModule } from 'primeng/dropdown';
+import { ConnectWalletRequest } from '../../models/view-models/connect-wallet-request';
+import { DepositRequest } from '../../models/view-models/deposit-request';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { ApiResponse } from '../../models/view-models/api-response.model';
 
 @Component({
   selector: 'app-profile-header',
   standalone: true,
-  imports: [SplitButtonModule, TagModule, RatingModule, CommonModule, FormsModule, ButtonModule],
+  imports: [SplitButtonModule, TagModule, RatingModule, CommonModule, FormsModule, ButtonModule, MatProgressSpinnerModule, DialogModule, DropdownModule, InputNumberModule],
   templateUrl: './profile-header.component.html',
   styleUrl: './profile-header.component.css'
 })
@@ -31,7 +35,22 @@ export class ProfileHeaderComponent implements OnDestroy {
   @Input() imageLoading?: boolean;
   @Input() coverImageLoading = false;
   private destroy$ = new Subject<void>();
+  
   wallet$!: Observable<WalletVM>;
+  walletLoading = false;
+  hasWallet = false;
+  showDepositDialog = false;
+  showConnectWalletDialog = false;
+  depositAmount = 0;
+  walletAddress = '';
+  isFiatWallet = true;
+  currencyCode = [
+    { label: 'USD', value: 'USD' },
+    { label: 'EUR', value: 'EUR' },
+    // add more fiat currencies as needed
+  ];
+  selectedCurrency = 'USD'; 
+
 
   editItems: any[] = [
     {
@@ -50,35 +69,64 @@ export class ProfileHeaderComponent implements OnDestroy {
     private imageService: ImagesService, 
     private userService: UserService, 
     private authService: AuthService,
-    private walletService: WalletService, 
-    private dialog: MatDialog,
+    private walletService: WalletService,
     private store: Store, 
     private router: Router
   ) {}
 
-  loadWallet() {
-    this.wallet$ = this.walletService.getWallet();
+  ngOnInit() {
   }
 
-  openDepositDialog(): void {
-    const dialogRef = this.dialog.open(DepositDialogComponent, {
-      width: '400px',
-      data: { currentBalance: this.wallet$ ? (this.wallet$ as any).balance : 0 }
-    });
+  handleWalletAction(hasWallet: boolean) {
+    if (hasWallet) {
+      this.openDepositDialog();
+    } else {
+      this.showConnectWalletDialog = true;
+    }
+  }
+  connectWallet(): void {
+    if (this.selectedCurrency && this.depositAmount > 0) {
+      console.log(this.selectedCurrency);
+      const request: ConnectWalletRequest = {
+        type: 'FIAT',
+        currencyCode: this.selectedCurrency,
+        depositAmount: this.depositAmount
+      };
+      this.walletService.connectWallet(request).subscribe({
+        next: (response) => this.handlePaymentRedirect(response),
+        error: (err) => { /* Handle error */ }
+      });
+    }
+  }
+  
 
-    dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.walletService.depositFunds(result.amount).subscribe({
-          next: () => {
-            this.loadWallet(); // Refresh wallet data
-            // Show success notification
-          },
-          error: (err) => {
-            // Handle error
-          }
-        });
-      }
-    });
+  openDepositDialog(): void {
+    this.showDepositDialog = true;
+  }
+
+  confirmDeposit(): void {
+    console.log('Deposit amount:', this.depositAmount);
+    if (this.depositAmount > 0) {
+      const request: DepositRequest = { amount: this.depositAmount };
+      this.walletService.depositFunds(request).subscribe({
+        next: (response) => this.handlePaymentRedirect(response),
+        error: (err) => { /* Handle error notification */ }
+      });
+    } else {
+      // Inform the user that the deposit amount must be greater than zero.
+    }
+  }
+  
+  
+  private handlePaymentRedirect(response: ApiResponse<WalletVM>) {
+    if (response.data.checkoutUrl) {
+      window.location.href = response.data.checkoutUrl;
+    }
+    this.showConnectWalletDialog = false;
+    this.showDepositDialog = false;
+  }
+  private showSuccessNotification(message: string): void {
+    // Implement your notification logic
   }
 
   getImageUrl(imagePath: string): string {
@@ -137,3 +185,22 @@ export class ProfileHeaderComponent implements OnDestroy {
     this.destroy$.complete();
   }
 }
+
+  // loadWallet() {
+  //   this.walletLoading = true;
+  //   this.wallet$ = this.walletService.getWallet().pipe(
+  //     map((response: ApiResponse<WalletVM>) => response.data),
+  //     tap(() => {
+  //       this.hasWallet = true;
+  //       this.walletLoading = false;
+  //     }),
+  //     catchError(error => {
+  //       this.walletLoading = false;
+  //       if (error.status === 404) {
+  //         this.hasWallet = false;
+  //       }
+  //       return of({ balance: 0 } as WalletVM);
+  //     })
+  //   );
+  // }
+  

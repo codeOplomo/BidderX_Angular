@@ -1,3 +1,4 @@
+import { Collection } from "../../store/collections/collection.model";
 import { WalletVM } from "./wallet-vm";
 
 export interface ProfileVM {
@@ -7,6 +8,8 @@ export interface ProfileVM {
     firstName: string;
     lastName: string;
     imageUrl: string;
-    coverImageUrl: string;
-    wallet?: WalletVM;
+    hasWallet: boolean;
+    coverImageUrl?: string;
+    wallet?: WalletVM | null;
+    collections?: Collection[];
 }

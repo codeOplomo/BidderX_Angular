@@ -1,4 +1,5 @@
 import { createAction, props } from '@ngrx/store';
+import { ProfileVM } from '../../models/view-models/profile';
 
 export const loadUserProfile = createAction('[User] Load Profile');
 
@@ -35,7 +36,7 @@ export const updateUserCoverImageFailure = createAction(
 
 export const loadUserProfileSuccess = createAction(
   '[User] Load Profile Success',
-  props<{ user: any }>()
+  props<{ user: ProfileVM }>()
 );
 export const loadUserProfileFailure = createAction(
   '[User] Load Profile Failure',

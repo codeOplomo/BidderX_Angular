@@ -6,6 +6,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
+import { DialogModule } from 'primeng/dialog';
 
 export interface DepositDialogData {
   currentBalance: number;
@@ -14,9 +15,9 @@ export interface DepositDialogData {
 @Component({
   selector: 'app-deposit-dialog',
   standalone: true,
-  imports: [MatButtonModule, MatInputModule, MatFormFieldModule, MatIconModule, CommonModule, ReactiveFormsModule],
+  imports: [MatButtonModule, MatInputModule, MatFormFieldModule, MatIconModule, CommonModule, ReactiveFormsModule, DialogModule],
   templateUrl: './deposit-dialog.component.html',
-  styleUrl: './deposit-dialog.component.css'
+  styleUrl: './deposit-dialog.component.css',
 })
 export class DepositDialogComponent {
   depositForm: FormGroup;
