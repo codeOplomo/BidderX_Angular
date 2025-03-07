@@ -1,21 +1,58 @@
-<div *ngIf="collection$ | async as collection" class="w-full rounded-xl shadow-lg overflow-hidden" style="background: linear-gradient(135deg, #f3f9f2 0%, #f3f9f2 100%);">
-    <app-showcase-header (imageUpdated)="handleImageUpdate($event)"></app-showcase-header>
-
-  <div class="p-8">
-      <div *ngIf="loading$ | async" class="flex items-center justify-center h-[200px]">
-          <span class="material-symbols-outlined animate-spin text-4xl">progress_activity</span>
+<ng-container *ngIf="collection$ | async as collection">
+    <div class="w-full rounded-xl shadow-lg overflow-hidden"
+         style="background: linear-gradient(135deg, #f3f9f2 0%, #f3f9f2 100%);">
+      <app-showcase-header (imageUpdated)="handleImageUpdate($event)"></app-showcase-header>
+      <!-- Floating Action Button -->
+      <button *ngIf="isOwner()" (click)="openAddProductDialog()"
+          class="absolute -bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 flex items-center gap-2">
+          <span class="material-symbols-outlined">add</span>
+      </button>
+    </div>
+  
+    <div class="p-8 pt-12">
+      <!-- Loading State -->
+      <div *ngIf="loading$ | async" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+        <!-- ...loading placeholders... -->
       </div>
-
+  
+      <!-- Error State -->
       <div *ngIf="error$ | async as error" class="text-red-500 text-center p-4 rounded-lg bg-red-50">
-          <span class="material-symbols-outlined text-3xl mb-2">error</span>
-          <p>{{ error }}</p>
+        <span class="material-symbols-outlined text-3xl mb-2">error</span>
+        <p>{{ error }}</p>
+        <button (click)="retryLoading()" class="mt-2 text-red-600 hover:text-red-700 font-medium">
+            Retry
+        </button>
       </div>
-
+  
+      <!-- Products Grid with Empty State -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          <app-product-card
-              *ngFor="let product of collection.items"
-              [product]="product"
-          ></app-product-card>
+        <!-- Add Product Card (for owners) -->
+        <div *ngIf="isOwner() && collection.items?.length"
+            class="border-2 border-dashed border-gray-200 rounded-xl hover:border-green-500 transition-colors cursor-pointer flex items-center justify-center min-h-[300px]"
+            (click)="openAddProductDialog()">
+            <div class="text-center text-gray-400 hover:text-green-500">
+                <span class="material-symbols-outlined text-4xl">add</span>
+                <p class="mt-2 font-medium">Add Product</p>
+            </div>
+        </div>
+  
+        <app-product-card *ngFor="let product of collection.items"
+            [product]="product" [editable]="isOwner()"
+            (edit)="onEditItem(product)" (delete)="onDeleteItem(product)"></app-product-card>
+  
+        <!-- Empty State -->
+        <div *ngIf="!collection.items?.length" class="col-span-full text-center py-12">
+            <div class="max-w-md mx-auto">
+                <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">inventory</span>
+                <h3 class="text-xl font-semibold mb-2">No products in this collection yet</h3>
+                <p class="text-gray-500 mb-4">Start by adding your first product to showcase</p>
+                <button *ngIf="isOwner()" (click)="openAddProductDialog()"
+                    class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors">
+                    Add First Product
+                </button>
+            </div>
+        </div>
       </div>
-  </div>
-</div>
+    </div>
+  </ng-container>
+  

@@ -15,6 +15,14 @@ export class CollectionsService {
 
   constructor(private http: HttpClient, private imagesService: ImagesService) { }
 
+  getCollections(page: number = 0, size: number = 12): Observable<ApiResponse<PaginatedApiResponse<Collection>>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+    return this.http.get<ApiResponse<PaginatedApiResponse<Collection>>>(`${this.apiUrl}`, { params });
+  }
+  
+
   createCollection(data: any): Observable<any> {
     return this.http.post(`${this.apiUrl}/create`, data);
   }

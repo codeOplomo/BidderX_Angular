@@ -57,8 +57,9 @@ export class ProductInfoComponent implements OnChanges {
   }
   
   loadCategory(): void {
-    if (!this.product) return;
-
+    // Add null check for category
+    if (!this.product || !this.product.category) return;
+  
     this.categoriesService.getCategoryById(this.product.category.id).subscribe({
       next: (response: ApiResponse<Category>) => {
         this.category = response.data.name;

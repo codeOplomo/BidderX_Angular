@@ -3,6 +3,7 @@ import { ProfileVM } from "./profile";
 
 export interface AuctionVm {
     id: string;  // UUID string
+    code: string;
     title: string;
     description: string;
     startTime: string;

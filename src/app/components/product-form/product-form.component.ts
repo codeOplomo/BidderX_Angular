@@ -26,6 +26,7 @@ import { ApiResponse } from '../../models/view-models/api-response.model';
 })
 export class ProductFormComponent {
   @Input() parentForm!: FormGroup;
+  @Input() collectionId?: string;
   user$: Observable<any>;
     userEmail: string = '';
     collections: Collection[] = []; 
@@ -46,11 +47,16 @@ export class ProductFormComponent {
 
   ngOnInit(): void {
     this.loadCategories();
+    if (this.collectionId) {
+      this.parentForm.patchValue({ collectionId: this.collectionId });
+    }
     this.user$.subscribe(user =>{ 
       console.log('User data in ProfileComponent:', user);
       if (user) {
         this.userEmail = user.email; 
-        this.fetchUserCollections(); 
+        if (!this.collectionId) {
+          this.fetchUserCollections(); 
+        }
       }
       });
   }

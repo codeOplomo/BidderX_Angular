@@ -14,11 +14,12 @@ import { AuctionCardComponent } from '../auction-card/auction-card.component';
 import { ImagesService } from '../../services/images.service';
 import { ProductVM } from '../../models/view-models/product-vm';
 import { AuthService } from '../../services/auth.service';
+import { CollectionCardComponent } from '../collection-card/collection-card.component';
 
 @Component({
   selector: 'app-profile-tabs',
   standalone: true,
-  imports: [CommonModule, TabsModule, CollectionsTabComponent, PaginatorModule, AuctionCardComponent],
+  imports: [CommonModule, TabsModule, CollectionsTabComponent, PaginatorModule, AuctionCardComponent, CollectionCardComponent],
   templateUrl: './profile-tabs.component.html',
   styleUrls: ['./profile-tabs.component.css']
 })

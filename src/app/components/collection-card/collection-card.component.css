@@ -1,0 +1,143 @@
+
+  .collection-card {
+    position: relative;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    /* padding: 1rem; */
+  }
+  
+  .cover-image {
+    position: relative;
+    border-radius: 0.5rem;
+    height: 12rem;
+    margin: 0 -1rem 1rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+    overflow: hidden;
+  }
+  
+  .cover-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .cover-image:hover img {
+    transform: scale(1.1);
+  }
+  
+  .profile-image-overlay {
+    position: absolute;
+    /* Instead of bottom: -1.25rem, you can do: */
+    top: 50%; /* Or some other value, e.g. '8rem' or '30%' */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 2; /* Ensure it floats on top of other images */
+  }
+  
+  .profile-image {
+    width: 5rem;
+    height: 5rem;
+    border: 4px solid #fff;
+    border-radius: 50%;
+    overflow: hidden;
+    background-color: #A9B6B1;
+  }
+  
+  .profile-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .content {
+    margin: 0 -1rem 1rem;
+  }
+  
+  .product-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+  
+  .product-image {
+    position: relative;
+    width: 100%;
+    padding-bottom: 100%; /* Maintain aspect ratio */
+    border-radius: 0.5rem;
+    overflow: hidden;
+    background-color: #f0f0f0;
+  }
+  
+  .product-image img {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+  
+  .info {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+  
+  .title {
+    font-size: 1.125rem;
+        font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        cursor: pointer;
+        line-height: 1.4; 
+        transition: all 0.6s ease-in-out;
+  }
+  
+  .title:hover {
+    color: #FFA400;
+  }
+  
+  .items-count {
+    background-color: #f7f7f7;
+    color: #555;
+    padding: 0.25rem 0.5rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .footer {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1rem;
+  }
+  
+  .no-collections {
+    grid-column: span 4;
+    text-align: center;
+    padding: 2rem;
+  }
+  
+  .no-collections i {
+    font-size: 2rem;
+    color: #ccc;
+    margin-bottom: 1rem;
+  }
+  
+  .no-collections h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+  
+  .no-collections p {
+    color: #777;
+  }
+  
+
+
+  

@@ -16,12 +16,16 @@ import { AuctionsDashComponent } from './pages/auctions-dash/auctions-dash.compo
 import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
 import { PaymentCancelComponent } from './components/payment-cancel/payment-cancel.component';
 import { PaymentConfirmationComponent } from './components/payment-confirmation/payment-confirmation.component';
+import { HomeComponent } from './pages/home/home.component';
+import { CreateProductComponent } from './pages/create-product/create-product.component';
+import { AuctionsExplorerComponent } from './pages/auctions-explorer/auctions-explorer.component';
 
 export const routes: Routes = [
     {
         path: '',
         component: MainLayoutComponent,
         children: [
+            { path: '', component: HomeComponent},
             { path: 'login', component: LoginComponent },
             { path: 'register', component: RegisterComponent },
             { path: 'verification', component: VerifyComponent},
@@ -30,6 +34,8 @@ export const routes: Routes = [
             { path: 'edit-password', component: EditPasswordComponent, canActivate: [authGuard] },
             { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard], data: { roles: ['OWNER'] } },
             { path: 'create-auction', component: CreateAuctionComponent, canActivate: [authGuard], data: { roles: ['OWNER'] } },
+            { path: 'create-product', component: CreateProductComponent, canActivate: [authGuard], data: { roles: ['OWNER'] } },
+            { path: 'explore-auctions', component: AuctionsExplorerComponent},
             { path: 'collection-showcase/:id', component: CollectionShowcaseComponent},
             { path: 'product-detail/:id', component: ProductDetailComponent},
             { path: 'payment-success', component: PaymentSuccessComponent},

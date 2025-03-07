@@ -15,6 +15,46 @@ export class AuctionsService {
 
   constructor(private http: HttpClient) {}
 
+
+  getAuctionsByFilter(
+    categoryId: string | null,
+    minPrice: number | null = null,
+    maxPrice: number | null = null,
+    page: number = 0,
+    size: number = 8
+  ): Observable<ApiResponse<PaginatedApiResponse<AuctionVm>>> {
+    let params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+      
+    // Add category filter if provided
+    if (categoryId) {
+      params = params.set('categoryId', categoryId);
+    }
+    
+    // Add price filters if provided
+    if (minPrice !== null) {
+      params = params.set('minPrice', minPrice.toString());
+    }
+    
+    if (maxPrice !== null) {
+      params = params.set('maxPrice', maxPrice.toString());
+    }
+    
+    return this.http.get<ApiResponse<PaginatedApiResponse<AuctionVm>>>(`${this.apiUrl}`, { params });
+  }
+
+  getLiveAuctions(
+    page: number = 0,
+    size: number = 8
+  ): Observable<ApiResponse<PaginatedApiResponse<AuctionVm>>> {
+    const params = new HttpParams()
+      .set('page', page.toString())
+      .set('size', size.toString());
+  
+    return this.http.get<ApiResponse<PaginatedApiResponse<AuctionVm>>>(`${this.apiUrl}/live`, { params });
+  }
+
   getAuctionById(auctionId: string): Observable<ApiResponse<AuctionVm>> {
     return this.http.get<ApiResponse<AuctionVm>>(`${this.apiUrl}/${auctionId}`);
   }

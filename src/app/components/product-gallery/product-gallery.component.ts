@@ -38,7 +38,21 @@ closeLightbox(): void {
   }
 
   loadThumbnails(): void {
-    this.thumbnails = [this.product!.imageUrl, ...(this.product!.featuredImages || [])];
+    if (this.product) {
+      // Create a base array, only adding imageUrl if it exists
+      const images: string[] = [];
+      
+      if (this.product.imageUrl) {
+        images.push(this.product.imageUrl);
+      }
+      
+      // Only spread featuredImages if it exists
+      if (this.product.featuredImages && this.product.featuredImages.length > 0) {
+        images.push(...this.product.featuredImages);
+      }
+      
+      this.thumbnails = images;
+    }
   }
 
   get selectedImage(): string {
