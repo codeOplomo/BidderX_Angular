@@ -10,65 +10,107 @@ import { AuthService } from '../../services/auth.service';
 import { Menu, MenuModule } from 'primeng/menu';
 import { UserService } from '../../services/user.service';
 import { BehaviorSubject, EMPTY, Observable, of, Subject } from 'rxjs';
-import { catchError, delay, distinctUntilChanged, filter, switchMap, take, takeUntil, tap } from 'rxjs/operators';
+import { catchError, debounceTime, delay, distinctUntilChanged, filter, finalize, switchMap, take, takeUntil, tap } from 'rxjs/operators';
 import { MenuItem } from 'primeng/api';
 import { Store } from '@ngrx/store';
 import { UserState } from '../../store/user/user.state';
 import { selectUser } from '../../store/user/user.selectors';
 import { ImagesService } from '../../services/images.service';
+import { FormsModule } from '@angular/forms';
+import { AuctionVm } from '../../models/view-models/auction-vm.model';
+import { AuctionsService } from '../../services/auctions.service';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
   imports: [
     CommonModule,
-    MenubarModule,
-    MenuModule,
     ButtonModule,
-    RippleModule,
     NgIf,
     RouterModule,
-    AvatarModule,
-    BadgeModule
+    FormsModule
   ],
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   @ViewChild('userMenu') userMenu!: Menu;
+  isMobileMenuOpen = false;
+  isDropdownOpen = false;
+  isUserMenuOpen = false;
+
+  searchQuery: string = '';
+  searchResults: AuctionVm[] = [];
+  isSearchLoading = false;
+  private searchSubject = new Subject<string>();
 
   private destroy$ = new Subject<void>();
   defaultAvatar = 'assets/default-avatar.png';
 
-  
+
   user$!: Observable<any>;
 
   items = [
-    { label: 'Home', icon: 'pi pi-home', routerLink: '/' },
-    { label: 'About', icon: 'pi pi-info-circle', routerLink: '/about' },
-    // Add more menu items here
+    { label: 'Home', icon: 'home', routerLink: '/' },
+    { label: 'About', icon: 'info', routerLink: '/about' }
   ];
-  
+
   dropdownItems = [
     {
       label: 'Profile',
-      icon: 'pi pi-user',
+      icon: 'person',
       command: () => this.goToProfile(),
     },
     {
       label: 'Logout',
-      icon: 'pi pi-sign-out',
+      icon: 'logout',
       command: () => this.logout(),
     },
   ];
 
   constructor(
     public authService: AuthService,
+    private auctionsService: AuctionsService,
     private userService: UserService,
     private imagesService: ImagesService,
     private store: Store<UserState>,
     private router: Router
-  ) {  }
+  ) {
+    this.searchSubject.pipe(
+      debounceTime(300),
+      distinctUntilChanged(),
+      switchMap(query => {
+        if (query.length > 2) {
+          this.isSearchLoading = true;
+          return this.auctionsService.searchAuctions(query, 5).pipe(
+            finalize(() => this.isSearchLoading = false),
+            catchError(() => of([]))
+          );
+        }
+        return of([]);
+      })
+    ).subscribe(results => {
+      this.searchResults = results;
+    });
+   }
 
+   onSearchInput(): void {
+    this.searchSubject.next(this.searchQuery.trim());
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.searchResults = [];
+  }
+
+  onSearch(): void {
+    // Navigate to the search results page with the query as a parameter.
+    this.router.navigate(['/explore-auctions'], { queryParams: { q: this.searchQuery } });
+  }
+
+  
+  navigateToAuction(productId?: string): void {
+    this.router.navigate(['/product-detail', productId]);
+  }
   ngOnInit() {
     // Initialize user$ after the store is available
     this.user$ = this.store.select(selectUser);
@@ -86,13 +128,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
   goToProfile() {
     this.router.navigate(['/profile']);
   }
-
-  toggleDropdown(event: Event) {
-    this.userMenu.toggle(event);
-  }
-
   logout() {
     this.authService.logout();
     this.router.navigate(['/login']);
+  }
+
+  handleSearchResultClick(productId?: string) {
+    this.clearSearch();
+    this.navigateToAuction(productId);
+  }
+
+  toggleDropdown() {
+    this.isDropdownOpen = !this.isDropdownOpen;
   }
 }

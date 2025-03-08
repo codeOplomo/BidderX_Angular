@@ -148,17 +148,16 @@
                 <h2 class="text-4xl font-bold text-gray-900">Explore Categories</h2>
             </div>
             <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div *ngFor="let category of categories"
-     (click)="goToCategoryAuctions(category)"
-     class="bg-white rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-  <div class="w-12 h-12 bg-purple-50 rounded-lg mb-3 flex items-center justify-center">
-    <span class="material-symbols-outlined text-purple-600">
-      {{ categoryIcons[category.name] || categoryIcons['default'] }}
-    </span>
-  </div>
-  <h3 class="font-semibold mb-1">{{ category.name }}</h3>
-  <p class="text-sm text-gray-500">{{ category.productsCount }} items</p>
-</div>
+                <div *ngFor="let category of categories" (click)="goToCategoryAuctions(category)"
+                    class="bg-[#A9B6B1] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+                    <div class="w-12 h-12 bg-purple-50 rounded-lg mb-3 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-purple-600">
+                            {{ categoryIcons[category.name] || categoryIcons['default'] }}
+                        </span>
+                    </div>
+                    <h3 class="font-semibold mb-1">{{ category.name }}</h3>
+                    <p class="text-sm text-gray-500">{{ category.productsCount }} items</p>
+                </div>
 
 
             </div>
@@ -167,7 +166,7 @@
 
 
 
-    
+
 
     <section class="py-20 bg-gray-50">
         <div class="max-w-7xl mx-auto px-4">
