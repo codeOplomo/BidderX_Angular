@@ -54,7 +54,7 @@ export class ProfileTabsComponent implements OnInit {
   // Instead of a static items array, we use a getter that returns the appropriate tabs.
   get itemsToShow(): string[] {
     // For bidder role, show only 'liked' and 'victories' (use lowercase to match your ngSwitch cases)
-    return this.isBidder() ? ['liked', 'victories'] : ['auctions', 'collections', 'liked', 'victories'];
+    return this.isBidder() ? ['tracked', 'victories'] : ['auctions', 'collections', 'tracked', 'victories'];
   }
 
   ngOnInit(): void {

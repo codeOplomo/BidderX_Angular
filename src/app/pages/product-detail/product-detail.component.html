@@ -34,19 +34,18 @@
 
     <!-- Simplified Collections Section -->
     <div *ngIf="product && product.collections && product.collections.length > 0" class="p-4 rounded-xl">
-  <h3 class="text-sm text-[#3e1300] mb-4">Collections</h3>
-  <div class="flex flex-wrap gap-4 justify-start">
-    <div *ngFor="let collection of product?.collections"
-      class="group flex flex-col items-center gap-2 cursor-pointer">
-      <img [src]="getImageUrl(collection.imageUrl)" [alt]="collection.name" 
-           class="w-10 h-10 rounded-full border-2 border-[#A9B6B1] object-cover 
+      <h3 class="text-sm text-[#3e1300] mb-4">Collections</h3>
+      <div class="flex flex-wrap gap-4 justify-start">
+        <div *ngFor="let collection of product?.collections"
+          class="group flex flex-col items-center gap-2 cursor-pointer">
+          <img [src]="getImageUrl(collection.imageUrl)" [alt]="collection.name" class="w-10 h-10 rounded-full border-2 border-[#A9B6B1] object-cover 
                   transition-transform duration-200 ease-in-out group-hover:scale-110" />
-      <span class="text-xs text-center text-[#3e1300] transition-colors duration-200 group-hover:text-[#FFA400]">
-        {{ collection.name }}
-      </span>
+          <span class="text-xs text-center text-[#3e1300] transition-colors duration-200 group-hover:text-[#FFA400]">
+            {{ collection.name }}
+          </span>
+        </div>
+      </div>
     </div>
-  </div>
-</div>
 
     <app-product-tabs></app-product-tabs>
 

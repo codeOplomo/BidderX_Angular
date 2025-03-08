@@ -12,14 +12,37 @@
         </a>
 
         <!-- Desktop Menu -->
-        <div class="hidden md:flex items-center space-x-6 ml-10">
-          <a *ngFor="let item of items" [routerLink]="item.routerLink"
-            class="px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50/50 hover:text-emerald-700 transition-colors flex items-center gap-2"
-            routerLinkActive="bg-emerald-50/60 text-emerald-700">
-            <span [class]="item.icon"></span>
-            {{ item.label }}
+<div class="hidden md:flex items-center space-x-6 ml-10">
+  <ng-container *ngFor="let item of items">
+    <!-- If the item does not have subItems -->
+    <a *ngIf="!item.subItems" [routerLink]="item.routerLink"
+      class="px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50/50 hover:text-emerald-700 transition-colors flex items-center gap-2"
+      routerLinkActive="bg-emerald-50/60 text-emerald-700">
+      <span [class]="item.icon"></span>
+      {{ item.label }}
+    </a>
+    
+    <!-- If the item has subItems (dropdown) -->
+    <div *ngIf="item.subItems" class="relative group">
+      <button
+        (click)="goToExplorer(item.routerLink)"
+        class="px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50/50 hover:text-emerald-700 transition-colors flex items-center gap-2 cursor-pointer">
+        <span [class]="item.icon"></span>
+        {{ item.label }}
+      </button>
+      <!-- Dropdown Menu -->
+      <div
+        class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+        <ng-container *ngFor="let sub of item.subItems">
+          <a (click)="goToExplorer(sub.routerLink, sub.queryParams)" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+            {{ sub.label }}
           </a>
-        </div>
+        </ng-container>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
       </div>
 
       <!-- Right Section -->
@@ -47,74 +70,71 @@
 
             <!-- Search results dropdown -->
             <!-- Inside the search results dropdown div -->
-<div *ngIf="searchResults.length > 0 && !isSearchLoading"
-  class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-100 z-50">
-  <div class="max-h-96 overflow-y-auto">
-    <!-- Existing results -->
-    <div *ngFor="let auction of searchResults" 
-         (click)="handleSearchResultClick(auction.product.id)"
-         class="p-2 hover:bg-gray-50 cursor-pointer transition-colors">
-      <!-- ... existing auction template ... -->
-      <div *ngFor="let auction of searchResults" (click)="handleSearchResultClick(auction.product.id)"
-      class="p-2 hover:bg-gray-50 cursor-pointer transition-colors">
-      <div class="flex items-center gap-2">
-        <!-- Image -->
-        <img [src]="getAvatarUrl(auction.product.imageUrl || 'https://picsum.photos/400/300?random=1')"
-          class="w-8 h-8 rounded-lg object-cover">
+            <div *ngIf="searchResults.length > 0 && !isSearchLoading"
+              class="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg shadow-lg border border-gray-100 z-50">
+              <div class="max-h-96 overflow-y-auto">
+                <!-- Existing results -->
+                <div *ngFor="let auction of searchResults" (click)="handleSearchResultClick(auction.product.id)"
+                  class="p-2 hover:bg-gray-50 cursor-pointer transition-colors">
+                  <!-- ... existing auction template ... -->
+                  <div *ngFor="let auction of searchResults" (click)="handleSearchResultClick(auction.product.id)"
+                    class="p-2 hover:bg-gray-50 cursor-pointer transition-colors">
+                    <div class="flex items-center gap-2">
+                      <!-- Image -->
+                      <img [src]="getAvatarUrl(auction.product.imageUrl || 'https://picsum.photos/400/300?random=1')"
+                        class="w-8 h-8 rounded-lg object-cover">
 
-        <!-- Text Content -->
-        <div class="flex-1 min-w-0 space-y-0.5">
-          <!-- Bid Info -->
-          <div class="flex items-center gap-1.5">
-            <span class="text-xs font-medium text-orange-500">
-              {{ auction.totalBids }}+ Place Bit
-            </span>
-            <span class="text-xs font-semibold text-gray-900">
-              {{ auction.currentBid }}wETH
-            </span>
-          </div>
+                      <!-- Text Content -->
+                      <div class="flex-1 min-w-0 space-y-0.5">
+                        <!-- Bid Info -->
+                        <div class="flex items-center gap-1.5">
+                          <span class="text-xs font-medium text-orange-500">
+                            {{ auction.totalBids }}+ Place Bit
+                          </span>
+                          <span class="text-xs font-semibold text-gray-900">
+                            {{ auction.currentBid }}wETH
+                          </span>
+                        </div>
 
-          <!-- Title -->
-          <div class="flex items-center justify-between text-[10px]">
-            <span class="text-gray-900 truncate font-medium text-xs">
-              {{ auction.title }}
-            </span>
-          </div>
+                        <!-- Title -->
+                        <div class="flex items-center justify-between text-[10px]">
+                          <span class="text-gray-900 truncate font-medium text-xs">
+                            {{ auction.title }}
+                          </span>
+                        </div>
 
-          <!-- Sub Info -->
-          <div class="flex items-center justify-between text-[10px]">
-            <span class="text-gray-500 truncate">
-              {{ auction.product.title }}
-            </span>
-            <span class="text-gray-500 shrink-0">
-              Highest bid {{ auction.currentBid }}/{{ auction.totalBids || 20 }}
-            </span>
-          </div>
-        </div>
+                        <!-- Sub Info -->
+                        <div class="flex items-center justify-between text-[10px]">
+                          <span class="text-gray-500 truncate">
+                            {{ auction.product.title }}
+                          </span>
+                          <span class="text-gray-500 shrink-0">
+                            Highest bid {{ auction.currentBid }}/{{ auction.totalBids || 20 }}
+                          </span>
+                        </div>
+                      </div>
 
-        <!-- Bid Button -->
-        <button class="flex flex-col items-center justify-center w-12 h-12 bg-orange-50 rounded-lg 
+                      <!-- Bid Button -->
+                      <button class="flex flex-col items-center justify-center w-12 h-12 bg-orange-50 rounded-lg 
     hover:bg-orange-100 transition-colors shrink-0 ml-1">
-          <span class="text-[9px] font-medium text-orange-700 leading-tight">Place Bid</span>
-          <span class="text-base font-bold text-orange-700 leading-none mt-0.5">
-            {{ 65 }}
-          </span>
-        </button>
-      </div>
-    </div>
-    </div>
+                        <span class="text-[9px] font-medium text-orange-700 leading-tight">Place Bid</span>
+                        <span class="text-base font-bold text-orange-700 leading-none mt-0.5">
+                          {{ 65 }}
+                        </span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
 
-    <!-- "See more" link -->
-    <div class="sticky bottom-0 bg-white border-t border-gray-100">
-      <a (click)="clearSearch()"
-         [routerLink]="['/explore-auctions']" 
-         [queryParams]="{ q: searchQuery }"
-         class="block p-3 text-center text-sm font-medium text-orange-600 hover:bg-gray-50 transition-colors">
-        See all results for "{{ searchQuery }}"
-      </a>
-    </div>
-  </div>
-</div>
+                <!-- "See more" link -->
+                <div class="sticky bottom-0 bg-white border-t border-gray-100">
+                  <a (click)="clearSearch()" [routerLink]="['/explore-auctions']" [queryParams]="{ q: searchQuery }"
+                    class="block p-3 text-center text-sm font-medium text-orange-600 hover:bg-gray-50 transition-colors">
+                    See all results for "{{ searchQuery }}"
+                  </a>
+                </div>
+              </div>
+            </div>
           </div>
 
 

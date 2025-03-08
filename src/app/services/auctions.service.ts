@@ -29,6 +29,7 @@ export class AuctionsService {
     minPrice: number | null = null,
     maxPrice: number | null = null,
     status: string,
+    type: string | null,
     sortOrder: 'ASC' | 'DESC' = 'DESC',
     page: number = 0,
     size: number = 8,
@@ -41,6 +42,10 @@ export class AuctionsService {
       
     if (status) {
       params = params.set('status', status);
+    }
+
+    if (type) {
+      params = params.set('type', type);
     }
 
     // Add category filter if provided

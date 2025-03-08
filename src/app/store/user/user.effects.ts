@@ -4,26 +4,44 @@ import { Observable, of, Subject } from 'rxjs';
 import { map, catchError, switchMap } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import * as UserActions from './user.actions';
-import { Action } from '@ngrx/store';
+import * as WalletActions from '../wallet/wallet.actions';
+import { Action, Store } from '@ngrx/store';
 import { ProfileVM } from '../../models/view-models/profile';
 
 @Injectable()
 export class UserEffects {
   private readonly actions$ = inject(Actions);
   private readonly userService = inject(UserService);
+  private readonly store = inject(Store);
   private destroy$ = new Subject<void>();
 
   
-  loadProfile$ = createEffect(() => this.actions$.pipe(
+loadProfile$ = createEffect(() => {
+  return this.actions$.pipe(
     ofType(UserActions.loadUserProfile),
-    switchMap(() => this.userService.getProfile().pipe(
-      // Extract the .data property from the API response
-      map(apiResponse => UserActions.loadUserProfileSuccess({ 
-        user: apiResponse.data  // This is the actual ProfileVM
-      })),
-      catchError(error => of(UserActions.loadUserProfileFailure({ error })))
-    ))
-  ));
+    switchMap(() =>
+      this.userService.getProfile().pipe(
+        map((response) => {
+          // Update wallet state using hasWallet flag
+          if (response.data.hasWallet && response.data.wallet) {
+            this.store.dispatch(
+              WalletActions.loadWalletSuccess({
+                wallet: response.data.wallet
+              })
+            );
+          }
+          
+          return UserActions.loadUserProfileSuccess({
+            user: response.data
+          });
+        }),
+        catchError((error) => of(UserActions.loadUserProfileFailure({ error })))
+      )
+    )
+  );
+});
+
+  
 
   updateProfile$ = createEffect(() => this.actions$.pipe(
     ofType(UserActions.updateUserProfile),

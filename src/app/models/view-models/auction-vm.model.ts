@@ -12,7 +12,7 @@ export interface AuctionVm {
     type: string;
     status: string;
     startingPrice: string;
-    currentBid: string;
+    currentBid: number;
     product: ProductVM;
     reactionsCount: number;
     totalBidders: number;

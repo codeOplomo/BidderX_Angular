@@ -2,22 +2,27 @@ import { CommonModule } from '@angular/common';
 import { Component, Input, SimpleChanges } from '@angular/core';
 import { AuctionVm } from '../../models/view-models/auction-vm.model';
 import { AuthService } from '../../services/auth.service';
+import { PlaceBidDialogComponent } from "../place-bid-dialog/place-bid-dialog.component";
+import { BidRequest } from '../../models/view-models/bid-request';
+import { BidsService } from '../../services/bids.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-place-bid-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, PlaceBidDialogComponent, FormsModule],
   templateUrl: './place-bid-card.component.html',
   styleUrl: './place-bid-card.component.css'
 })
 export class PlaceBidCardComponent {
   @Input() auction!: AuctionVm;
+  showBidDialog = false;
 auctionEnded = false;
 auctionNotStarted = false;
 countdown = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 private countdownInterval: any;
 
-constructor(private authService: AuthService) {}
+constructor(private authService: AuthService, private bidsService: BidsService) {}
 
 ngOnChanges(changes: SimpleChanges): void {
   if (changes['auction']) {
@@ -29,6 +34,28 @@ ngOnInit(): void {
   this.startCountdown();
 }
 
+openBidDialog() {
+  this.showBidDialog = true;
+}
+
+onBidSubmitted(bidAmount: number) {
+  const bidRequest: BidRequest = {
+    auctionId: this.auction.id,
+    bidAmount: bidAmount
+  };
+
+  this.bidsService.placeBid(bidRequest).subscribe({
+    next: (response) => {
+      console.log('Bid placed successfully:', response);
+      this.showBidDialog = false; // Close the dialog after success
+      // Optionally, refresh your auction data or update current bid info here.
+    },
+    error: (error) => {
+      console.error('Error placing bid:', error);
+      // Optionally display an error message.
+    }
+  });
+}
 ngOnDestroy(): void {
   if (this.countdownInterval) {
     clearInterval(this.countdownInterval);

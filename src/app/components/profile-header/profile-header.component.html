@@ -132,12 +132,10 @@
                 Balance: {{ user.wallet?.balance | currency }}
               </span>
             </div>
-        
+
             <button class="flex items-center gap-1 px-3 py-1.5 rounded-full text-white text-sm transition-colors"
-              [class.bg-green-600]="user.hasWallet" 
-              [class.bg-blue-600]="!user.hasWallet"
-              [class.hover-bg-green-700]="user.hasWallet"
-              [class.hover-bg-blue-700]="!user.hasWallet"
+              [class.bg-green-600]="user.hasWallet" [class.bg-blue-600]="!user.hasWallet"
+              [class.hover-bg-green-700]="user.hasWallet" [class.hover-bg-blue-700]="!user.hasWallet"
               (click)="handleWalletAction(user.hasWallet)">
               <span class="material-symbols-outlined text-sm">
                 {{ user.hasWallet ? 'add' : 'account_balance_wallet' }}
@@ -145,7 +143,7 @@
               {{ user.hasWallet ? 'Deposit' : 'Connect Wallet' }}
             </button>
           </ng-container>
-        
+
           <div *ngIf="walletLoading" class="flex items-center gap-2 px-3 py-1.5">
             <mat-spinner diameter="20"></mat-spinner>
           </div>

@@ -36,7 +36,6 @@
         </ng-template>
       </div>
 
-      <!-- Other Tabs -->
       <!-- Collections Tab -->
       <div *ngSwitchCase="'collections'" class="mt-6 sm:mt-10">
         <div class="card-grid">
@@ -54,7 +53,7 @@
       </div>
 
       <!-- Liked Tab -->
-      <div *ngSwitchCase="'liked'" class="mt-6 sm:mt-10">
+      <div *ngSwitchCase="'tracked'" class="mt-6 sm:mt-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
           <app-auction-card *ngFor="let auction of likedAuctions" [auction]="auction"
             (likeToggled)="onLikeToggled($event)"

@@ -12,7 +12,7 @@
         <span class="text-sm text-[#3e1300]">Winning bid</span>
         <div class="flex items-center gap-2">
           <span class="text-xl font-semibold text-[#cb8502]">
-            {{ '0.00' }} SwETH
+            {{ '0.00' }} $
           </span>
           <span class="text-sm text-[#6b7280]">by {{ 'No bids yet' }}</span>
         </div>
@@ -66,14 +66,14 @@
         <div class="flex flex-col">
           <span class="text-sm text-[#3e1300]">Current Bid</span>
           <span class="text-2xl font-semibold text-[#cb8502]">
-            {{ '0.00' }} SwETH
+            {{ '0.00' }} $
           </span>
         </div>
   
         <button 
           class="bid-button"
           [disabled]="auctionEnded || auctionNotStarted"
-          
+          (click)="openBidDialog()"
         >
           {{ auctionEnded ? 'Auction Ended' : 'Place Bid' }}
         </button>
@@ -81,12 +81,18 @@
   
       <!-- Minimum Bid Info -->
       <div class="text-sm text-[#6b7280]">
-        Minimum bid:  SwETH
+        Minimum bid:  $
       </div>
     </div>
   </ng-container>
   </div>
 
+  <app-place-bid-dialog
+  [(visible)]="showBidDialog"
+  [minimumBid]="auction.currentBid || 0"
+  [auctionId]="auction.id"
+  (bidSubmitted)="onBidSubmitted($event)">
+</app-place-bid-dialog>
 <!--   
 
 <div class="flex flex-col gap-8 p-6 rounded-2xl bg-white/80 shadow-md backdrop-blur-sm"

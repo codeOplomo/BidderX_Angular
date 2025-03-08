@@ -32,13 +32,18 @@ import { animate, state, style, transition, trigger } from '@angular/animations'
   ]
 })
 export class AuctionsExplorerComponent {
-  filtersVisible = true;
+  filtersVisible = false;
   auctions: AuctionVm[] = [];
   filteredAuctions: AuctionVm[] = [];
   auctionsStatus: { label: string; value: string }[] = [
     // { label: 'All Listings', value: '' },
     { label: 'Active Now', value: 'APPROVED' },
     { label: 'Recently Ended', value: 'ENDED' }
+  ];
+  auctionsType: { label: string; value: string }[] = [
+    { label: 'All Types', value: '' },
+    { label: 'Timed Auctions', value: 'TIMED' },
+    { label: 'Instant Auctions', value: 'INSTANT' }
   ];
 
   categories: Category[] = [];
@@ -50,6 +55,7 @@ export class AuctionsExplorerComponent {
   selectedStatus: string = 'APPROVED';
   selectedSortOrder: 'ASC' | 'DESC' = 'DESC';
   searchQuery: string = '';
+  selectedType: string | null = null;
 
   currentPage: number = 0;
   pageSize: number = 8;
@@ -68,6 +74,7 @@ export class AuctionsExplorerComponent {
     this.route.queryParamMap.subscribe(params => {
       this.selectedCategory = params.get('categoryId');
       this.searchQuery = params.get('q') || '';
+      this.selectedType = params.get('type') || '';
       // Fetch auctions once we have the filter parameter
       this.getAuctions();
     });
@@ -91,6 +98,7 @@ export class AuctionsExplorerComponent {
       this.minPrice,
       this.maxPrice,
       this.selectedStatus,
+      this.selectedType,
       this.selectedSortOrder,
       this.currentPage,
       this.pageSize,

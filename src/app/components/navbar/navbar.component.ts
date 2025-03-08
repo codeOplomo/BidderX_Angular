@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { MenubarModule } from 'primeng/menubar';
 import { ButtonModule } from 'primeng/button';
 import { RippleModule } from 'primeng/ripple';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { CommonModule, NgClass, NgIf } from '@angular/common';
 import { AvatarModule } from 'primeng/avatar';
 import { BadgeModule } from 'primeng/badge';
@@ -33,7 +33,6 @@ import { AuctionsService } from '../../services/auctions.service';
   templateUrl: './navbar.component.html',
 })
 export class NavbarComponent implements OnInit, OnDestroy {
-  @ViewChild('userMenu') userMenu!: Menu;
   isMobileMenuOpen = false;
   isDropdownOpen = false;
   isUserMenuOpen = false;
@@ -51,6 +50,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   items = [
     { label: 'Home', icon: 'home', routerLink: '/' },
+    { 
+      label: 'Explore', 
+      icon: 'explore', 
+      routerLink: '/explore-auctions',
+      subItems: [
+        { label: 'Timed Auctions', routerLink: '/explore-auctions', queryParams: { type: 'TIMED' } },
+        { label: 'Instant Auctions', routerLink: '/explore-auctions', queryParams: { type: 'INSTANT' } }
+      ]
+    },
     { label: 'About', icon: 'info', routerLink: '/about' }
   ];
 
@@ -127,6 +135,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   goToProfile() {
     this.router.navigate(['/profile']);
+  }
+  goToExplorer(routerLink: string, queryParams?: any): void {
+    this.router.navigate([routerLink], { queryParams: queryParams || {} });
   }
   logout() {
     this.authService.logout();

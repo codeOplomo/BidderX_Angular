@@ -1,0 +1,44 @@
+<p-dialog header="Place a Bid" [(visible)]="visible" [style]="{width: '400px'}" 
+          [dismissableMask]="true" [modal]="true" position="bottom">
+  <div class="dialog-content flex flex-col gap-4">
+    <div class="flex flex-col gap-2">
+        <small class="text-sm" [class.text-green-500]="!insufficientBalance" [class.text-red-500]="insufficientBalance">
+            Available balance: {{ (walletBalance$ | async) | currency }}
+          </small>
+          <small *ngIf="insufficientBalance" class="text-sm text-red-500 block mt-1">
+            Insufficient wallet balance
+          </small>
+          
+      <label class="text-sm font-medium text-gray-700">Bid Amount ($)</label>
+      <input
+        type="number"
+        [(ngModel)]="bidAmount"
+        [min]="minimumBid"
+        step="0.01"
+        class="p-2 border rounded-md focus:ring-2 focus:ring-[#cb8502] focus:border-[#cb8502]"
+        placeholder="Enter bid amount"
+      >
+      <small class="text-sm text-gray-500">
+        Minimum bid: {{ minimumBid | number:'1.2-2' }} $
+      </small>
+    </div>
+    <div class="flex justify-end gap-3 mt-4">
+      <button 
+        type="button"
+        (click)="onClose()"
+        class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md"
+      >
+        Cancel
+      </button>
+      <button 
+        type="button"
+        (click)="submitBid()"
+        [disabled]="loading || !bidAmount || bidAmount < minimumBid"
+        class="px-4 py-2 bg-[#cb8502] text-white rounded-md hover:bg-[#ba7600] disabled:opacity-50"
+      >
+        <span *ngIf="!loading">Submit Bid</span>
+        <span *ngIf="loading">Processing...</span>
+      </button>
+    </div>
+  </div>
+</p-dialog>
