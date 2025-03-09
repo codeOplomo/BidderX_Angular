@@ -19,6 +19,8 @@ import { TabsModule } from 'primeng/tabs';
 import { collectionReducer } from './store/collections/collection.reducer';
 import { CollectionEffects } from './store/collections/collection.effects';
 import { walletReducer } from './store/wallet/wallet.reducer';
+import { AuthEffects } from './store/auth/auth.effects';
+import { WalletEffects } from './store/wallet/wallet.effects';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -33,8 +35,8 @@ export const appConfig: ApplicationConfig = {
         preset: Aura
       }
     }),
-    provideStore({ user: UserReducer, collection: collectionReducer, wallet: walletReducer }),
-    provideEffects([UserEffects, CollectionEffects]),
+    provideStore({ profile: UserReducer, collection: collectionReducer, wallet: walletReducer }),
+    provideEffects([UserEffects, CollectionEffects, AuthEffects, WalletEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),

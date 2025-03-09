@@ -4,10 +4,12 @@ import { catchError, filter, finalize, switchMap, take, throwError } from 'rxjs'
 import { inject } from '@angular/core';
 import { RefreshTokenResponseVM } from '../models/view-models/refresh-token-response.model';
 import { AuthService } from '../services/auth.service';
+import { Store } from '@ngrx/store';
+import * as AuthActions from '../store/auth/auth.actions';
 
 export const headersInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);
-  const router = inject(Router);
+  const store = inject(Store);
 
   // Skip Authorization for login or refresh token requests
   if (req.url.includes('/api/auth/login') || req.url.includes('/api/auth/refresh-token')) {
@@ -46,8 +48,7 @@ export const headersInterceptor: HttpInterceptorFn = (req, next) => {
               }),
               catchError(refreshError => {
                 authService.isRefreshing = false;
-                authService.logout();
-                router.navigate(['/login']);
+                store.dispatch(AuthActions.logout());
                 return throwError(() => refreshError);
               }),
               finalize(() => {

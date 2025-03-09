@@ -6,6 +6,8 @@ import { PlaceBidDialogComponent } from "../place-bid-dialog/place-bid-dialog.co
 import { BidRequest } from '../../models/view-models/bid-request';
 import { BidsService } from '../../services/bids.service';
 import { FormsModule } from '@angular/forms';
+import { loadWallet } from '../../store/wallet/wallet.actions';
+import { Store } from '@ngrx/store';
 
 @Component({
   selector: 'app-place-bid-card',
@@ -22,7 +24,7 @@ auctionNotStarted = false;
 countdown = { days: 0, hours: 0, minutes: 0, seconds: 0 };
 private countdownInterval: any;
 
-constructor(private authService: AuthService, private bidsService: BidsService) {}
+constructor(private authService: AuthService, private bidsService: BidsService, private store: Store) {}
 
 ngOnChanges(changes: SimpleChanges): void {
   if (changes['auction']) {
@@ -46,6 +48,8 @@ onBidSubmitted(bidAmount: number) {
 
   this.bidsService.placeBid(bidRequest).subscribe({
     next: (response) => {
+      this.store.dispatch(loadWallet());
+      // this.store.dispatch(loadAuctionDetails({ auctionId: this.auction.id }));
       console.log('Bid placed successfully:', response);
       this.showBidDialog = false; // Close the dialog after success
       // Optionally, refresh your auction data or update current bid info here.

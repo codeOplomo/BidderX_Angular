@@ -19,6 +19,9 @@ import { ImagesService } from '../../services/images.service';
 import { FormsModule } from '@angular/forms';
 import { AuctionVm } from '../../models/view-models/auction-vm.model';
 import { AuctionsService } from '../../services/auctions.service';
+import * as AuthActions from '../../store/auth/auth.actions';
+import * as UserActions from '../../store/user/user.actions';
+import { ProfileVM } from '../../models/view-models/profile';
 
 @Component({
   selector: 'app-navbar',
@@ -46,8 +49,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
   defaultAvatar = 'assets/default-avatar.png';
 
 
-  user$!: Observable<any>;
+  user$!: Observable<ProfileVM>;
 
+  ngOnInit() {
+    this.user$ = this.store.select(selectUser).pipe(
+      tap(user => console.log('DEBUG: user from store', user)),
+      filter((user): user is ProfileVM => !!user)
+    );
+    // This is useful if you want to handle page reloads where the user might already be logged in.
+    this.authService.isLoggedIn$.pipe(
+      filter(isLoggedIn => isLoggedIn),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.store.dispatch(UserActions.loadUserProfile());
+    });
+  }
   items = [
     { label: 'Home', icon: 'home', routerLink: '/' },
     { 
@@ -78,9 +94,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
   constructor(
     public authService: AuthService,
     private auctionsService: AuctionsService,
-    private userService: UserService,
     private imagesService: ImagesService,
-    private store: Store<UserState>,
+    private store: Store,
     private router: Router
   ) {
     this.searchSubject.pipe(
@@ -119,10 +134,6 @@ export class NavbarComponent implements OnInit, OnDestroy {
   navigateToAuction(productId?: string): void {
     this.router.navigate(['/product-detail', productId]);
   }
-  ngOnInit() {
-    // Initialize user$ after the store is available
-    this.user$ = this.store.select(selectUser);
-  }
 
   getAvatarUrl(imagePath: string): string {
     return this.imagesService.getImageUrl(imagePath);
@@ -136,12 +147,14 @@ export class NavbarComponent implements OnInit, OnDestroy {
   goToProfile() {
     this.router.navigate(['/profile']);
   }
+  goToLogin() {
+    this.router.navigate(['/login']);
+  }
   goToExplorer(routerLink: string, queryParams?: any): void {
     this.router.navigate([routerLink], { queryParams: queryParams || {} });
   }
   logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
+    this.store.dispatch(AuthActions.logout());
   }
 
   handleSearchResultClick(productId?: string) {

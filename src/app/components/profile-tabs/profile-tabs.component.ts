@@ -15,6 +15,7 @@ import { ImagesService } from '../../services/images.service';
 import { ProductVM } from '../../models/view-models/product-vm';
 import { AuthService } from '../../services/auth.service';
 import { CollectionCardComponent } from '../collection-card/collection-card.component';
+import { ProfileVM } from '../../models/view-models/profile';
 
 @Component({
   selector: 'app-profile-tabs',
@@ -25,7 +26,7 @@ import { CollectionCardComponent } from '../collection-card/collection-card.comp
 })
 
 export class ProfileTabsComponent implements OnInit {
-  user$: Observable<any>;
+  user$: Observable<ProfileVM | null>;
   userEmail: string = '';
   collections: any[] = []; 
   products: ProductVM[] = [];
@@ -53,7 +54,7 @@ export class ProfileTabsComponent implements OnInit {
 
   // Instead of a static items array, we use a getter that returns the appropriate tabs.
   get itemsToShow(): string[] {
-    // For bidder role, show only 'liked' and 'victories' (use lowercase to match your ngSwitch cases)
+    // For bidder role, show only 'tracked' and 'victories' (use lowercase to match your ngSwitch cases)
     return this.isBidder() ? ['tracked', 'victories'] : ['auctions', 'collections', 'tracked', 'victories'];
   }
 
@@ -85,20 +86,6 @@ export class ProfileTabsComponent implements OnInit {
       this.auctions[index] = { ...updatedAuction };
       this.auctions = [...this.auctions];
     }
-  }
-
-  private fetchUserVictories(page: number, size: number): void {
-    // if (!this.userEmail) return;
-  
-    // this.auctionService.getUserWonAuctionsByEmail(this.userEmail, page, size)
-    //   .pipe(take(1))
-    //   .subscribe({
-    //     next: (response) => {
-    //       this.victories = response.data.content;
-    //       this.totalRecords = response.data.page.totalElements;
-    //     },
-    //     error: (err) => console.error('Error fetching victories:', err),
-    //   });
   }
 
   private fetchUserLikedAuctions(page: number, size: number): void {
@@ -142,19 +129,7 @@ export class ProfileTabsComponent implements OnInit {
       },
     });
   }
-  
-  // private fetchOwnerProducts(page: number, size: number): void {
-  //   if (!this.isOwner() || !this.userEmail) return;
-  //     this.productService.getAvailableUserProductsByEmail(this.userEmail, page, size)
-  //     .pipe(take(1))
-  //     .subscribe({
-  //       next: (response) => {
-  //         this.products = response.data.content;
-  //       },
-  //       error: (err) => console.error('Error fetching products:', err),
-  //     });
-  // }
-  
+
   onPageChange(event: any): void {
     this.first = event.first;
     this.rows = event.rows;
@@ -167,7 +142,7 @@ export class ProfileTabsComponent implements OnInit {
       case 'auctions':
         this.fetchOwnerAuctions(page, this.rows);
         break;
-      case 'liked':
+      case 'tracked':
         this.fetchUserLikedAuctions(page, this.rows);
         break;
       case 'victories':
@@ -188,7 +163,7 @@ export class ProfileTabsComponent implements OnInit {
       case 'auctions':
         if (this.isOwner()) this.fetchOwnerAuctions(page, this.rows);
         break;
-      case 'liked':
+      case 'tracked':
         this.fetchUserLikedAuctions(page, this.rows);
         break;
       case 'victories':
@@ -200,4 +175,32 @@ export class ProfileTabsComponent implements OnInit {
   getImageUrl(imageUrl?: string): string {
     return imageUrl?.trim() ? this.imagesService.getImageUrl(imageUrl) : 'https://picsum.photos/400/300?random=1';
   }
+  
+  // private fetchOwnerProducts(page: number, size: number): void {
+  //   if (!this.isOwner() || !this.userEmail) return;
+  //     this.productService.getAvailableUserProductsByEmail(this.userEmail, page, size)
+  //     .pipe(take(1))
+  //     .subscribe({
+  //       next: (response) => {
+  //         this.products = response.data.content;
+  //       },
+  //       error: (err) => console.error('Error fetching products:', err),
+  //     });
+  // }
+  
+  
+  private fetchUserVictories(page: number, size: number): void {
+    // if (!this.userEmail) return;
+  
+    // this.auctionService.getUserWonAuctionsByEmail(this.userEmail, page, size)
+    //   .pipe(take(1))
+    //   .subscribe({
+    //     next: (response) => {
+    //       this.victories = response.data.content;
+    //       this.totalRecords = response.data.page.totalElements;
+    //     },
+    //     error: (err) => console.error('Error fetching victories:', err),
+    //   });
+  }
+  
 }

@@ -6,6 +6,9 @@ import { ApiResponse } from '../../models/view-models/api-response.model';
 import { AuctionVm } from '../../models/view-models/auction-vm.model';
 import { CommonModule } from '@angular/common';
 import { AuctionRectionsService } from '../../services/auction-rections.service';
+import { Store } from '@ngrx/store';
+import { selectWalletBalance } from '../../store/wallet/wallet.selectors';
+import { Observable } from 'rxjs';
 
 
 @Component({
@@ -24,7 +27,8 @@ export class ProductInfoComponent implements OnChanges {
 
   constructor(
     private categoriesService: CategoriesService,
-    private auctionReactionsService: AuctionRectionsService
+    private auctionReactionsService: AuctionRectionsService,
+    private store: Store
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {

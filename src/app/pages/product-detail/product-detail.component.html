@@ -12,20 +12,31 @@
     <div class="p-6 rounded-2xl bg-white/80 shadow-md backdrop-blur-sm">
       <div class="flex justify-between items-center">
         <div class="flex flex-col gap-1">
+          <!-- Add wallet balance here -->
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-sm text-[#3e1300] font-medium">
+              <i class="fas fa-wallet mr-1 text-[#cb8502]"></i>
+              Your Balance:
+            </span>
+            <span class="text-lg font-semibold text-[#28a745]">
+              {{ walletBalance$ | async | currency }}
+            </span>
+          </div>
+          
           <span class="text-2xl font-semibold text-[#cb8502]">
             {{ getAuctionTypeDisplay(auction?.type) }}
           </span>
-          <!-- Display fixed price for INSTANT auctions -->
+          <!-- Existing price displays -->
           <span *ngIf="auction?.type === 'INSTANT'" class="text-lg text-[#3e1300]">
             Fixed Price: <span class="font-medium">{{ auction?.startingPrice | currency }}</span>
           </span>
-          <!-- Display current bid for TIMED auctions -->
           <span *ngIf="auction?.type === 'TIMED' && auction?.currentBid" class="text-lg text-[#3e1300]">
             Current Bid: <span class="font-medium">{{ auction?.currentBid | currency }}</span>
           </span>
         </div>
-        <button *ngIf="auction?.status === 'APPROVED'" class="bg-[#FFA400] text-white rounded-xl py-3 px-6 font-semibold cursor-pointer
-          transition-all duration-200 hover:bg-[#cb8502] hover:-translate-y-[1px]">
+        <button *ngIf="auction?.status === 'APPROVED'" 
+                class="bg-[#FFA400] text-white rounded-xl py-3 px-6 font-semibold cursor-pointer
+                       transition-all duration-200 hover:bg-[#cb8502] hover:-translate-y-[1px]">
           {{ auction?.type === 'INSTANT' ? 'Buy Now' : 'Place Bid' }}
         </button>
       </div>

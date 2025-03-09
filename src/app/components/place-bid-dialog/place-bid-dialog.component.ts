@@ -6,7 +6,8 @@ import { BidRequest } from '../../models/view-models/bid-request';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectWalletBalance } from '../../store/wallet/wallet.selectors';
-import { Observable } from 'rxjs';
+import { Observable, take, tap } from 'rxjs';
+import * as WalletActions from '../../store/wallet/wallet.actions';
 
 @Component({
   selector: 'app-place-bid-dialog',
@@ -35,19 +36,32 @@ export class PlaceBidDialogComponent {
     //   console.log('Current Wallet Balance:', balance);
     // });
   }
+  
+  ngOnInit() {
+    this.store.dispatch(WalletActions.loadWallet());
+  }
 
-  submitBid() {
-    // Add balance validation
-    this.walletBalance$.subscribe(balance => {
+  // place-bid-dialog.component.ts
+submitBid() {
+  this.walletBalance$.pipe(
+    take(1),
+    tap(balance => {
       if (this.validateBid() && this.bidAmount! <= balance) {
+        const newBalance = balance - this.bidAmount!;
+        
+        this.store.dispatch(WalletActions.updateWalletBalance({ 
+          newBalance 
+        }));
+        
         this.loading = true;
         this.bidSubmitted.emit(this.bidAmount);
         this.insufficientBalance = false;
       } else {
         this.insufficientBalance = true;
       }
-    }).unsubscribe();
-  }
+    })
+  ).subscribe();
+}
 
   private validateBid(): boolean {
     return !!this.bidAmount && this.bidAmount >= this.minimumBid;

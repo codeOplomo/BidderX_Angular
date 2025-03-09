@@ -17,11 +17,13 @@ import { ProductTabsComponent } from "../../components/product-tabs/product-tabs
 import { ActivatedRoute, Router } from '@angular/router';
 import { ProductVM } from '../../models/view-models/product-vm';
 import { ProductsService } from '../../services/products.service';
-import { catchError, of, switchMap, tap } from 'rxjs';
+import { catchError, Observable, of, switchMap, tap } from 'rxjs';
 import { ImagesService } from '../../services/images.service';
 import { PlaceBidCardComponent } from "../../components/place-bid-card/place-bid-card.component";
 import { AuctionVm } from '../../models/view-models/auction-vm.model';
 import { AuctionsService } from '../../services/auctions.service';
+import { Store } from '@ngrx/store';
+import { selectWalletBalance } from '../../store/wallet/wallet.selectors';
 
 
 @Component({
@@ -34,6 +36,8 @@ import { AuctionsService } from '../../services/auctions.service';
 export class ProductDetailComponent {
   product: ProductVM | null = null;
   auction: AuctionVm | null = null;
+  walletBalance$!: Observable<number>;
+  walletLoading = false;
   loading = true;
   error: string | null = null;
 
@@ -42,8 +46,11 @@ export class ProductDetailComponent {
     private productService: ProductsService,
     private imagesService: ImagesService,
     private auctionsService: AuctionsService,
+    private store: Store,
     private router: Router,
-    ) {}
+    ) {
+      this.walletBalance$ = this.store.select(selectWalletBalance);
+    }
 
     ngOnInit(): void {
       this.route.params.pipe(

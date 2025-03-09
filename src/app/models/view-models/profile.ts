@@ -2,6 +2,7 @@ import { Collection } from "../../store/collections/collection.model";
 import { WalletVM } from "./wallet-vm";
 
 export interface ProfileVM {
+    id?: string;
     email: string;
     profileIdentifier: string;
     phoneNumber: string;

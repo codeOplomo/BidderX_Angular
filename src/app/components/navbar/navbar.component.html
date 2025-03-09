@@ -12,36 +12,36 @@
         </a>
 
         <!-- Desktop Menu -->
-<div class="hidden md:flex items-center space-x-6 ml-10">
-  <ng-container *ngFor="let item of items">
-    <!-- If the item does not have subItems -->
-    <a *ngIf="!item.subItems" [routerLink]="item.routerLink"
-      class="px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50/50 hover:text-emerald-700 transition-colors flex items-center gap-2"
-      routerLinkActive="bg-emerald-50/60 text-emerald-700">
-      <span [class]="item.icon"></span>
-      {{ item.label }}
-    </a>
-    
-    <!-- If the item has subItems (dropdown) -->
-    <div *ngIf="item.subItems" class="relative group">
-      <button
-        (click)="goToExplorer(item.routerLink)"
-        class="px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50/50 hover:text-emerald-700 transition-colors flex items-center gap-2 cursor-pointer">
-        <span [class]="item.icon"></span>
-        {{ item.label }}
-      </button>
-      <!-- Dropdown Menu -->
-      <div
-        class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
-        <ng-container *ngFor="let sub of item.subItems">
-          <a (click)="goToExplorer(sub.routerLink, sub.queryParams)" class="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
-            {{ sub.label }}
-          </a>
-        </ng-container>
-      </div>
-    </div>
-  </ng-container>
-</div>
+        <div class="hidden md:flex items-center space-x-6 ml-10">
+          <ng-container *ngFor="let item of items">
+            <!-- If the item does not have subItems -->
+            <a *ngIf="!item.subItems" [routerLink]="item.routerLink"
+              class="px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50/50 hover:text-emerald-700 transition-colors flex items-center gap-2"
+              routerLinkActive="bg-emerald-50/60 text-emerald-700">
+              <span [class]="item.icon"></span>
+              {{ item.label }}
+            </a>
+
+            <!-- If the item has subItems (dropdown) -->
+            <div *ngIf="item.subItems" class="relative group">
+              <button (click)="goToExplorer(item.routerLink)"
+                class="px-3 py-2 rounded-lg text-gray-600 hover:bg-gray-50/50 hover:text-emerald-700 transition-colors flex items-center gap-2 cursor-pointer">
+                <span [class]="item.icon"></span>
+                {{ item.label }}
+              </button>
+              <!-- Dropdown Menu -->
+              <div
+                class="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-10">
+                <ng-container *ngFor="let sub of item.subItems">
+                  <a (click)="goToExplorer(sub.routerLink, sub.queryParams)"
+                    class="block px-4 py-2 text-gray-700 hover:bg-gray-100 cursor-pointer">
+                    {{ sub.label }}
+                  </a>
+                </ng-container>
+              </div>
+            </div>
+          </ng-container>
+        </div>
 
       </div>
 
@@ -139,25 +139,35 @@
 
 
           <!-- User Dropdown -->
-          <div *ngIf="(authService.isLoggedIn$ | async) && (user$ | async) as user" class="relative">
-            <button (click)="toggleDropdown()"
-              class="flex items-center gap-2.5 hover:bg-gray-50/50 px-3 py-2 rounded-lg transition-colors">
-              <img [src]="getAvatarUrl(user?.imageUrl || '')"
-                class="w-8 h-8 rounded-full object-cover border-2 border-emerald-100">
-              <!-- <span class="text-gray-700 font-medium">{{ user?.profileIdentifier || 'User' }}</span> -->
-              <span class="material-symbols-outlined text-gray-500 text-lg">expand_more</span>
-            </button>
-
-            <!-- Dropdown Menu -->
-            <div *ngIf="isDropdownOpen"
-              class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100/80 py-2 z-50">
-              <a *ngFor="let item of dropdownItems" (click)="item.command(); isDropdownOpen = false"
-                class="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-emerald-50/60 hover:text-emerald-700 transition-colors">
-                <span class="material-symbols-outlined text-lg">{{ item.icon }}</span>
-                {{ item.label }}
-              </a>
+          <ng-container *ngIf="user$ | async as user; else guestView">
+            <div class="relative">
+              <button (click)="toggleDropdown()"
+                class="flex items-center gap-2.5 hover:bg-gray-50/50 px-3 py-2 rounded-lg transition-colors">
+                <img [src]="getAvatarUrl(user.imageUrl || defaultAvatar)"
+                  class="w-8 h-8 rounded-full object-cover border-2 border-emerald-100">
+                <span class="material-symbols-outlined text-gray-500 text-lg">expand_more</span>
+              </button>
+          
+              <!-- Dropdown Menu -->
+              <div *ngIf="isDropdownOpen"
+                class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100/80 py-2 z-50">
+                <a *ngFor="let item of dropdownItems" (click)="item.command(); isDropdownOpen = false"
+                  class="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-emerald-50/60 hover:text-emerald-700 transition-colors">
+                  <span class="material-symbols-outlined text-lg">{{ item.icon }}</span>
+                  {{ item.label }}
+                </a>
+              </div>
             </div>
-          </div>
+          </ng-container>
+          
+          <ng-template #guestView>
+            <button (click)="goToLogin()"
+              class="flex items-center gap-2 bg-[#FFA400] text-white px-4 py-2 rounded-lg hover:bg-[#cb8500] transition-colors font-medium">
+              Get Started
+            </button>
+          </ng-template>
+          
+          
         </div>
 
         <!-- Mobile Menu Button -->

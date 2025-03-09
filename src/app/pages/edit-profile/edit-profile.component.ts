@@ -89,7 +89,6 @@ export class EditProfileComponent implements OnInit {
       takeUntil(this.destroy$)
     ).subscribe(user => {
       if (user) {
-        this.toastService.showSuccess('Success', user.message || 'Profile updated successfully!');
         this.router.navigate(['/profile']);
       }
     });

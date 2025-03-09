@@ -46,36 +46,36 @@ export class AuthService {
     }
   }
 
-  private hasValidToken(): boolean {
-    const token = localStorage.getItem('accessToken');
-    return !!token;
-  }
-
-  login(loginData: any) {
-    return this.http.post<TokenResponseVM>(`${this.apiUrl}/login`, loginData).pipe(
-      tap({
-        next: (response) => {
-          const { accessToken, refreshToken } = response;
-          
-          // Decode the accessToken to extract roles
-          const decodedToken = this.decodeToken(accessToken);
-          const roles = decodedToken?.roles || [];
-          
-          // Store tokens and roles in localStorage
-          localStorage.setItem('accessToken', accessToken);
-          localStorage.setItem('refreshToken', refreshToken);
-          localStorage.setItem('userRoles', JSON.stringify(roles));
-          
-          // Update the logged-in state
-          this.isLoggedInSubject.next(true);
-        }
-      }),
-      tap(() => {
-        this.store.dispatch(UserActions.loadUserProfile());
-      })
-    );
+  setLoggedInStatus(status: boolean) {
+    this.isLoggedInSubject.next(status);
   }
   
+  private hasValidToken(): boolean {
+    const token = localStorage.getItem('accessToken');
+    if (!token) return false;
+    
+    return true;
+  }
+
+  login(credentials: { email: string; password: string }): Observable<TokenResponseVM> {
+    // Only make API call, remove all side effects
+    return this.http.post<TokenResponseVM>(`${this.apiUrl}/login`, credentials);
+  }
+  
+  logout(): Observable<void> {
+    // Only make the API call here
+    return this.http.post<void>(`${this.apiUrl}/logout`, {});
+  }
+
+  checkAuthState(): boolean {
+    return this.hasValidToken();
+  }
+
+  // Method to check if user has a specific role
+  hasRole(role: string): boolean {
+    const roles = JSON.parse(localStorage.getItem('userRoles') || '[]');
+    return roles.includes(`ROLE_${role}`);
+  }
   refreshToken(): Observable<RefreshTokenResponseVM> {
     const refreshToken = localStorage.getItem('refreshToken');
     if (!refreshToken) {
@@ -106,28 +106,6 @@ export class AuthService {
   }
   
 
-  logout() {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('userRoles');
-    this.store.dispatch(UserActions.clearUserProfile());
-    this.isLoggedInSubject.next(false);
-    this.refreshTokenSubject.next(null);
-    this.isRefreshing = false;
-  }
-
-  checkAuthState(): boolean {
-    return this.hasValidToken();
-  }
-
-  private checkTokenExists(): boolean {
-    return !!localStorage.getItem('accessToken');
-  }
-  // Method to check if user has a specific role
-  hasRole(role: string): boolean {
-    const roles = JSON.parse(localStorage.getItem('userRoles') || '[]');
-    return roles.includes(`ROLE_${role}`);
-  }
 
   register(registerDataVM: RegisterDataVM): Observable<RegisterResponseVM> {
     return this.http.post<RegisterResponseVM>(`${this.apiUrl}/register`, registerDataVM)

@@ -21,6 +21,7 @@ import { ConnectWalletRequest } from '../../models/view-models/connect-wallet-re
 import { DepositRequest } from '../../models/view-models/deposit-request';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ApiResponse } from '../../models/view-models/api-response.model';
+import * as WalletActions from '../../store/wallet/wallet.actions';
 
 @Component({
   selector: 'app-profile-header',
@@ -30,7 +31,7 @@ import { ApiResponse } from '../../models/view-models/api-response.model';
   styleUrl: './profile-header.component.css'
 })
 export class ProfileHeaderComponent implements OnDestroy {
-  @Input() user$?: Observable<ProfileVM>;
+  @Input() profile$?: Observable<ProfileVM | null>;
   @Input() rating?: number;
   @Input() imageLoading?: boolean;
   @Input() coverImageLoading = false;
@@ -86,16 +87,19 @@ export class ProfileHeaderComponent implements OnDestroy {
   }
   connectWallet(): void {
     if (this.selectedCurrency && this.depositAmount > 0) {
-      console.log(this.selectedCurrency);
       const request: ConnectWalletRequest = {
         type: 'FIAT',
         currencyCode: this.selectedCurrency,
         depositAmount: this.depositAmount
       };
-      this.walletService.connectWallet(request).subscribe({
-        next: (response) => this.handlePaymentRedirect(response),
-        error: (err) => { /* Handle error */ }
-      });
+      this.store.dispatch(WalletActions.connectWallet({ request }));
+    }
+  }
+  
+  confirmDeposit(): void {
+    if (this.depositAmount > 0) {
+      const request: DepositRequest = { amount: this.depositAmount };
+      this.store.dispatch(WalletActions.depositFunds({ request }));
     }
   }
   
@@ -104,19 +108,6 @@ export class ProfileHeaderComponent implements OnDestroy {
     this.showDepositDialog = true;
   }
 
-  confirmDeposit(): void {
-    console.log('Deposit amount:', this.depositAmount);
-    if (this.depositAmount > 0) {
-      const request: DepositRequest = { amount: this.depositAmount };
-      this.walletService.depositFunds(request).subscribe({
-        next: (response) => this.handlePaymentRedirect(response),
-        error: (err) => { /* Handle error notification */ }
-      });
-    } else {
-      // Inform the user that the deposit amount must be greater than zero.
-    }
-  }
-  
   
   private handlePaymentRedirect(response: ApiResponse<WalletVM>) {
     if (response.data.checkoutUrl) {
