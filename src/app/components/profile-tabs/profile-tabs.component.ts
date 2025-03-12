@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
-import { Observable, take } from 'rxjs';
+import { Observable, Subscription, take } from 'rxjs';
 import { CollectionsTabComponent } from '../collections-tab/collections-tab.component';
 import { Store } from '@ngrx/store';
 import { selectUser } from '../../store/user/user.selectors';
@@ -16,6 +16,7 @@ import { ProductVM } from '../../models/view-models/product-vm';
 import { AuthService } from '../../services/auth.service';
 import { CollectionCardComponent } from '../collection-card/collection-card.component';
 import { ProfileVM } from '../../models/view-models/profile';
+import { selectIsBidder, selectIsOwner } from '../../store/auth/auth.selectors';
 
 @Component({
   selector: 'app-profile-tabs',
@@ -34,6 +35,13 @@ export class ProfileTabsComponent implements OnInit {
   likedAuctions: AuctionVm[] = [];
   victories: AuctionVm[] = [];
 
+  isOwner$: Observable<boolean>;
+  isBidder$: Observable<boolean>;
+  // Local copies of role flags for synchronous access in methods
+  isOwner: boolean = false;
+  isBidder: boolean = false;
+  private subscriptions: Subscription = new Subscription();
+
   totalRecords: number = 0; 
   first: number = 0;       
   rows: number = 12;
@@ -44,41 +52,49 @@ export class ProfileTabsComponent implements OnInit {
   constructor(
     private store: Store, 
     private collectionService: CollectionsService, 
-    private productService: ProductsService,
     private auctionService: AuctionsService,
     private imagesService: ImagesService,
-    private authService: AuthService
   ) {
     this.user$ = this.store.select(selectUser);
+    
+    this.isOwner$ = this.store.select(selectIsOwner);
+    this.isBidder$ = this.store.select(selectIsBidder);
   }
 
   // Instead of a static items array, we use a getter that returns the appropriate tabs.
   get itemsToShow(): string[] {
     // For bidder role, show only 'tracked' and 'victories' (use lowercase to match your ngSwitch cases)
-    return this.isBidder() ? ['tracked', 'victories'] : ['auctions', 'collections', 'tracked', 'victories'];
+    return this.isBidder ? ['tracked', 'victories'] : ['auctions', 'collections', 'tracked', 'victories'];
   }
 
   ngOnInit(): void {
-    this.user$.subscribe(user => {
-      if (user) {
-        this.userEmail = user.email;
+    // Subscribe to role observables to set local booleans
+    this.subscriptions.add(
+      this.isOwner$.subscribe(isOwner => {
+        this.isOwner = isOwner;
+      })
+    );
+    this.subscriptions.add(
+      this.isBidder$.subscribe(isBidder => {
+        this.isBidder = isBidder;
+      })
+    );
 
-        if (this.isBidder()) {
-          this.activeTab = this.itemsToShow[0]; // First bidder tab (liked)
+    // Subscribe to the user observable to get email and initialize tab
+    this.subscriptions.add(
+      this.user$.subscribe(user => {
+        if (user) {
+          this.userEmail = user.email;
+          // If the user is a bidder, default to the first bidder tab
+          if (this.isBidder) {
+            this.activeTab = this.itemsToShow[0];
+          }
+          this.selectTab(this.activeTab);
         }
-        
-        this.selectTab(this.activeTab);
-      }
-    });
+      })
+    );
   }
 
-    isOwner(): boolean {
-      return this.authService.hasRole('OWNER');
-    }
-
-    isBidder(): boolean {
-      return this.authService.hasRole('BIDDER');
-    }
 
   onLikeToggled(updatedAuction: AuctionVm) {
     const index = this.auctions.findIndex(a => a.id === updatedAuction.id);
@@ -87,6 +103,20 @@ export class ProfileTabsComponent implements OnInit {
       this.auctions = [...this.auctions];
     }
   }
+
+private fetchUserVictories(page: number, size: number): void {
+  if (!this.userEmail) return;
+
+  this.auctionService.getUserWonAuctions(this.userEmail, page, size)
+    .pipe(take(1))
+    .subscribe({
+      next: (response) => {
+        this.victories = response.data.content;
+        this.totalRecords = response.data.page.totalElements;
+      },
+      error: (err) => console.error('Error fetching won auctions:', err),
+    });
+}
 
   private fetchUserLikedAuctions(page: number, size: number): void {
     if (!this.userEmail) return;
@@ -103,7 +133,7 @@ export class ProfileTabsComponent implements OnInit {
   }
   
   private fetchOwnerAuctions(page: number, size: number): void {
-    if (!this.isOwner() || !this.userEmail) return;
+    if (!this.isOwner || !this.userEmail) return;
     
     this.auctionService.getUserAuctionsByEmail(this.userEmail, page, size)
       .pipe(take(1))
@@ -117,7 +147,7 @@ export class ProfileTabsComponent implements OnInit {
   }
 
   fetchOwnerCollections(page: number, size: number): void {
-    if (!this.isOwner() || !this.userEmail) return;
+    if (!this.isOwner || !this.userEmail) return;
     this.collectionService.getCollectionsByEmail(this.userEmail, page, size).subscribe({
       next: (response) => {
         this.collections = response.data.content;
@@ -158,10 +188,10 @@ export class ProfileTabsComponent implements OnInit {
   
     switch (tab) {
       case 'collections':
-        if (this.isOwner()) this.fetchOwnerCollections(page, this.rows);
+        if (this.isOwner) this.fetchOwnerCollections(page, this.rows);
         break;
       case 'auctions':
-        if (this.isOwner()) this.fetchOwnerAuctions(page, this.rows);
+        if (this.isOwner) this.fetchOwnerAuctions(page, this.rows);
         break;
       case 'tracked':
         this.fetchUserLikedAuctions(page, this.rows);
@@ -175,6 +205,12 @@ export class ProfileTabsComponent implements OnInit {
   getImageUrl(imageUrl?: string): string {
     return imageUrl?.trim() ? this.imagesService.getImageUrl(imageUrl) : 'https://picsum.photos/400/300?random=1';
   }
+
+  ngOnDestroy(): void {
+    this.subscriptions.unsubscribe();
+  }
+  
+  
   
   // private fetchOwnerProducts(page: number, size: number): void {
   //   if (!this.isOwner() || !this.userEmail) return;
@@ -187,20 +223,4 @@ export class ProfileTabsComponent implements OnInit {
   //       error: (err) => console.error('Error fetching products:', err),
   //     });
   // }
-  
-  
-  private fetchUserVictories(page: number, size: number): void {
-    // if (!this.userEmail) return;
-  
-    // this.auctionService.getUserWonAuctionsByEmail(this.userEmail, page, size)
-    //   .pipe(take(1))
-    //   .subscribe({
-    //     next: (response) => {
-    //       this.victories = response.data.content;
-    //       this.totalRecords = response.data.page.totalElements;
-    //     },
-    //     error: (err) => console.error('Error fetching victories:', err),
-    //   });
-  }
-  
 }

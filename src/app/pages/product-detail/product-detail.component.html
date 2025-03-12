@@ -8,12 +8,44 @@
     <app-product-info [product]="product" [auction]="auction"> <!-- Fixed spelling -->
     </app-product-info>
 
-    <!-- Bid Section (Enhanced for Instant Auctions) -->
+    <!-- Bid Section -->
     <div class="p-6 rounded-2xl bg-white/80 shadow-md backdrop-blur-sm">
       <div class="flex justify-between items-center">
         <div class="flex flex-col gap-1">
-          <!-- Add wallet balance here -->
-          <div class="flex items-center gap-2 mb-2">
+
+          <span class="text-2xl font-semibold text-[#cb8502]">
+            {{ getAuctionTypeDisplay(auction?.type) }}
+          </span>
+
+          <!-- Ended Auction Display -->
+          <ng-container *ngIf="auction?.status === 'ENDED'">
+            <div class="flex items-center gap-3">
+              <!-- Winner Avatar -->
+              <img
+                *ngIf="getImageUrl(auction?.winner?.imageUrl ?? '')"
+                [src]="getImageUrl(auction?.winner?.imageUrl ?? '')"
+                alt="Winner Avatar"
+                class="w-10 h-10 rounded-full border-2 border-[#cb8502]"
+              />
+              <!-- Winner Details -->
+              <div>
+                <div class="text-lg text-[#3e1300]">
+                  <span class="font-medium">Winner:</span>
+                  {{ auction?.winner?.profileIdentifier || auction?.winner?.email || 'No winner' }}
+                </div>
+                <div class="text-lg text-[#3e1300]">
+                  <span class="font-medium">Winning Bid:</span>
+                  <span>{{ auction?.currentBid | currency }}</span>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+
+          <!-- Active Auction Display -->
+          <ng-container *ngIf="auction?.status !== 'ENDED'">
+            
+          <!-- Show balance only for non-owners -->
+          <div *ngIf="auction?.status !== 'ENDED'" class="flex items-center gap-2 mb-2">
             <span class="text-sm text-[#3e1300] font-medium">
               <i class="fas fa-wallet mr-1 text-[#cb8502]"></i>
               Your Balance:
@@ -22,21 +54,12 @@
               {{ walletBalance$ | async | currency }}
             </span>
           </div>
-          
-          <span class="text-2xl font-semibold text-[#cb8502]">
-            {{ getAuctionTypeDisplay(auction?.type) }}
-          </span>
-          <!-- Existing price displays -->
-          <span *ngIf="auction?.type === 'INSTANT'" class="text-lg text-[#3e1300]">
-            Fixed Price: <span class="font-medium">{{ auction?.startingPrice | currency }}</span>
-          </span>
-          <span *ngIf="auction?.type === 'TIMED' && auction?.currentBid" class="text-lg text-[#3e1300]">
-            Current Bid: <span class="font-medium">{{ auction?.currentBid | currency }}</span>
-          </span>
+          </ng-container>
         </div>
-        <button *ngIf="auction?.status === 'APPROVED'" 
-                class="bg-[#FFA400] text-white rounded-xl py-3 px-6 font-semibold cursor-pointer
-                       transition-all duration-200 hover:bg-[#cb8502] hover:-translate-y-[1px]">
+
+        <!-- Show button only for non-owners and approved auctions -->
+        <button *ngIf="(isOwner$ | async) === false && auction?.status === 'APPROVED'" class="bg-[#FFA400] text-white rounded-xl py-3 px-6 font-semibold cursor-pointer
+                   transition-all duration-200 hover:bg-[#cb8502] hover:-translate-y-[1px]" (click)="openBidDialog()">
           {{ auction?.type === 'INSTANT' ? 'Buy Now' : 'Place Bid' }}
         </button>
       </div>
@@ -48,7 +71,7 @@
       <h3 class="text-sm text-[#3e1300] mb-4">Collections</h3>
       <div class="flex flex-wrap gap-4 justify-start">
         <div *ngFor="let collection of product?.collections"
-          class="group flex flex-col items-center gap-2 cursor-pointer">
+          class="group flex flex-col items-center gap-2 cursor-pointer" (click)="navigateToCollection(collection.id)">
           <img [src]="getImageUrl(collection.imageUrl)" [alt]="collection.name" class="w-10 h-10 rounded-full border-2 border-[#A9B6B1] object-cover 
                   transition-transform duration-200 ease-in-out group-hover:scale-110" />
           <span class="text-xs text-center text-[#3e1300] transition-colors duration-200 group-hover:text-[#FFA400]">
@@ -58,10 +81,18 @@
       </div>
     </div>
 
-    <app-product-tabs></app-product-tabs>
+    <app-product-tabs 
+  *ngIf="auction" 
+  [auctionId]="auction.id" 
+  [auctionEnded]="auction?.status === 'ENDED'">
+</app-product-tabs>
+
 
     <app-place-bid-card *ngIf="auction?.type === 'TIMED'" [auction]="auction!"></app-place-bid-card>
   </div>
+  <app-place-bid-dialog [(visible)]="showBidDialog" [minimumBid]="auction?.currentBid || 0" [auctionId]="auction?.id"
+    (bidSubmitted)="onBidSubmitted($event)">
+  </app-place-bid-dialog>
 </div>
 
 

@@ -69,6 +69,17 @@ export class AuctionsService {
     return this.http.get<ApiResponse<PaginatedApiResponse<AuctionVm>>>(`${this.apiUrl}`, { params });
   }
 
+  
+getUserWonAuctions(email: string, page: number, size: number): Observable<ApiResponse<PaginatedApiResponse<AuctionVm>>> {
+  return this.http.get<ApiResponse<PaginatedApiResponse<AuctionVm>>>(`${this.apiUrl}/victories`, {
+    params: {
+      email: email,
+      page: page.toString(),
+      size: size.toString()
+    }
+  });
+}
+
   getLiveAuctions(
     page: number = 0,
     size: number = 8

@@ -9,6 +9,7 @@ import { AuctionRectionsService } from '../../services/auction-rections.service'
 import { Store } from '@ngrx/store';
 import { selectWalletBalance } from '../../store/wallet/wallet.selectors';
 import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -28,6 +29,7 @@ export class ProductInfoComponent implements OnChanges {
   constructor(
     private categoriesService: CategoriesService,
     private auctionReactionsService: AuctionRectionsService,
+    private router: Router,
     private store: Store
   ) {}
 
@@ -72,5 +74,13 @@ export class ProductInfoComponent implements OnChanges {
         this.category = 'Unknown';
       }
     });
+  }
+
+  navigateToAuctionsExplorer() {
+    if (this.product?.category?.id) {
+      this.router.navigate(['/explore-auctions'], {
+        queryParams: { categoryId: this.product.category.id }
+      });
+    }
   }
 }

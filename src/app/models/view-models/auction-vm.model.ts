@@ -19,4 +19,5 @@ export interface AuctionVm {
     totalBids: number;
     likedByCurrentUser: boolean;
     bidders: ProfileVM[];
+    winner: ProfileVM | null;
 }

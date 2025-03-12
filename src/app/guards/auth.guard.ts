@@ -1,40 +1,45 @@
-import { ActivatedRouteSnapshot, CanActivateFn, Router, RouterStateSnapshot, UrlTree } from '@angular/router';
-import { map, Observable, take } from 'rxjs';
-import { AuthService } from '../services/auth.service';
-import { inject } from '@angular/core';
+import { inject } from "@angular/core";
+import { CanActivateFn, ActivatedRouteSnapshot, RouterStateSnapshot, Router, UrlTree } from "@angular/router";
+import { Store } from "@ngrx/store";
+import { Observable } from "rxjs";
+import { map, take } from "rxjs/operators";
+import { selectIsAuthenticated, selectUserRoles } from "../store/auth/auth.selectors";
 
 export const authGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
-): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree => {
-  const authService = inject(AuthService);
+): Observable<boolean | UrlTree> => {
+  const store = inject(Store);
   const router = inject(Router);
 
-  return authService.isLoggedIn$.pipe(
+  return store.select(selectIsAuthenticated).pipe(
     take(1),
-    map(isLoggedIn => {
-      // Check if the route requires specific roles
-      const requiredRoles = route.data['roles'] as Array<string>;
-      
-      if (!isLoggedIn) {
-        // Store the attempted URL for redirecting after login
-        return router.createUrlTree(['/login'], {
-          queryParams: { returnUrl: state.url }
-        });
+    map(isAuthenticated => {
+      if (!isAuthenticated) {
+        return router.createUrlTree(['/login'], { queryParams: { returnUrl: state.url } });
       }
+      return true;
+    })
+  );
+};
 
-      // If roles are specified, check if user has required roles
-      if (requiredRoles) {
-        const hasRequiredRole = requiredRoles.some(role => 
-          authService.hasRole(role)
-        );
+export const roleGuard: CanActivateFn = (
+  route: ActivatedRouteSnapshot,
+  state: RouterStateSnapshot
+): Observable<boolean | UrlTree> => {
+  const store = inject(Store);
+  const router = inject(Router);
+  const requiredRoles = route.data['roles'] as Array<string>;
 
-        if (!hasRequiredRole) {
-          // Redirect to home or unauthorized page if user doesn't have required role
-          return router.createUrlTree(['/']);
-        }
+  return store.select(selectUserRoles).pipe(
+    take(1),
+    map(userRoles => {
+      if (!userRoles || userRoles.length === 0) {
+        return router.createUrlTree(['/']);
       }
-
+      if (requiredRoles && !requiredRoles.some(role => userRoles.includes(role))) {
+        return router.createUrlTree(['/']);
+      }
       return true;
     })
   );

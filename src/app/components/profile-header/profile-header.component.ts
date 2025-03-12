@@ -22,6 +22,7 @@ import { DepositRequest } from '../../models/view-models/deposit-request';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { ApiResponse } from '../../models/view-models/api-response.model';
 import * as WalletActions from '../../store/wallet/wallet.actions';
+import { selectIsOwner } from '../../store/auth/auth.selectors';
 
 @Component({
   selector: 'app-profile-header',
@@ -36,6 +37,7 @@ export class ProfileHeaderComponent implements OnDestroy {
   @Input() imageLoading?: boolean;
   @Input() coverImageLoading = false;
   private destroy$ = new Subject<void>();
+  isOwner$: Observable<boolean>;
   
   wallet$!: Observable<WalletVM>;
   walletLoading = false;
@@ -73,11 +75,18 @@ export class ProfileHeaderComponent implements OnDestroy {
     private walletService: WalletService,
     private store: Store, 
     private router: Router
-  ) {}
-
-  ngOnInit() {
+  ) {
+    this.isOwner$ = this.store.select(selectIsOwner);
   }
 
+  ngOnInit() {
+    
+  }
+
+  
+  // isOwner(): boolean {
+  //   return this.authService.hasRole('OWNER');
+  // }
   handleWalletAction(hasWallet: boolean) {
     if (hasWallet) {
       this.openDepositDialog();
@@ -167,9 +176,6 @@ export class ProfileHeaderComponent implements OnDestroy {
     onCreateAuction() {
       this.router.navigate(['/create-auction']);
     }
-  isOwner(): boolean {
-    return this.authService.hasRole('OWNER');
-  }
 
   ngOnDestroy() {
     this.destroy$.next();

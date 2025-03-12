@@ -139,33 +139,35 @@
 
 
           <!-- User Dropdown -->
-          <ng-container *ngIf="user$ | async as user; else guestView">
-            <div class="relative">
-              <button (click)="toggleDropdown()"
-                class="flex items-center gap-2.5 hover:bg-gray-50/50 px-3 py-2 rounded-lg transition-colors">
-                <img [src]="getAvatarUrl(user.imageUrl || defaultAvatar)"
-                  class="w-8 h-8 rounded-full object-cover border-2 border-emerald-100">
-                <span class="material-symbols-outlined text-gray-500 text-lg">expand_more</span>
-              </button>
-          
-              <!-- Dropdown Menu -->
-              <div *ngIf="isDropdownOpen"
-                class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100/80 py-2 z-50">
-                <a *ngFor="let item of dropdownItems" (click)="item.command(); isDropdownOpen = false"
-                  class="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-emerald-50/60 hover:text-emerald-700 transition-colors">
-                  <span class="material-symbols-outlined text-lg">{{ item.icon }}</span>
-                  {{ item.label }}
-                </a>
-              </div>
-            </div>
-          </ng-container>
-          
-          <ng-template #guestView>
-            <button (click)="goToLogin()"
-              class="flex items-center gap-2 bg-[#FFA400] text-white px-4 py-2 rounded-lg hover:bg-[#cb8500] transition-colors font-medium">
-              Get Started
-            </button>
-          </ng-template>
+          <!-- User Dropdown -->
+<ng-container *ngIf="(isAuthenticated$ | async) && (user$ | async) as user; else guestView">
+  <div class="relative">
+    <button (click)="toggleDropdown()"
+      class="flex items-center gap-2.5 hover:bg-gray-50/50 px-3 py-2 rounded-lg transition-colors">
+      <img [src]="getAvatarUrl(user.imageUrl || defaultAvatar)"
+        class="w-8 h-8 rounded-full object-cover border-2 border-emerald-100">
+      <span class="material-symbols-outlined text-gray-500 text-lg">expand_more</span>
+    </button>
+    
+    <!-- Dropdown Menu -->
+    <div *ngIf="isDropdownOpen"
+      class="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100/80 py-2 z-50">
+      <a *ngFor="let item of dropdownItems" (click)="item.command(); isDropdownOpen = false"
+        class="flex items-center gap-3 px-4 py-2.5 text-gray-600 hover:bg-emerald-50/60 hover:text-emerald-700 transition-colors">
+        <span class="material-symbols-outlined text-lg">{{ item.icon }}</span>
+        {{ item.label }}
+      </a>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #guestView>
+  <button (click)="goToLogin()"
+    class="flex items-center gap-2 bg-[#FFA400] text-white px-4 py-2 rounded-lg hover:bg-[#cb8500] transition-colors font-medium">
+    Get Started
+  </button>
+</ng-template>
+
           
           
         </div>
@@ -191,37 +193,38 @@
         </a>
 
         <!-- Mobile User Section -->
-        <ng-container *ngIf="authService.isLoggedIn$ | async">
-          <!-- User Header -->
-          <div class="px-4 py-2.5 text-gray-700 cursor-pointer hover:bg-gray-50/50"
-            (click)="isUserMenuOpen = !isUserMenuOpen">
-            <div class="flex items-center gap-3">
-              <img [src]="getAvatarUrl((user$ | async)?.imageUrl || '')"
-                class="w-6 h-6 rounded-full border-2 border-emerald-100">
-              <span class="font-medium">{{ (user$ | async)?.profileIdentifier || 'User' }}</span>
-              <span class="material-symbols-outlined ml-auto transform transition-transform"
-                [class.rotate-180]="isUserMenuOpen">expand_more</span>
-            </div>
-          </div>
+<ng-container *ngIf="isAuthenticated$ | async; else guestView">
+  <!-- User Header -->
+  <div class="px-4 py-2.5 text-gray-700 cursor-pointer hover:bg-gray-50/50"
+       (click)="isUserMenuOpen = !isUserMenuOpen">
+    <div class="flex items-center gap-3">
+      <img [src]="getAvatarUrl((user$ | async)?.imageUrl || defaultAvatar)"
+           class="w-6 h-6 rounded-full border-2 border-emerald-100">
+      <span class="font-medium">{{ (user$ | async)?.profileIdentifier || 'User' }}</span>
+      <span class="material-symbols-outlined ml-auto transform transition-transform"
+            [class.rotate-180]="isUserMenuOpen">expand_more</span>
+    </div>
+  </div>
 
-          <!-- User Submenu -->
-          <div class="pl-8 space-y-1" *ngIf="isUserMenuOpen">
-            <a *ngFor="let item of dropdownItems" (click)="item.command(); isMobileMenuOpen = false"
-              class="block px-4 py-2.5 text-gray-600 hover:bg-emerald-50/60 hover:text-emerald-700 transition-colors">
-              <span class="material-symbols-outlined text-lg mr-2">{{ item.icon }}</span>
-              {{ item.label }}
-            </a>
-          </div>
-        </ng-container>
+  <!-- User Submenu -->
+  <div class="pl-8 space-y-1" *ngIf="isUserMenuOpen">
+    <a *ngFor="let item of dropdownItems" (click)="item.command(); isMobileMenuOpen = false"
+       class="block px-4 py-2.5 text-gray-600 hover:bg-emerald-50/60 hover:text-emerald-700 transition-colors">
+      <span class="material-symbols-outlined text-lg mr-2">{{ item.icon }}</span>
+      {{ item.label }}
+    </a>
+  </div>
+</ng-container>
 
-        <!-- Guest View -->
-        <ng-container *ngIf="!(authService.isLoggedIn$ | async)">
-          <a routerLink="/login"
-            class="block px-4 py-2.5 text-gray-600 hover:bg-gray-50/50 hover:text-emerald-700 transition-colors"
-            (click)="isMobileMenuOpen = false">
-            Get Started
-          </a>
-        </ng-container>
+<!-- Guest View -->
+<ng-template #guestView>
+  <a routerLink="/login"
+     class="block px-4 py-2.5 text-gray-600 hover:bg-gray-50/50 hover:text-emerald-700 transition-colors"
+     (click)="isMobileMenuOpen = false">
+    Get Started
+  </a>
+</ng-template>
+
 
         <!-- Mobile Search -->
         <div class="px-4 py-2">

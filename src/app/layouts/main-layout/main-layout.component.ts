@@ -16,6 +16,6 @@ export class MainLayoutComponent implements OnInit {
   constructor(private authService: AuthService) {}
   ngOnInit() {
     // Initialize auth state on app start
-    this.authService.initializeAuthState();
+    // this.authService.initializeAuthState();
   }
 }

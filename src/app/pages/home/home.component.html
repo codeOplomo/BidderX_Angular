@@ -56,11 +56,11 @@
                 <p class="text-lg text-gray-600">Active auctions ending soon - place your bids</p>
             </div>
 
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
-                <!-- Auction cards -->
+            <div class="grid gap-4 sm:gap-6" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
                 <app-auction-card *ngFor="let auction of liveAuctions | slice:0:(showMore ? 8 : 4)" [auction]="auction">
                 </app-auction-card>
-            </div>
+              </div>
+              
 
             <!-- Auction Categories -->
             <!-- <div class="space-y-6">

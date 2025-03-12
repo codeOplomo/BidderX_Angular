@@ -22,6 +22,7 @@ import { AuctionsService } from '../../services/auctions.service';
 import * as AuthActions from '../../store/auth/auth.actions';
 import * as UserActions from '../../store/user/user.actions';
 import { ProfileVM } from '../../models/view-models/profile';
+import { selectAuthState, selectIsAuthenticated, selectIsOwner } from '../../store/auth/auth.selectors';
 
 @Component({
   selector: 'app-navbar',
@@ -46,24 +47,15 @@ export class NavbarComponent implements OnInit, OnDestroy {
   private searchSubject = new Subject<string>();
 
   private destroy$ = new Subject<void>();
-  defaultAvatar = 'assets/default-avatar.png';
+  defaultAvatar = 'https://unsplash.it/200/200';
 
 
-  user$!: Observable<ProfileVM>;
+  user$!: Observable<ProfileVM | null>;
 
-  ngOnInit() {
-    this.user$ = this.store.select(selectUser).pipe(
-      tap(user => console.log('DEBUG: user from store', user)),
-      filter((user): user is ProfileVM => !!user)
-    );
-    // This is useful if you want to handle page reloads where the user might already be logged in.
-    this.authService.isLoggedIn$.pipe(
-      filter(isLoggedIn => isLoggedIn),
-      takeUntil(this.destroy$)
-    ).subscribe(() => {
-      this.store.dispatch(UserActions.loadUserProfile());
-    });
-  }
+  isAuthenticated$!: Observable<boolean>;
+ 
+
+  
   items = [
     { label: 'Home', icon: 'home', routerLink: '/' },
     { 
@@ -98,6 +90,32 @@ export class NavbarComponent implements OnInit, OnDestroy {
     private store: Store,
     private router: Router
   ) {
+    this.isAuthenticated$ = this.store.select(selectIsAuthenticated);
+    
+   }
+
+   
+  ngOnInit() {
+    this.store.select(selectAuthState).subscribe(state => console.log('Auth State:', state));
+
+    this.isAuthenticated$ = this.store.select(selectIsAuthenticated).pipe(
+      tap(isAuth => console.log('Auth status:', isAuth))
+    );
+  
+    this.user$ = this.store.select(selectUser).pipe(
+      distinctUntilChanged()
+    );
+    
+    
+  
+    this.isAuthenticated$.pipe(
+      filter(isAuth => isAuth),
+      takeUntil(this.destroy$)
+    ).subscribe(() => {
+      this.store.dispatch(UserActions.loadUserProfile());
+    });
+
+
     this.searchSubject.pipe(
       debounceTime(300),
       distinctUntilChanged(),
@@ -114,7 +132,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
     ).subscribe(results => {
       this.searchResults = results;
     });
-   }
+  }
+
 
    onSearchInput(): void {
     this.searchSubject.next(this.searchQuery.trim());

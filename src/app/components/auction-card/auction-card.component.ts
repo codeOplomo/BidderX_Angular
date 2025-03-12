@@ -9,11 +9,12 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { CountdownService } from '../../services/countdown.service';
+import { UniquePipe } from '../../pipes/unique.pipe';
 
 @Component({
   selector: 'app-auction-card',
   standalone: true,
-  imports: [CommonModule, CardModule, AvatarModule, TooltipModule, RouterModule],
+  imports: [CommonModule, CardModule, AvatarModule, TooltipModule, RouterModule, UniquePipe],
   templateUrl: './auction-card.component.html',
   styleUrl: './auction-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush

@@ -14,6 +14,7 @@ import { selectCollectionCoverImage, selectCollectionError, selectCollectionLoad
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { ImagesService } from '../../services/images.service';
 import { AuthService } from '../../services/auth.service';
+import { selectIsBidder, selectIsOwner } from '../../store/auth/auth.selectors';
 
 @Component({
   selector: 'app-collection-showcase',
@@ -24,6 +25,8 @@ import { AuthService } from '../../services/auth.service';
 })
 export class CollectionShowcaseComponent {
 
+  isOwner$: Observable<boolean>;
+  isBidder$: Observable<boolean>;
   collection$: Observable<Collection | null>;
   loading$: Observable<boolean>;
   error$: Observable<any>;
@@ -39,6 +42,8 @@ export class CollectionShowcaseComponent {
     this.collection$ = this.store.pipe(select(selectCollectionCoverImage));
     this.loading$ = this.store.pipe(select(selectCollectionLoading));
     this.error$ = this.store.pipe(select(selectCollectionError));
+    this.isOwner$ = this.store.select(selectIsOwner);
+        this.isBidder$ = this.store.select(selectIsBidder);
   }
 
   ngOnInit(): void {
@@ -48,9 +53,9 @@ export class CollectionShowcaseComponent {
     }
   }
   
-  isOwner(): boolean {
-    return this.authService.hasRole('OWNER');
-  }
+  // isOwner(): boolean {
+  //   return this.authService.hasRole('OWNER');
+  // }
 
   retryLoading(): void {
     const collectionId = this.route.snapshot.paramMap.get('id');

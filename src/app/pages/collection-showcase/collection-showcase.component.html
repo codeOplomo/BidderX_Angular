@@ -3,7 +3,7 @@
          style="background: linear-gradient(135deg, #f3f9f2 0%, #f3f9f2 100%);">
       <app-showcase-header (imageUpdated)="handleImageUpdate($event)"></app-showcase-header>
       <!-- Floating Action Button -->
-      <button *ngIf="isOwner()" (click)="openAddProductDialog()"
+      <button *ngIf="isOwner$ | async"  (click)="openAddProductDialog()"
           class="absolute -bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 flex items-center gap-2">
           <span class="material-symbols-outlined">add</span>
       </button>
@@ -27,7 +27,7 @@
       <!-- Products Grid with Empty State -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
         <!-- Add Product Card (for owners) -->
-        <div *ngIf="isOwner() && collection.items?.length"
+        <div *ngIf="(isOwner$ | async) && collection.items?.length"
             class="border-2 border-dashed border-gray-200 rounded-xl hover:border-green-500 transition-colors cursor-pointer flex items-center justify-center min-h-[300px]"
             (click)="openAddProductDialog()">
             <div class="text-center text-gray-400 hover:text-green-500">
@@ -37,7 +37,7 @@
         </div>
   
         <app-product-card *ngFor="let product of collection.items"
-            [product]="product" [editable]="isOwner()"
+            [product]="product" [editable]="(isOwner$ | async) ?? false" 
             (edit)="onEditItem(product)" (delete)="onDeleteItem(product)"></app-product-card>
   
         <!-- Empty State -->
@@ -46,7 +46,7 @@
                 <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">inventory</span>
                 <h3 class="text-xl font-semibold mb-2">No products in this collection yet</h3>
                 <p class="text-gray-500 mb-4">Start by adding your first product to showcase</p>
-                <button *ngIf="isOwner()" (click)="openAddProductDialog()"
+                <button *ngIf="isOwner$ | async"  (click)="openAddProductDialog()"
                     class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors">
                     Add First Product
                 </button>

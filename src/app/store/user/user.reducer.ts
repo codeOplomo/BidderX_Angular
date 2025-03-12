@@ -52,5 +52,5 @@ export const UserReducer = createReducer(
       loading: false,
       error
     })),
-    on(UserActions.clearUserProfile, () => initialState)
+    on(UserActions.clearUserProfile, state => ({ ...state, user: null }))
   );

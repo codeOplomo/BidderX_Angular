@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output, SimpleChanges } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 import { BidsService } from '../../services/bids.service';
 import { BidRequest } from '../../models/view-models/bid-request';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectWalletBalance } from '../../store/wallet/wallet.selectors';
-import { Observable, take, tap } from 'rxjs';
+import { finalize, Observable, take, tap } from 'rxjs';
 import * as WalletActions from '../../store/wallet/wallet.actions';
 
 @Component({
@@ -17,11 +17,25 @@ import * as WalletActions from '../../store/wallet/wallet.actions';
   styleUrl: './place-bid-dialog.component.css'
 })
 export class PlaceBidDialogComponent {
-  @Input() visible: boolean = false;
+  // @Input() visible: boolean = false;
   @Input() minimumBid: number = 0;
   @Input() auctionId: string | undefined = '';
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() bidSubmitted = new EventEmitter<number>();
+
+  private _visible = false;
+  
+  @Input()
+  get visible(): boolean {
+    return this._visible;
+  }
+  set visible(value: boolean) {
+    if (this._visible !== value) {
+      this._visible = value;
+      this.visibleChange.emit(value);
+    }
+  }
+
 
   walletBalance$: Observable<number>;
   insufficientBalance = false;
@@ -41,6 +55,12 @@ export class PlaceBidDialogComponent {
     this.store.dispatch(WalletActions.loadWallet());
   }
 
+  // ngOnChanges(changes: SimpleChanges) {
+  //   if (changes['visible'] && !changes['visible'].currentValue) {
+  //     this.resetForm();
+  //   }
+  // }
+
   // place-bid-dialog.component.ts
 submitBid() {
   this.walletBalance$.pipe(
@@ -56,10 +76,13 @@ submitBid() {
         this.loading = true;
         this.bidSubmitted.emit(this.bidAmount);
         this.insufficientBalance = false;
+        this.bidAmount = undefined;
       } else {
         this.insufficientBalance = true;
+        this.loading = false;
       }
-    })
+    }),
+    finalize(() => this.loading = false)
   ).subscribe();
 }
 
@@ -69,7 +92,6 @@ submitBid() {
 
   onClose() {
     this.visible = false;
-    this.visibleChange.emit(false);
     this.resetForm();
   }
 

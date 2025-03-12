@@ -25,7 +25,7 @@
       <div *ngSwitchCase="'auctions'" class="mt-6 sm:mt-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
           <app-auction-card *ngFor="let auction of auctions" [auction]="auction" (likeToggled)="onLikeToggled($event)"
-            class="hover:scale-[1.02] transform-gpu transition-transform duration-300 hover:shadow-lg">
+            class="transform-gpu transition-transform duration-300">
           </app-auction-card>
         </div>
         <ng-template #noAuctions>
@@ -57,7 +57,7 @@
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
           <app-auction-card *ngFor="let auction of likedAuctions" [auction]="auction"
             (likeToggled)="onLikeToggled($event)"
-            class="hover:scale-[1.02] transform-gpu transition-transform duration-300 hover:shadow-lg">
+            class="transform-gpu transition-transform duration-300 hover:shadow-lg">
           </app-auction-card>
         </div>
       </div>
@@ -65,16 +65,17 @@
       <!-- Victories Tab -->
       <div *ngSwitchCase="'victories'" class="mt-6 sm:mt-10">
         <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-6">
-          <app-auction-card *ngFor="let auction of victories" [auction]="auction" (likeToggled)="onLikeToggled($event)"
-            class="hover:scale-[1.02] transform-gpu transition-transform duration-300 hover:shadow-lg">
+          <app-auction-card *ngFor="let auction of victories" [auction]="auction" 
+            (likeToggled)="onLikeToggled($event)"
+            class="transform-gpu transition-transform duration-300 hover:shadow-lg">
           </app-auction-card>
         </div>
-        <ng-template #noVictories>
-          <div class="text-center py-8 sm:py-12 space-y-4">
-            <span class="material-symbols-outlined text-4xl text-amber-600/60">military_tech</span>
-            <p class="text-emerald-900/60">Your collection of victories begins here</p>
-          </div>
-        </ng-template>
+        
+        <!-- Add this no victories section -->
+        <div *ngIf="victories.length === 0" class="text-center py-8 sm:py-12 space-y-4">
+          <span class="material-symbols-outlined text-4xl text-amber-600/60">military_tech</span>
+          <p class="text-emerald-900/60">Your collection of victories begins here</p>
+        </div>
       </div>
     </ng-container>
 

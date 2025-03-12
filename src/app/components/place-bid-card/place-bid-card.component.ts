@@ -27,6 +27,8 @@ private countdownInterval: any;
 constructor(private authService: AuthService, private bidsService: BidsService, private store: Store) {}
 
 ngOnChanges(changes: SimpleChanges): void {
+  this.auctionEnded = this.auction.status === 'ENDED';
+  this.auctionNotStarted = this.auction.status === 'PENDING';
   if (changes['auction']) {
     this.updateCountdown();
   }
@@ -66,13 +68,13 @@ ngOnDestroy(): void {
   }
 }
 
-isOwner(): boolean {
-  return this.authService.hasRole('OWNER');
-}
+// isOwner(): boolean {
+//   return this.authService.hasRole('OWNER');
+// }
 
-isBidder(): boolean {
-  return this.authService.hasRole('BIDDER');
-}
+// isBidder(): boolean {
+//   return this.authService.hasRole('BIDDER');
+// }
 
 private startCountdown(): void {
   this.countdownInterval = setInterval(() => {
