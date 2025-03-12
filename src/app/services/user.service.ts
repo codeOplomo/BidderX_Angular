@@ -31,6 +31,22 @@ export class UserService {
       }))
     );
   }
+
+  getProfileByEmail(email: string): Observable<ApiResponse<ProfileVM>> {
+    return this.http.get<ApiResponse<ProfileVM>>(`${this.apiUrl}/${email}/profile`).pipe(
+      map(response => ({
+        ...response,
+        data: {
+          ...response.data,
+          imageUrl: this.imagesService.getImageUrl(response.data.imageUrl),
+          coverImageUrl: response.data.coverImageUrl
+            ? this.imagesService.getImageUrl(response.data.coverImageUrl)
+            : undefined,
+          collections: response.data.collections || [],
+        }
+      }))
+    );
+  }
   
   
   

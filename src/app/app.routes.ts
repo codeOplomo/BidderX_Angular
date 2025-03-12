@@ -30,6 +30,7 @@ export const routes: Routes = [
             { path: 'register', component: RegisterComponent },
             { path: 'verification', component: VerifyComponent},
             { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+            { path: 'profile/:email', component: ProfileComponent, canActivate: [authGuard] },
             { path: 'edit-profile', component: EditProfileComponent, canActivate: [authGuard] },
             { path: 'edit-password', component: EditPasswordComponent, canActivate: [authGuard] },
             { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard], data: { roles: ['ROLE_OWNER'] } },

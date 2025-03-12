@@ -4,7 +4,7 @@ import { TabPanel, TabViewModule } from 'primeng/tabview';
 import { TabsModule } from 'primeng/tabs';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClientModule, HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
 import { ButtonModule } from 'primeng/button';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
@@ -44,6 +44,9 @@ import { ProfileVM } from '../../models/view-models/profile';
 export class ProfileComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
   profile$: Observable<ProfileVM>;
+  visitedProfile$!: Observable<ProfileVM>;
+  isCurrentUser: boolean = false;
+  userEmail: string = '';
 
   rating: number = 5;
   imageLoading = false;
@@ -54,6 +57,8 @@ export class ProfileComponent implements OnInit, OnDestroy {
   
   constructor(
     private store: Store,
+    private route: ActivatedRoute,
+    private userService: UserService
   ) {
     this.profile$ = this.store.select(selectUser).pipe(
       filter((profile): profile is ProfileVM => profile !== null)
@@ -61,8 +66,20 @@ export class ProfileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    // Dispatch load action on init
-    this.store.dispatch(UserActions.loadUserProfile());
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
+      const email = params.get('email');
+      if (email) {
+        this.userEmail = email;
+        this.visitedProfile$ = this.userService.getProfileByEmail(email).pipe(
+          map(response => response.data)
+        );
+      } else {
+        // Load current user if no email parameter
+        this.store.dispatch(UserActions.loadUserProfile());
+      }
+    });
     
     this.profile$.pipe(
       takeUntil(this.destroy$)

@@ -13,4 +13,5 @@ export interface ProfileVM {
     coverImageUrl?: string;
     wallet?: WalletVM | null;
     collections?: Collection[];
+    roles: string[];
 }

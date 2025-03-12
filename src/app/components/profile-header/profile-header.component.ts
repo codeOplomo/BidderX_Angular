@@ -33,6 +33,7 @@ import { selectIsOwner } from '../../store/auth/auth.selectors';
 })
 export class ProfileHeaderComponent implements OnDestroy {
   @Input() profile$?: Observable<ProfileVM | null>;
+  @Input() isCurrentUser: boolean = false;
   @Input() rating?: number;
   @Input() imageLoading?: boolean;
   @Input() coverImageLoading = false;
@@ -71,8 +72,6 @@ export class ProfileHeaderComponent implements OnDestroy {
   constructor(
     private imageService: ImagesService, 
     private userService: UserService, 
-    private authService: AuthService,
-    private walletService: WalletService,
     private store: Store, 
     private router: Router
   ) {

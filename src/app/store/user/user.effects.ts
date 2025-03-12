@@ -42,7 +42,8 @@ loadProfile$ = createEffect(() => {
               userId: response.data.wallet.userId,
               checkoutUrl: response.data.wallet.checkoutUrl
             } : null,
-            collections: response.data.collections
+            collections: response.data.collections,
+            roles: response.data.roles || []
           };
 
           if (user.hasWallet && user.wallet) {
@@ -77,6 +78,7 @@ loadProfile$ = createEffect(() => {
             email: response.data.email,
             imageUrl: response.data.imageUrl,
             hasWallet: response.data.hasWallet,
+            roles: response.data.roles || [],
           };
           return UserActions.updateUserProfileSuccess({ user: updatedUser });
         }),
