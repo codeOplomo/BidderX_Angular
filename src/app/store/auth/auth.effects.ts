@@ -76,12 +76,13 @@ export class AuthEffects {
           this.store.dispatch(AuthActions.setUserRoles({ roles }));
           localStorage.setItem('userRoles', JSON.stringify(roles));
 
-          // Load user profile
-          this.store.dispatch(UserActions.loadUserProfile());
-          this.store.dispatch(AuthActions.setAuthenticated({ isAuthenticated: true }));
+          const isAdmin = roles.includes('ROLE_ADMIN');
+        const redirectPath = isAdmin ? '/dashboard' : '/profile';
 
-          // Navigate to dashboard
-          this.router.navigate(['/profile']);
+          // Load user profile
+          this.store.dispatch(AuthActions.setAuthenticated({ isAuthenticated: true }));
+          this.store.dispatch(UserActions.loadUserProfile());
+          this.router.navigate([redirectPath]);
         })
       ),
     { dispatch: false }

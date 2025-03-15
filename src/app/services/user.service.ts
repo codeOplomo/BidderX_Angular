@@ -16,6 +16,30 @@ export class UserService {
   constructor(private http: HttpClient, private imagesService: ImagesService) { }
 
 
+  banUser(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${email}/ban`, {});
+  }
+
+  unbanUser(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${email}/unban`, {});
+  }
+  
+  getUsers(): Observable<ApiResponse<ProfileVM[]>> {
+    return this.http.get<ApiResponse<ProfileVM[]>>(`${this.apiUrl}`);
+  }
+
+  approveOwnerRequest(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${email}/approve-owner`, {});
+  }
+
+  rejectOwnerRequest(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${email}/reject-owner`, {});
+  }
+
+  requestOwnerUpgrade(): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/become-owner`, {});
+  }
+
   getProfile(): Observable<ApiResponse<ProfileVM>> {
     return this.http.get<ApiResponse<ProfileVM>>(`${this.apiUrl}/profile`).pipe(
       map(response => ({

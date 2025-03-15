@@ -12,12 +12,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { RejectDialogComponent } from '../../components/reject-dialog/reject-dialog.component';
 import { AuctionRequestsTableComponent } from '../../components/auction-requests-table/auction-requests-table.component';
 import { AuctionStats } from '../../models/view-models/auctions-stats-vm';
+import { ChartStatsComponent } from "../../components/chart-stats/chart-stats.component";
 
 
 @Component({
   selector: 'app-auctions-dash',
   standalone: true,
-  imports: [CommonModule, StatsCardComponent, ToastModule, MatPaginatorModule, MatIconModule, AuctionRequestsTableComponent],
+  imports: [CommonModule, ToastModule, MatPaginatorModule, MatIconModule, AuctionRequestsTableComponent],
   templateUrl: './auctions-dash.component.html',
   styleUrl: './auctions-dash.component.css',
   providers: [ToastService]
@@ -29,30 +30,14 @@ export class AuctionsDashComponent {
   pageSize: number = 10;
   totalItems: number = 0;
   isLoading: boolean = false;
-  stats: AuctionStats = {
-    totalAuctions: 0,
-    pendingRequests: 0,
-    activeUsers: 0,
-    totalRevenue: 0
-  };
+  
 
   constructor(private auctionsService: AuctionsService, private toastService: ToastService, private dialog: MatDialog) { }
 
   ngOnInit(): void {
     this.loadPendingAuctions();
-    this.loadStats();
   }
 
-  loadStats(): void {
-    this.auctionsService.getAuctionsStats().subscribe({
-      next: (res) => {
-        this.stats = res.data;
-      },
-      error: (err) => {
-        this.toastService.showError('Error', 'Failed to load stats');
-      }
-    });
-  }
 
   loadPendingAuctions(): void {
     this.auctionsService.getPendingAuctions(this.currentPage, this.pageSize)

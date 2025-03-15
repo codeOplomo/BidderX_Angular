@@ -1,14 +1,17 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-home-hero',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './home-hero.component.html',
   styleUrl: './home-hero.component.css'
 })
 export class HomeHeroComponent {
+  searchTerm = ''; 
   showEraDropdown = false;
   showCategoryDropdown = false;
 
@@ -17,6 +20,8 @@ export class HomeHeroComponent {
 
   selectedEra: string | null = null;
   selectedCategory: string | null = null;
+
+  constructor(private router: Router) {}
 
   toggleEraDropdown() {
     this.showEraDropdown = !this.showEraDropdown;
@@ -39,10 +44,10 @@ export class HomeHeroComponent {
   }
 
   searchTreasures() {
-    // Implement search logic here
-    console.log('Searching with:', {
-      era: this.selectedEra,
-      category: this.selectedCategory
-    });
+    if (this.searchTerm) {
+      this.router.navigate(['/explore-auctions'], {
+        queryParams: { q: this.searchTerm }
+      });
+    }
   }
 }

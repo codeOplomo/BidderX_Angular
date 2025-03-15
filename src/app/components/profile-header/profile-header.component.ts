@@ -11,8 +11,7 @@ import { Store } from '@ngrx/store';
 import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
 import { ImagesService } from '../../services/images.service';
-import { WalletVM } from '../../models/view-models/wallet-vm';
-import { WalletService } from '../../services/wallet.service';
+import { WalletVM } from '../../models/view-models/wallet-vm'; 
 import { ProfileVM } from '../../models/view-models/profile';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DialogModule } from 'primeng/dialog';
@@ -23,13 +22,16 @@ import { InputNumberModule } from 'primeng/inputnumber';
 import { ApiResponse } from '../../models/view-models/api-response.model';
 import * as WalletActions from '../../store/wallet/wallet.actions';
 import { selectIsOwner } from '../../store/auth/auth.selectors';
+import { ToastService } from '../../services/toast.service';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-profile-header',
   standalone: true,
-  imports: [SplitButtonModule, TagModule, RatingModule, CommonModule, FormsModule, ButtonModule, MatProgressSpinnerModule, DialogModule, DropdownModule, InputNumberModule],
+  imports: [SplitButtonModule, TagModule, RatingModule, CommonModule, FormsModule, ButtonModule, MatProgressSpinnerModule, DialogModule, DropdownModule, InputNumberModule, ToastModule],
   templateUrl: './profile-header.component.html',
-  styleUrl: './profile-header.component.css'
+  styleUrl: './profile-header.component.css',
+  providers: [ToastService]
 })
 export class ProfileHeaderComponent implements OnDestroy {
   @Input() profile$?: Observable<ProfileVM | null>;
@@ -72,6 +74,7 @@ export class ProfileHeaderComponent implements OnDestroy {
   constructor(
     private imageService: ImagesService, 
     private userService: UserService, 
+    private toastService: ToastService,
     private store: Store, 
     private router: Router
   ) {
@@ -82,10 +85,21 @@ export class ProfileHeaderComponent implements OnDestroy {
     
   }
 
+  onBecomeOwner(): void {
+    // Optionally, you can add a confirmation dialog here
+    this.userService.requestOwnerUpgrade().subscribe({
+      next: (response) => {
+        // Display a success toast using the returned message
+        this.toastService.showSuccess('Request Submitted', response.message);
+        // Optionally, refresh the profile observable here to reflect changes
+      },
+      error: (err) => {
+        console.error("Error while submitting owner upgrade request:", err);
+        this.toastService.showError('Request Failed', 'Unable to submit owner upgrade request.');
+      }
+    });
+  }
   
-  // isOwner(): boolean {
-  //   return this.authService.hasRole('OWNER');
-  // }
   handleWalletAction(hasWallet: boolean) {
     if (hasWallet) {
       this.openDepositDialog();

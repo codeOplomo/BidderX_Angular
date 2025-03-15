@@ -142,4 +142,10 @@ export class AuctionCardComponent implements OnInit, OnDestroy {
   goToProductDetail(productId?: string): void {
     this.router.navigate(['/product-detail', productId]);
   }
+
+  goToProfile(email: string | undefined): void {
+    if (email) {
+      this.router.navigate(['/profile', email]);
+    }
+  }
 }

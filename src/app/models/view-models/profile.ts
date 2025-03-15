@@ -14,4 +14,6 @@ export interface ProfileVM {
     wallet?: WalletVM | null;
     collections?: Collection[];
     roles: string[];
+    ownerRequestStatus?: string;
+    isBanned?: boolean;
 }

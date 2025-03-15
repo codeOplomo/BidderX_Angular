@@ -78,7 +78,8 @@
           <p-avatar *ngFor="let bidder of (auction?.bidders || []) | unique:'profileIdentifier' | slice:0:3"
             [image]="getImageUrl(bidder?.imageUrl)" pTooltip="{{ bidder?.profileIdentifier }}" tooltipPosition="top"
             size="normal" shape="circle"
-            class="w-6 h-6 rounded-full border-2 border-white bg-[#A9B6B1] -ml-2 first:ml-0">
+            class="cursor-pointer hover:shadow-md transition-shadow w-6 h-6 rounded-full border-2 border-white bg-[#A9B6B1] -ml-2 first:ml-0"
+            (click)="goToProfile(bidder?.email)">
           </p-avatar>
 
 
@@ -89,20 +90,22 @@
       <!-- Bid Details -->
       <div class="flex justify-between items-center">
         <!-- Winning Bid or Current Bid -->
-<div class="flex flex-col min-h-[50px]">  <!-- Ensure consistent height -->
-  <span class="text-sm text-slate-500">
-    {{ auction.status === 'ENDED' ? 'Winning Bid' : 'Current Bid' }}
-  </span>
+        <div class="flex flex-col min-h-[50px]"> <!-- Ensure consistent height -->
+          <span class="text-sm text-slate-500">
+            {{ auction.status === 'ENDED' ? 'Winning Bid' : 'Current Bid' }}
+          </span>
 
-  <p *ngIf="auction.status === 'ENDED'" class="text-slate-700 text-sm">
-    {{ auction.winner?.profileIdentifier }}
-    <span class="text-lg font-semibold text-[#FFA400]">{{' ' + auction.currentBid + '$' }}</span>
-  </p>
+          <p *ngIf="auction.status === 'ENDED'" class="text-slate-700 text-sm">
+            <span class="cursor-pointer hover:underline" (click)="goToProfile(auction.winner?.email)">
+              {{ auction.winner?.profileIdentifier }}
+            </span>
+            <span class="text-lg font-semibold text-[#FFA400]">{{' ' + auction.currentBid + '$' }}</span>
+          </p>
 
-  <span *ngIf="auction.status !== 'ENDED'" class="text-lg font-semibold text-[#FFA400]">
-    {{ ' ' + auction.currentBid + ' $' }}
-  </span>
-</div>
+          <span *ngIf="auction.status !== 'ENDED'" class="text-lg font-semibold text-[#FFA400]">
+            {{ ' ' + auction.currentBid + ' $' }}
+          </span>
+        </div>
 
 
 

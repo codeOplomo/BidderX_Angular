@@ -19,6 +19,8 @@ import { PaymentConfirmationComponent } from './components/payment-confirmation/
 import { HomeComponent } from './pages/home/home.component';
 import { CreateProductComponent } from './pages/create-product/create-product.component';
 import { AuctionsExplorerComponent } from './pages/auctions-explorer/auctions-explorer.component';
+import { UsersDashComponent } from './pages/users-dash/users-dash.component';
+import { HomeDashComponent } from './pages/home-dash/home-dash.component';
 
 export const routes: Routes = [
     {
@@ -48,7 +50,9 @@ export const routes: Routes = [
         path: 'dashboard',
         component: DashboardLayoutComponent,
         children: [
-            { path: '', component: AuctionsDashComponent}
+            { path: '', component: HomeDashComponent},
+            { path: 'users', component: UsersDashComponent},
+            { path: 'auctions', component: AuctionsDashComponent},
         ]
     },
 ];

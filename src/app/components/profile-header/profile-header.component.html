@@ -23,19 +23,30 @@
 
   <!-- Profile Actions - Top Right -->
   <div class="absolute right-2 sm:right-8 top-2 sm:top-4 flex gap-1 sm:gap-3">
-    <button *ngIf="isCurrentUser && (profile$ | async)?.roles?.includes('OWNER')"
-      class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
-      (click)="onCreateCollection()">
-      <span class="material-symbols-outlined text-sm sm:text-base">add</span>
-      <span class="hidden sm:inline">Create Collection</span>
-    </button>
+    <!-- Existing Owner Actions -->
+    <ng-container *ngIf="(profile$ | async)?.roles?.includes('OWNER')">
+      <button *ngIf="isCurrentUser"
+        class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
+        (click)="onCreateCollection()">
+        <span class="material-symbols-outlined text-sm sm:text-base">add</span>
+        <span class="hidden sm:inline">Create Collection</span>
+      </button>
 
-    <button *ngIf="isCurrentUser && (profile$ | async)?.roles?.includes('OWNER')"
-      class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
-      (click)="onCreateAuction()">
-      <span class="material-symbols-outlined text-sm sm:text-base">gavel</span>
-      <span class="hidden sm:inline">Create Auction</span>
-    </button>
+      <button *ngIf="isCurrentUser && (profile$ | async)?.roles?.includes('OWNER')"
+        class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
+        (click)="onCreateAuction()">
+        <span class="material-symbols-outlined text-sm sm:text-base">gavel</span>
+        <span class="hidden sm:inline">Create Auction</span>
+      </button>
+    </ng-container>
+
+    <button
+    *ngIf="isCurrentUser && (profile$ | async)?.roles?.includes('BIDDER') && !(profile$ | async)?.roles?.includes('OWNER')"
+    class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
+    (click)="onBecomeOwner()">
+    <span class="material-symbols-outlined text-sm sm:text-base">verified</span>
+    <span class="hidden sm:inline">Become Owner</span>
+  </button>
   </div>
 
   <!-- Profile Content -->
@@ -74,9 +85,9 @@
       <div class="flex justify-between items-center mb-2 sm:mb-4">
         <!-- User name and verified icon -->
         <div class="flex items-center gap-1 sm:gap-2">
-          <h1 class="text-base sm:text-lg font-bold tracking-tight drop-shadow-md">
+          <h3 class="text-base sm:text-lg font-bold tracking-tight drop-shadow-md">
             {{ (profile$ | async)?.profileIdentifier }}
-          </h1>
+          </h3>
           <div
             class="inline-flex bg-gradient-to-r from-emerald-500 to-teal-400 p-0.5 sm:p-1 rounded-full shadow-md animate-pulse">
             <span class="material-symbols-outlined text-xs text-white">verified</span>
@@ -85,24 +96,25 @@
 
         <!-- Action Buttons in row -->
         <div class="flex gap-1 sm:gap-2">
-          <button *ngIf="isCurrentUser" class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
+          <button *ngIf="isCurrentUser"
+            class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
             (click)="onEditProfile()" title="Edit Profile">
             <span class="material-symbols-outlined text-xs sm:text-sm text-white">edit</span>
           </button>
           <ng-container *ngIf="!isCurrentUser">
-          <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
-            title="Send Message">
-            <span class="material-symbols-outlined text-xs sm:text-sm text-white">chat</span>
-          </button>
-          <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
-            title="Share Profile">
-            <span class="material-symbols-outlined text-xs sm:text-sm text-white">share</span>
-          </button>
-          <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
-            title="Follow">
-            <span class="material-symbols-outlined text-xs sm:text-sm text-white">person_add</span>
-          </button>
-        </ng-container>
+            <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
+              title="Send Message">
+              <span class="material-symbols-outlined text-xs sm:text-sm text-white">chat</span>
+            </button>
+            <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
+              title="Share Profile">
+              <span class="material-symbols-outlined text-xs sm:text-sm text-white">share</span>
+            </button>
+            <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
+              title="Follow">
+              <span class="material-symbols-outlined text-xs sm:text-sm text-white">person_add</span>
+            </button>
+          </ng-container>
         </div>
       </div>
 
@@ -155,7 +167,7 @@
   </div>
 </div>
 
-
+<p-toast></p-toast>
 <!-- Add these dialog templates at the bottom of your component template -->
 <p-dialog header="Deposit Funds" [(visible)]="showDepositDialog" [style]="{width: '400px'}" [dismissableMask]="true"
   [modal]="true" position="bottom">
