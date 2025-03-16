@@ -10,6 +10,7 @@ import { Store } from '@ngrx/store';
 import { selectWalletBalance } from '../../store/wallet/wallet.selectors';
 import { Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { selectIsAuthenticated } from '../../store/auth/auth.selectors';
 
 
 @Component({
@@ -20,6 +21,7 @@ import { Router } from '@angular/router';
   styleUrl: './product-info.component.css'
 })
 export class ProductInfoComponent implements OnChanges {
+  isAuthenticated = false;
   @Input() product: ProductVM | null = null;
   @Input() auction: AuctionVm | null = null;
   category: string = '';
@@ -31,7 +33,10 @@ export class ProductInfoComponent implements OnChanges {
     private auctionReactionsService: AuctionRectionsService,
     private router: Router,
     private store: Store
-  ) {}
+  ) {
+    this.store.select(selectIsAuthenticated)
+      .subscribe(isAuth => this.isAuthenticated = isAuth);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
@@ -44,12 +49,11 @@ export class ProductInfoComponent implements OnChanges {
   }
 
   toggleLike(): void {
-    if (!this.auction) return;
+    if (!this.isAuthenticated || !this.auction) return; 
 
     const previousLikes = this.likes;
     const previousIsLiked = this.isLiked;
 
-    // Optimistic UI update
     this.isLiked = !this.isLiked;
     this.likes += this.isLiked ? 1 : -1;
 
@@ -63,7 +67,6 @@ export class ProductInfoComponent implements OnChanges {
   }
   
   loadCategory(): void {
-    // Add null check for category
     if (!this.product || !this.product.category) return;
   
     this.categoriesService.getCategoryById(this.product.category.id).subscribe({

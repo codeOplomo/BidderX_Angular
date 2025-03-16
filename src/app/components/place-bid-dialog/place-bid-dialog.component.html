@@ -1,7 +1,48 @@
 <p-dialog header="Place a Bid" [(visible)]="visible" [style]="{width: '400px'}" 
           [dismissableMask]="true" [modal]="true" position="bottom">
   <div class="dialog-content flex flex-col gap-4">
-    <div class="flex flex-col gap-2">
+    <!-- Unauthenticated State -->
+    <div *ngIf="!(isAuthenticated$ | async)" class="text-center p-4">
+      <h3 class="text-lg font-semibold text-[#3e1300] mb-3">
+        <i class="pi pi-lock text-xl mr-2"></i>
+        Authentication Required
+      </h3>
+      <p class="text-gray-600 mb-4">
+        You need to be logged in to place bids. Please sign in or create an account.
+      </p>
+      <div class="flex justify-center gap-3">
+        <button 
+          (click)="navigateTo('/login')"
+          class="px-4 py-2 bg-[#cb8502] text-white rounded-md hover:bg-[#ba7600] transition-colors">
+          Sign In
+        </button>
+        <button 
+          (click)="navigateTo('/register')"
+          class="px-4 py-2 border border-[#cb8502] text-[#cb8502] rounded-md hover:bg-[#fff4e6] transition-colors">
+          Register
+        </button>
+      </div>
+    </div>
+
+    <!-- Authenticated but No Wallet -->
+    <div *ngIf="(isAuthenticated$ | async) && !(hasWallet$ | async)" class="text-center p-4">
+      <h3 class="text-lg font-semibold text-[#3e1300] mb-3">
+        <i class="pi pi-wallet text-xl mr-2"></i>
+        Wallet Setup Required
+      </h3>
+      <p class="text-gray-600 mb-4">
+        Please connect a payment method and fund your wallet to participate in auctions.
+      </p>
+      <button 
+        (click)="navigateTo('/wallet')"
+        class="px-4 py-2 bg-[#cb8502] text-white rounded-md hover:bg-[#ba7600] transition-colors">
+        Connect Wallet
+      </button>
+    </div>
+
+    <!-- Authenticated with Wallet -->
+    <div *ngIf="(isAuthenticated$ | async) && (hasWallet$ | async)">
+      <div class="flex flex-col gap-2">
         <small class="text-sm" [class.text-green-500]="!insufficientBalance" [class.text-red-500]="insufficientBalance">
             Available balance: {{ (walletBalance$ | async) | currency }}
           </small>
@@ -9,36 +50,37 @@
             Insufficient wallet balance
           </small>
           
-      <label class="text-sm font-medium text-gray-700">Bid Amount ($)</label>
-      <input
-        type="number"
-        [(ngModel)]="bidAmount"
-        [min]="minimumBid"
-        step="0.01"
-        class="p-2 border rounded-md focus:ring-2 focus:ring-[#cb8502] focus:border-[#cb8502]"
-        placeholder="Enter bid amount"
-      >
-      <small class="text-sm text-gray-500">
-        Minimum bid: {{ minimumBid | number:'1.2-2' }} $
-      </small>
-    </div>
-    <div class="flex justify-end gap-3 mt-4">
-      <button 
-        type="button"
-        (click)="onClose()"
-        class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md"
-      >
-        Cancel
-      </button>
-      <button 
-        type="button"
-        (click)="submitBid()"
-        [disabled]="loading || !bidAmount || bidAmount < minimumBid"
-        class="px-4 py-2 bg-[#cb8502] text-white rounded-md hover:bg-[#ba7600] disabled:opacity-50"
-      >
-        <span *ngIf="!loading">Submit Bid</span>
-        <span *ngIf="loading">Processing...</span>
-      </button>
+        <label class="text-sm font-medium text-gray-700">Bid Amount ($)</label>
+        <input
+          type="number"
+          [(ngModel)]="bidAmount"
+          [min]="minimumBid"
+          step="0.01"
+          class="p-2 border rounded-md focus:ring-2 focus:ring-[#cb8502] focus:border-[#cb8502]"
+          placeholder="Enter bid amount"
+        >
+        <small class="text-sm text-gray-500">
+          Minimum bid: {{ minimumBid | number:'1.2-2' }} $
+        </small>
+      </div>
+      <div class="flex justify-end gap-3 mt-4">
+        <button 
+          type="button"
+          (click)="onClose()"
+          class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-md"
+        >
+          Cancel
+        </button>
+        <button 
+          type="button"
+          (click)="submitBid()"
+          [disabled]="loading || !bidAmount || bidAmount < minimumBid"
+          class="px-4 py-2 bg-[#cb8502] text-white rounded-md hover:bg-[#ba7600] disabled:opacity-50"
+        >
+          <span *ngIf="!loading">Submit Bid</span>
+          <span *ngIf="loading">Processing...</span>
+        </button>
+      </div>
     </div>
   </div>
 </p-dialog>

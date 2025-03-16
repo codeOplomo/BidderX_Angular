@@ -6,6 +6,7 @@ import { CreateAuctionVM } from '../models/view-models/create-auction-vm.model';
 import { AuctionVm } from '../models/view-models/auction-vm.model';
 import { PaginatedApiResponse } from '../models/view-models/paginated-api-response.model';
 import { AuctionStats } from '../models/view-models/auctions-stats-vm';
+import { OwnerRankingVM } from '../models/view-models/owner-ranking-vm';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,15 @@ export class AuctionsService {
 
   constructor(private http: HttpClient) {}
 
+
+  getOwnerRanking(duration: string, page: number, size: number): Observable<ApiResponse<PaginatedApiResponse<OwnerRankingVM>>> {
+    let params = new HttpParams()
+      .set('duration', duration)
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<ApiResponse<PaginatedApiResponse<OwnerRankingVM>>>(`${this.apiUrl}/ranking`, { params });
+  }
 
   searchAuctions(query: string, limit: number): Observable<AuctionVm[]> {
     return this.http.get<ApiResponse<AuctionVm[]>>(`${this.apiUrl}/search`, {

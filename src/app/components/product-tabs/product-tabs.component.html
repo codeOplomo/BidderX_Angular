@@ -16,11 +16,6 @@
       <app-bid-summary *ngFor="let bid of allBids" [bid]="bid"></app-bid-summary>
     </div>
 
-    <div *ngIf="activeTab === 'Details'"
-         class="grid gap-6 py-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))] transition-all duration-300">
-      <!-- ... existing details content ... -->
-    </div>
-
     <div *ngIf="activeTab === 'History'" 
          class="transition-all duration-300 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#cb8502] scrollbar-track-gray-100 pr-2">
       <app-bid-summary *ngFor="let bid of userBids" [bid]="bid"></app-bid-summary>

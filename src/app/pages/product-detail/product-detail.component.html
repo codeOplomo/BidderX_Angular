@@ -4,8 +4,7 @@
 
   <!-- Product Info -->
   <div class="flex flex-col gap-8">
-    <!-- Should be: -->
-    <app-product-info [product]="product" [auction]="auction"> <!-- Fixed spelling -->
+    <app-product-info [product]="product" [auction]="auction">
     </app-product-info>
 
     <!-- Bid Section -->
@@ -21,12 +20,9 @@
           <ng-container *ngIf="auction?.status === 'ENDED'">
             <div class="flex items-center gap-3">
               <!-- Winner Avatar -->
-              <img
-                *ngIf="getImageUrl(auction?.winner?.imageUrl ?? '')"
-                [src]="getImageUrl(auction?.winner?.imageUrl ?? '')"
-                alt="Winner Avatar"
-                class="w-10 h-10 rounded-full border-2 border-[#cb8502]"
-              />
+              <img *ngIf="getImageUrl(auction?.winner?.imageUrl ?? '')"
+                [src]="getImageUrl(auction?.winner?.imageUrl ?? '')" alt="Winner Avatar"
+                class="w-10 h-10 rounded-full border-2 border-[#cb8502]" />
               <!-- Winner Details -->
               <div>
                 <div class="text-lg text-[#3e1300]">
@@ -43,17 +39,17 @@
 
           <!-- Active Auction Display -->
           <ng-container *ngIf="auction?.status !== 'ENDED'">
-            
-          <!-- Show balance only for non-owners -->
-          <div *ngIf="auction?.status !== 'ENDED'" class="flex items-center gap-2 mb-2">
-            <span class="text-sm text-[#3e1300] font-medium">
-              <i class="fas fa-wallet mr-1 text-[#cb8502]"></i>
-              Your Balance:
-            </span>
-            <span class="text-lg font-semibold text-[#28a745]">
-              {{ walletBalance$ | async | currency }}
-            </span>
-          </div>
+
+            <!-- balance only for non-owners -->
+            <div *ngIf="auction?.status !== 'ENDED'" class="flex items-center gap-2 mb-2">
+              <span class="text-sm text-[#3e1300] font-medium">
+                <i class="fas fa-wallet mr-1 text-[#cb8502]"></i>
+                Your Balance:
+              </span>
+              <span class="text-lg font-semibold text-[#28a745]">
+                {{ walletBalance$ | async | currency }}
+              </span>
+            </div>
           </ng-container>
         </div>
 
@@ -81,11 +77,8 @@
       </div>
     </div>
 
-    <app-product-tabs 
-  *ngIf="auction" 
-  [auctionId]="auction.id" 
-  [auctionEnded]="auction.status === 'ENDED'">
-</app-product-tabs>
+    <app-product-tabs *ngIf="auction" [auctionId]="auction.id" [auctionEnded]="auction.status === 'ENDED'">
+    </app-product-tabs>
 
 
     <app-place-bid-card *ngIf="auction?.type === 'TIMED'" [auction]="auction!"></app-place-bid-card>

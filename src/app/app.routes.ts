@@ -21,6 +21,7 @@ import { CreateProductComponent } from './pages/create-product/create-product.co
 import { AuctionsExplorerComponent } from './pages/auctions-explorer/auctions-explorer.component';
 import { UsersDashComponent } from './pages/users-dash/users-dash.component';
 import { HomeDashComponent } from './pages/home-dash/home-dash.component';
+import { CreatorsComponent } from './pages/creators/creators.component';
 
 export const routes: Routes = [
     {
@@ -43,7 +44,8 @@ export const routes: Routes = [
             { path: 'product-detail/:id', component: ProductDetailComponent},
             { path: 'payment-success', component: PaymentSuccessComponent},
             { path: 'payment-cancel', component: PaymentCancelComponent},
-            { path: 'payment-confirmation', component: PaymentConfirmationComponent}
+            { path: 'payment-confirmation', component: PaymentConfirmationComponent},
+            { path: 'creators', component: CreatorsComponent}
         ]
     },
     {

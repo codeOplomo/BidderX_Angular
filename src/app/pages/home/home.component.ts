@@ -13,12 +13,14 @@ import { animate, query, stagger, style, transition, trigger } from '@angular/an
 import { Category } from '../../models/view-models/category.model';
 import { CategoriesService } from '../../services/categories.service';
 import { Router } from '@angular/router';
+import { RankingOwnersCardComponent } from "../../components/ranking-owners-card/ranking-owners-card.component";
+import { OwnerRankingVM } from '../../models/view-models/owner-ranking-vm';
 
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [HomeHeroComponent, CommonModule, CollectionCardComponent, AuctionCardComponent],
+  imports: [HomeHeroComponent, CommonModule, CollectionCardComponent, AuctionCardComponent, RankingOwnersCardComponent],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css',
   animations: [
@@ -45,6 +47,7 @@ import { Router } from '@angular/router';
   ]
 })
 export class HomeComponent {
+  topOwners: OwnerRankingVM[] = [];
   collections: Collection[] = [];
   displayedCollections: Collection[] = [];
   liveAuctions: AuctionVm[] = [];
@@ -82,12 +85,10 @@ export class HomeComponent {
   ) { }
 
   ngOnInit(): void {
-    // Fetch collections when the component initializes
+    
     this.collectionsService.getCollections(0, 8).subscribe({
       next: (response: ApiResponse<PaginatedApiResponse<Collection>>) => {
-        // Store all 8 collections
         this.collections = response.data.content;
-        // Initially show only the first 4 collections
         this.displayedCollections = this.collections.slice(0, 4);
       },
       error: (error) => {
@@ -102,6 +103,13 @@ export class HomeComponent {
       error: (error) => console.error('Error fetching live auctions:', error)
     });
 
+    this.auctionsService.getOwnerRanking('1d', 0, 10).subscribe({
+      next: (response) => {
+        this.topOwners = response.data.content.slice(0, 10); 
+      },
+      error: (error) => console.error('Error fetching rankings:', error)
+    });
+    
     this.categoriesService.getCategories().subscribe({
       next: (response: ApiResponse<Category[]>) => {
         this.categories = response.data;

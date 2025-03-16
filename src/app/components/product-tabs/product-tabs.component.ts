@@ -22,8 +22,8 @@ export class ProductTabsComponent {
   @Input() auctionEnded: boolean = false;
   private refreshInterval: any;
 
-  activeTab = 'Details';
-  tabs = ['Bids', 'Details', 'History'];
+  activeTab = 'Bids';
+  tabs = ['Bids', 'History'];
 
   allBids:BidVM[] =[];
   userBids:BidVM[] =[];

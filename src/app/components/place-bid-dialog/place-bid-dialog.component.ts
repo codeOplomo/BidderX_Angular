@@ -6,8 +6,11 @@ import { BidRequest } from '../../models/view-models/bid-request';
 import { FormsModule } from '@angular/forms';
 import { Store } from '@ngrx/store';
 import { selectWalletBalance } from '../../store/wallet/wallet.selectors';
-import { finalize, Observable, take, tap } from 'rxjs';
+import { finalize, map, Observable, take, tap } from 'rxjs';
 import * as WalletActions from '../../store/wallet/wallet.actions';
+import { Router } from '@angular/router';
+import { selectIsAuthenticated } from '../../store/auth/auth.selectors';
+import { selectUser } from '../../store/user/user.selectors';
 
 @Component({
   selector: 'app-place-bid-dialog',
@@ -17,13 +20,15 @@ import * as WalletActions from '../../store/wallet/wallet.actions';
   styleUrl: './place-bid-dialog.component.css'
 })
 export class PlaceBidDialogComponent {
-  // @Input() visible: boolean = false;
   @Input() minimumBid: number = 0;
   @Input() auctionId: string | undefined = '';
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() bidSubmitted = new EventEmitter<number>();
 
   private _visible = false;
+
+  isAuthenticated$: Observable<boolean>;
+  hasWallet$: Observable<boolean>;
   
   @Input()
   get visible(): boolean {
@@ -43,25 +48,18 @@ export class PlaceBidDialogComponent {
   bidAmount?: number;
   loading = false;
 
-  constructor(private store: Store) {
-    
+  constructor(private store: Store, private router: Router) {
+    this.isAuthenticated$ = this.store.select(selectIsAuthenticated);
+    this.hasWallet$ = this.store.select(selectUser).pipe(
+      map(user => user?.hasWallet || false)
+    );
     this.walletBalance$ = this.store.select(selectWalletBalance);
-    // this.walletBalance$.subscribe(balance => {
-    //   console.log('Current Wallet Balance:', balance);
-    // });
   }
   
   ngOnInit() {
     this.store.dispatch(WalletActions.loadWallet());
   }
 
-  // ngOnChanges(changes: SimpleChanges) {
-  //   if (changes['visible'] && !changes['visible'].currentValue) {
-  //     this.resetForm();
-  //   }
-  // }
-
-  // place-bid-dialog.component.ts
 submitBid() {
   this.walletBalance$.pipe(
     take(1),
@@ -90,6 +88,11 @@ submitBid() {
     return !!this.bidAmount && this.bidAmount >= this.minimumBid;
   }
 
+  navigateTo(route: string): void {
+    this.visible = false;
+    this.router.navigate([route]);
+  }
+  
   onClose() {
     this.visible = false;
     this.resetForm();

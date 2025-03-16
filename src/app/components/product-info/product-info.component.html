@@ -1,56 +1,42 @@
-<div class="flex justify-between items-start gap-4 p-4 rounded-[12px]"> <!-- Reduced padding to p-4 -->
-  <!-- Title Section -->
+<div class="flex justify-between items-start gap-4 p-4 rounded-[12px]">
   <div class="flex-1 min-w-0">
     <h1
-      class="text-3xl font-extrabold m-0 bg-gradient-to-br from-[#3e1300] to-[#ff6700] bg-clip-text text-transparent tracking-[0.5px] truncate overflow-hidden"
-    >
+      class="text-3xl font-extrabold m-0 bg-gradient-to-br from-[#3e1300] to-[#ff6700] bg-clip-text text-transparent tracking-[0.5px] truncate overflow-hidden">
       {{ product?.title }}
     </h1>
-    <p
-      class="text-sm text-[#64748b] font-medium flex items-center gap-1 flex-wrap mt-1"
-    >
+    <p class="text-sm text-[#64748b] font-medium flex items-center gap-1 flex-wrap mt-1">
       <span class="inline-block max-w-[600px] truncate">
         {{ product?.description }}
       </span>
-      <i class="fas fa-tags flex-shrink-0 text-sm"></i> <!-- Added text-sm -->
+      <i class="fas fa-tags flex-shrink-0 text-sm"></i>
       <span
         class="bg-[#A9B6B1] rounded-[10px] px-2 py-1 text-sm text-white cursor-pointer inline-flex items-center gap-1 transition-all duration-200 ease-in-out hover:bg-[#FFA400] hover:-translate-y-[1px]"
-        (click)="navigateToAuctionsExplorer()"
-  title="View auctions in this category"
-      > <!-- Added text-sm, reduced padding, rounded corners -->
+        (click)="navigateToAuctionsExplorer()" title="View auctions in this category">
         {{ category }}
       </span>
     </p>
   </div>
 
   <!-- Action Buttons -->
-  <div class="flex gap-1 flex-shrink-0"> <!-- Reduced gap to 1 -->
-    <!-- Add *ngIf to the like button -->
-<!-- Updated Like Button -->
-<button 
-  *ngIf="auction?.status !== 'PENDING'"
-  class="bg-[#A9B6B1] rounded-[10px] p-2 text-white cursor-pointer inline-flex items-center gap-1 transition-all duration-200 ease-in-out hover:bg-[#FFA400] hover:-translate-y-[1px]"
-  (click)="toggleLike()"
->
-<svg 
-class="w-5 h-5 fill-none stroke-current stroke-2"
-[ngClass]="{ '!fill-[#FFA400] !stroke-none': isLiked }"
->
-<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-</svg>
-  <span class="text-sm text-white">
-    {{ likes }}
-  </span>
-</button>
+  <div class="flex gap-1 flex-shrink-0">
+    <button *ngIf="auction?.status !== 'PENDING'" [disabled]="!isAuthenticated"
+      class="bg-[#A9B6B1] rounded-[10px] p-2 text-white inline-flex items-center gap-1 transition-all duration-200 ease-in-out hover:bg-[#FFA400] hover:-translate-y-[1px] disabled:opacity-75 disabled:cursor-not-allowed disabled:hover:bg-[#A9B6B1]"
+      (click)="toggleLike()" [title]="!isAuthenticated ? 'Login to like' : ''">
+      <svg class="w-5 h-5 fill-none stroke-current stroke-2" [ngClass]="{ '!fill-[#FFA400] !stroke-none': isLiked }">
+        <path
+          d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+      </svg>
+      <span class="text-sm text-white">
+        {{ likes }}
+      </span>
+    </button>
     <button
-      class="bg-[#A9B6B1] rounded-[10px] p-2 text-white cursor-pointer inline-flex items-center gap-1 transition-all duration-200 ease-in-out hover:bg-[#FFA400] hover:-translate-y-[1px]"
-    > <!-- Reduced padding to p-2 -->
-      <svg class="w-5 h-5" 
-        width="20" height="20" viewBox="0 0 24 24"
-        fill="none" stroke="currentColor" stroke-width="2">
-        <circle cx="12" cy="12" r="1"/>
-        <circle cx="19" cy="12" r="1"/>
-        <circle cx="5" cy="12" r="1"/>
+      class="bg-[#A9B6B1] rounded-[10px] p-2 text-white cursor-pointer inline-flex items-center gap-1 transition-all duration-200 ease-in-out hover:bg-[#FFA400] hover:-translate-y-[1px]">
+      <svg class="w-5 h-5" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2">
+        <circle cx="12" cy="12" r="1" />
+        <circle cx="19" cy="12" r="1" />
+        <circle cx="5" cy="12" r="1" />
       </svg>
     </button>
   </div>
