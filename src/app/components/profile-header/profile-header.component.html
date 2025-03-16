@@ -1,11 +1,9 @@
 <div class="relative h-[300px] sm:h-[400px] bg-slate-100 border-b-2 border-[#A9B6B1]/30">
   <!-- Cover Image with Overlay -->
   <div class="absolute inset-0 bg-gradient-to-b from-transparent/80 to-[#3e1300]/90">
-    <img
-    [src]="(user$ | async)?.coverImageUrl 
-    ? getImageUrl((user$ | async)?.coverImageUrl!) 
-    : 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6'"
-      alt="Cover photo"
+    <img [src]="(profile$ | async)?.coverImageUrl 
+      ? getImageUrl((profile$ | async)?.coverImageUrl!) 
+      : 'https://images.unsplash.com/photo-1579547621113-e4bb2a19bdd6'" alt="Cover photo"
       class="w-full h-full object-cover object-center transition-opacity duration-500 ease-in-out"
       [class.opacity-50]="coverImageLoading" />
 
@@ -25,37 +23,31 @@
 
   <!-- Profile Actions - Top Right -->
   <div class="absolute right-2 sm:right-8 top-2 sm:top-4 flex gap-1 sm:gap-3">
-    <button *ngIf="isOwner()" 
-      class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
-      (click)="onCreateCollection()">
-      <span class="material-symbols-outlined text-sm sm:text-base">add</span>
-      <span class="hidden sm:inline">Create Collection</span>
-    </button>
+    <!-- Existing Owner Actions -->
+    <ng-container *ngIf="(profile$ | async)?.roles?.includes('OWNER')">
+      <button *ngIf="isCurrentUser"
+        class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
+        (click)="onCreateCollection()">
+        <span class="material-symbols-outlined text-sm sm:text-base">add</span>
+        <span class="hidden sm:inline">Create Collection</span>
+      </button>
 
-    <button *ngIf="isOwner()" 
-      class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
-      (click)="onCreateAuction()">
-      <span class="material-symbols-outlined text-sm sm:text-base">gavel</span>
-      <span class="hidden sm:inline">Create Auction</span>
-    </button>
-  </div>
+      <button *ngIf="isCurrentUser && (profile$ | async)?.roles?.includes('OWNER')"
+        class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
+        (click)="onCreateAuction()">
+        <span class="material-symbols-outlined text-sm sm:text-base">gavel</span>
+        <span class="hidden sm:inline">Create Auction</span>
+      </button>
+    </ng-container>
 
-  <!-- Add this to profile-header.component.html -->
-<div class="absolute right-2 sm:right-8 top-24 sm:top-28 flex gap-2">
-  <div class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full text-white">
-    <span class="material-symbols-outlined text-green-400">account_balance_wallet</span>
-    <span class="text-sm font-medium">
-      Balance: {{ (wallet$ | async)?.balance | currency }}
-    </span>
-  </div>
-
-  <button *ngIf="isOwner()" 
-    class="flex items-center gap-1 bg-green-600 hover:bg-green-700 px-3 py-1.5 rounded-full text-white text-sm transition-colors"
-    (click)="openDepositDialog()">
-    <span class="material-symbols-outlined text-sm">add</span>
-    Deposit
+    <button
+    *ngIf="isCurrentUser && (profile$ | async)?.roles?.includes('BIDDER') && !(profile$ | async)?.roles?.includes('OWNER')"
+    class="flex items-center gap-1 sm:gap-2 p-2 sm:p-3 rounded-full backdrop-blur-sm bg-white/10 hover:bg-white/20 text-white transition-all duration-200 text-xs sm:text-base"
+    (click)="onBecomeOwner()">
+    <span class="material-symbols-outlined text-sm sm:text-base">verified</span>
+    <span class="hidden sm:inline">Become Owner</span>
   </button>
-</div>
+  </div>
 
   <!-- Profile Content -->
   <div
@@ -64,14 +56,12 @@
     <div class="relative">
       <div
         class="w-28 h-28 sm:w-36 sm:h-36 md:w-40 md:h-40 rounded-xl sm:rounded-2xl border-2 sm:border-4 border-white/80 shadow-xl sm:shadow-2xl overflow-hidden transition-transform duration-300 hover:scale-105">
-        <img
-        [src]="(user$ | async)?.imageUrl 
-        ? getImageUrl((user$ | async)?.imageUrl!) 
-        : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e'"
-          class="w-full h-full object-cover transition-opacity duration-500"
-          [class.opacity-50]="imageLoading" />
+        <img [src]="(profile$ | async)?.imageUrl 
+          ? getImageUrl((profile$ | async)?.imageUrl!) 
+          : 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e'"
+          class="w-full h-full object-cover transition-opacity duration-500" [class.opacity-50]="imageLoading" />
       </div>
-      
+
       <!-- Profile Image Upload - Matching cover image style -->
       <div
         class="absolute inset-0 flex items-center justify-center opacity-0 hover:opacity-100 bg-black/30 transition-opacity duration-300 cursor-pointer"
@@ -81,61 +71,152 @@
         </div>
         <div *ngIf="imageLoading"
           class="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div class="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-2 sm:border-4 border-white border-t-transparent"></div>
+          <div
+            class="animate-spin rounded-full h-8 w-8 sm:h-12 sm:w-12 border-2 sm:border-4 border-white border-t-transparent">
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Profile Info -->
-    <div class="flex-1 text-white backdrop-blur-md bg-slate-800/60 p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl border border-[#A9B6B1]/30 sm:border-2 shadow-vintage">
+    <div
+      class="flex-1 text-white backdrop-blur-md bg-slate-800/60 p-3 sm:p-6 rounded-xl sm:rounded-2xl shadow-lg sm:shadow-xl border border-[#A9B6B1]/30 sm:border-2 shadow-vintage">
       <!-- Top row with username/verified on left and action buttons on right -->
       <div class="flex justify-between items-center mb-2 sm:mb-4">
         <!-- User name and verified icon -->
         <div class="flex items-center gap-1 sm:gap-2">
-          <h1 class="text-base sm:text-lg font-bold tracking-tight drop-shadow-md">
-            {{ (user$ | async)?.profileIdentifier }}
-          </h1>
-          <div class="inline-flex bg-gradient-to-r from-emerald-500 to-teal-400 p-0.5 sm:p-1 rounded-full shadow-md animate-pulse">
+          <h3 class="text-base sm:text-lg font-bold tracking-tight drop-shadow-md">
+            {{ (profile$ | async)?.profileIdentifier }}
+          </h3>
+          <div
+            class="inline-flex bg-gradient-to-r from-emerald-500 to-teal-400 p-0.5 sm:p-1 rounded-full shadow-md animate-pulse">
             <span class="material-symbols-outlined text-xs text-white">verified</span>
           </div>
         </div>
-        
+
         <!-- Action Buttons in row -->
         <div class="flex gap-1 sm:gap-2">
-          <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
+          <button *ngIf="isCurrentUser"
+            class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
             (click)="onEditProfile()" title="Edit Profile">
             <span class="material-symbols-outlined text-xs sm:text-sm text-white">edit</span>
           </button>
-          <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
-            title="Send Message">
-            <span class="material-symbols-outlined text-xs sm:text-sm text-white">chat</span>
-          </button>
-          <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
-            title="Share Profile">
-            <span class="material-symbols-outlined text-xs sm:text-sm text-white">share</span>
-          </button>
-          <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
-            title="Follow">
-            <span class="material-symbols-outlined text-xs sm:text-sm text-white">person_add</span>
-          </button>
+          <ng-container *ngIf="!isCurrentUser">
+            <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
+              title="Send Message">
+              <span class="material-symbols-outlined text-xs sm:text-sm text-white">chat</span>
+            </button>
+            <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
+              title="Share Profile">
+              <span class="material-symbols-outlined text-xs sm:text-sm text-white">share</span>
+            </button>
+            <button class="p-1.5 sm:p-2 rounded-full bg-white/10 hover:bg-white/20 transition-all duration-200"
+              title="Follow">
+              <span class="material-symbols-outlined text-xs sm:text-sm text-white">person_add</span>
+            </button>
+          </ng-container>
         </div>
       </div>
-      
-      <!-- Stats & Contact - Made responsive -->
-      <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium text-white/90">
-        <div class="flex items-center gap-1 sm:gap-1.5 bg-white/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
-          <span class="material-symbols-outlined text-amber-400 text-xs sm:text-sm">star</span>
-          <span class="text-[#FFA400]">4.9 Rating</span>
+
+      <!-- New row for Stats/Contact and Wallet sections -->
+      <div class="flex justify-between items-center gap-4 mt-2 sm:mt-4">
+        <!-- Stats & Contact - Made responsive -->
+        <div class="flex flex-wrap items-center gap-2 text-xs sm:text-sm font-medium text-white/90">
+          <div class="flex items-center gap-1 sm:gap-1.5 bg-white/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
+            <span class="material-symbols-outlined text-amber-400 text-xs sm:text-sm">star</span>
+            <span class="text-[#FFA400]">4.9 Rating</span>
+          </div>
+          <div class="flex items-center gap-1 sm:gap-1.5 bg-white/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
+            <span class="material-symbols-outlined text-blue-300 text-xs sm:text-sm">mail</span>
+            <span class="truncate max-w-[120px] sm:max-w-[200px]">{{ (profile$ | async)?.email }}</span>
+          </div>
+          <div class="flex items-center gap-1 sm:gap-1.5 bg-white/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
+            <span class="material-symbols-outlined text-green-300 text-xs sm:text-sm">phone</span>
+            <span>{{ (profile$ | async)?.phoneNumber }}</span>
+          </div>
         </div>
-        <div class="flex items-center gap-1 sm:gap-1.5 bg-white/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
-          <span class="material-symbols-outlined text-blue-300 text-xs sm:text-sm">mail</span>
-          <span class="truncate max-w-[120px] sm:max-w-[200px]">{{ (user$ | async)?.email }}</span>
-        </div>
-        <div class="flex items-center gap-1 sm:gap-1.5 bg-white/10 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full">
-          <span class="material-symbols-outlined text-green-300 text-xs sm:text-sm">phone</span>
-          <span>{{ (user$ | async)?.phoneNumber }}</span>
+
+        <!-- Wallet Section -->
+        <div class="flex items-center gap-2" *ngIf="isCurrentUser">
+          <!-- Use *ngIf to get the async value once -->
+          <ng-container *ngIf="profile$ | async as user">
+            <div *ngIf="user.hasWallet" class="flex items-center gap-2 bg-white/10 px-3 py-1.5 rounded-full text-white">
+              <span class="material-symbols-outlined text-green-400">account_balance_wallet</span>
+              <span class="text-sm font-medium">
+                Balance: {{ user.wallet?.balance | currency }}
+              </span>
+            </div>
+
+            <button class="flex items-center gap-1 px-3 py-1.5 rounded-full text-white text-sm transition-colors"
+              [class.bg-green-600]="user.hasWallet" [class.bg-blue-600]="!user.hasWallet"
+              [class.hover-bg-green-700]="user.hasWallet" [class.hover-bg-blue-700]="!user.hasWallet"
+              (click)="handleWalletAction(user.hasWallet)">
+              <span class="material-symbols-outlined text-sm">
+                {{ user.hasWallet ? 'add' : 'account_balance_wallet' }}
+              </span>
+              {{ user.hasWallet ? 'Deposit' : 'Connect Wallet' }}
+            </button>
+          </ng-container>
+
+          <div *ngIf="walletLoading" class="flex items-center gap-2 px-3 py-1.5">
+            <mat-spinner diameter="20"></mat-spinner>
+          </div>
         </div>
       </div>
     </div>
   </div>
 </div>
+
+<p-toast></p-toast>
+<!-- Add these dialog templates at the bottom of your component template -->
+<p-dialog header="Deposit Funds" [(visible)]="showDepositDialog" [style]="{width: '400px'}" [dismissableMask]="true"
+  [modal]="true" position="bottom">
+  <div *ngIf="(profile$ | async)?.wallet as wallet" class="p-fluid">
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2">Current Balance:</label>
+      <p class="text-lg font-semibold">{{ wallet.balance | currency }}</p>
+    </div>
+
+    <div class="field">
+      <label for="amount" class="block text-gray-700 text-sm font-bold mb-2">Deposit Amount</label>
+      <input type="number" id="amount" pInputText [(ngModel)]="depositAmount" class="w-full" placeholder="Enter amount"
+        required>
+    </div>
+
+    <div class="flex justify-end gap-3 mt-5">
+      <button pButton type="button" label="Cancel" (click)="showDepositDialog = false"
+        class="p-button-outlined"></button>
+      <button pButton type="button" label="Deposit" (click)="confirmDeposit()" class="p-button-success"></button>
+    </div>
+  </div>
+</p-dialog>
+
+<p-dialog header="Connect Wallet" [(visible)]="showConnectWalletDialog" [style]="{width: '400px'}" [modal]="true"
+  position="bottom">
+  <div class="p-fluid">
+    <div class="field">
+      <label class="block text-gray-700 text-sm font-bold mb-2">Wallet Type</label>
+      <div class="flex align-items-center">
+        <span class="mr-2">FIAT</span>
+        <i class="pi pi-check-circle text-success"></i>
+      </div>
+    </div>
+    <div class="field">
+      <label class="block text-gray-700 text-sm font-bold mb-2">Select Fiat Currency</label>
+      <p-dropdown [options]="currencyCode" [(ngModel)]="selectedCurrency" optionLabel="label" optionValue="value"
+        placeholder="Select currency" class="w-full">
+      </p-dropdown>
+    </div>
+    <div class="field">
+      <label class="block text-gray-700 text-sm font-bold mb-2">Deposit Amount</label>
+      <p-inputNumber [(ngModel)]="depositAmount" [showButtons]="false" placeholder="Enter deposit amount" mode="decimal"
+        [minFractionDigits]="2" class="w-full">
+      </p-inputNumber>
+    </div>
+    <div class="flex justify-end gap-3 mt-5">
+      <button pButton type="button" label="Cancel" (click)="showConnectWalletDialog = false"
+        class="p-button-outlined"></button>
+      <button pButton type="button" label="Connect" (click)="connectWallet()" class="p-button-primary"></button>
+    </div>
+  </div>
+</p-dialog>

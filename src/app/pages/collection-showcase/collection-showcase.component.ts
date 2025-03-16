@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { CollectionsService } from '../../services/collections.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule, NgClass, NgFor } from '@angular/common';
@@ -13,6 +13,8 @@ import * as CollectionActions from '../../store/collections/collection.actions';
 import { selectCollectionCoverImage, selectCollectionError, selectCollectionLoading } from '../../store/collections/collection.selectors';
 import { ProductCardComponent } from '../../components/product-card/product-card.component';
 import { ImagesService } from '../../services/images.service';
+import { AuthService } from '../../services/auth.service';
+import { selectIsBidder, selectIsOwner } from '../../store/auth/auth.selectors';
 
 @Component({
   selector: 'app-collection-showcase',
@@ -23,6 +25,8 @@ import { ImagesService } from '../../services/images.service';
 })
 export class CollectionShowcaseComponent {
 
+  isOwner$: Observable<boolean>;
+  isBidder$: Observable<boolean>;
   collection$: Observable<Collection | null>;
   loading$: Observable<boolean>;
   error$: Observable<any>;
@@ -30,12 +34,16 @@ export class CollectionShowcaseComponent {
 
   constructor(
     private imagesService: ImagesService,
+    private authService: AuthService,
     private route: ActivatedRoute,
     private store: Store<{ collection: Collection}>,
+    private router: Router
   ) {
     this.collection$ = this.store.pipe(select(selectCollectionCoverImage));
     this.loading$ = this.store.pipe(select(selectCollectionLoading));
     this.error$ = this.store.pipe(select(selectCollectionError));
+    this.isOwner$ = this.store.select(selectIsOwner);
+        this.isBidder$ = this.store.select(selectIsBidder);
   }
 
   ngOnInit(): void {
@@ -45,6 +53,28 @@ export class CollectionShowcaseComponent {
     }
   }
   
+  // isOwner(): boolean {
+  //   return this.authService.hasRole('OWNER');
+  // }
+
+  retryLoading(): void {
+    const collectionId = this.route.snapshot.paramMap.get('id');
+    if (collectionId) {
+      this.store.dispatch(CollectionActions.loadCollection({ id: collectionId }));
+    }
+  }
+
+  openAddProductDialog(): void {
+    const collectionId = this.route.snapshot.paramMap.get('id');
+    if (collectionId) {
+      // Navigate to create product page with collection ID as query param
+      this.router.navigate(['/create-product'], { 
+        queryParams: { collectionId: collectionId } 
+      });
+    } else {
+      this.router.navigate(['/products/create']);
+    }
+  }
   
   ngOnChanges() {
     console.log(this.collection$);  

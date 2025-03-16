@@ -1,0 +1,46 @@
+<div class="p-4">
+    <h2 class="text-2xl font-bold mb-4">Users Dashboard</h2>
+    
+    <table class="min-w-full border-collapse">
+      <thead>
+        <tr class="bg-gray-100">
+          <th class="p-2 text-left">Name</th>
+          <th class="p-2 text-left">Email</th>
+          <th class="p-2 text-left">Roles</th>
+          <th class="p-2 text-left">Owner Request Status</th>
+          <th class="p-2 text-left">Banned?</th>
+          <th class="p-2 text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let user of users" class="border-b">
+          <td class="p-2">{{ user.firstName }} {{ user.lastName }}</td>
+          <td class="p-2">{{ user.email }}</td>
+          <td class="p-2">{{ user.roles.join(', ') }}</td>
+          <td class="p-2">{{ user.ownerRequestStatus }}</td>
+          <td class="p-2">{{ user.isBanned ? 'Yes' : 'No' }}</td>
+          <td class="p-2">
+            <!-- Existing owner request buttons -->
+            <button *ngIf="user.ownerRequestStatus === 'PENDING'" (click)="approveRequest(user)"
+              class="bg-green-500 text-white p-1 rounded mr-2">
+              Approve
+            </button>
+            <button *ngIf="user.ownerRequestStatus === 'PENDING'" (click)="rejectRequest(user)"
+              class="bg-red-500 text-white p-1 rounded mr-2">
+              Reject
+            </button>
+            <!-- New Ban/Unban buttons -->
+            <button *ngIf="!user.isBanned" (click)="banUser(user)"
+              class="bg-red-600 text-white p-1 rounded mr-2">
+              Ban
+            </button>
+            <button *ngIf="user.isBanned" (click)="unbanUser(user)"
+              class="bg-blue-600 text-white p-1 rounded">
+              Unban
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  

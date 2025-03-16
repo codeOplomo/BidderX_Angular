@@ -6,6 +6,11 @@ import { ApiResponse } from '../../models/view-models/api-response.model';
 import { AuctionVm } from '../../models/view-models/auction-vm.model';
 import { CommonModule } from '@angular/common';
 import { AuctionRectionsService } from '../../services/auction-rections.service';
+import { Store } from '@ngrx/store';
+import { selectWalletBalance } from '../../store/wallet/wallet.selectors';
+import { Observable } from 'rxjs';
+import { Router } from '@angular/router';
+import { selectIsAuthenticated } from '../../store/auth/auth.selectors';
 
 
 @Component({
@@ -16,6 +21,7 @@ import { AuctionRectionsService } from '../../services/auction-rections.service'
   styleUrl: './product-info.component.css'
 })
 export class ProductInfoComponent implements OnChanges {
+  isAuthenticated = false;
   @Input() product: ProductVM | null = null;
   @Input() auction: AuctionVm | null = null;
   category: string = '';
@@ -24,8 +30,13 @@ export class ProductInfoComponent implements OnChanges {
 
   constructor(
     private categoriesService: CategoriesService,
-    private auctionReactionsService: AuctionRectionsService
-  ) {}
+    private auctionReactionsService: AuctionRectionsService,
+    private router: Router,
+    private store: Store
+  ) {
+    this.store.select(selectIsAuthenticated)
+      .subscribe(isAuth => this.isAuthenticated = isAuth);
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['product'] && this.product) {
@@ -38,12 +49,11 @@ export class ProductInfoComponent implements OnChanges {
   }
 
   toggleLike(): void {
-    if (!this.auction) return;
+    if (!this.isAuthenticated || !this.auction) return; 
 
     const previousLikes = this.likes;
     const previousIsLiked = this.isLiked;
 
-    // Optimistic UI update
     this.isLiked = !this.isLiked;
     this.likes += this.isLiked ? 1 : -1;
 
@@ -57,8 +67,8 @@ export class ProductInfoComponent implements OnChanges {
   }
   
   loadCategory(): void {
-    if (!this.product) return;
-
+    if (!this.product || !this.product.category) return;
+  
     this.categoriesService.getCategoryById(this.product.category.id).subscribe({
       next: (response: ApiResponse<Category>) => {
         this.category = response.data.name;
@@ -67,5 +77,13 @@ export class ProductInfoComponent implements OnChanges {
         this.category = 'Unknown';
       }
     });
+  }
+
+  navigateToAuctionsExplorer() {
+    if (this.product?.category?.id) {
+      this.router.navigate(['/explore-auctions'], {
+        queryParams: { categoryId: this.product.category.id }
+      });
+    }
   }
 }

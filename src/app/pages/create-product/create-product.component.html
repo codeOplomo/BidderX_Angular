@@ -1,0 +1,49 @@
+<p-card class="w-full shadow-xl rounded-2xl"
+    [style]="{'background': 'linear-gradient(to bottom right, #f0fdf4, #eff6ff)'}">
+    <form [formGroup]="productForm" (ngSubmit)="onSubmit()">
+        <div class="grid grid-cols-1 md:grid-cols-[300px_1fr] gap-8 p-6">
+            <div class="flex flex-col gap-6">
+                <div *ngFor="let image of productImages; let i = index"
+                    class="group h-[300px] border-2 border-dashed border-gray-300 rounded-xl hover:border-gray-400 transition-colors relative overflow-hidden">
+                    <label
+                        class="absolute top-0 left-0 p-3 text-sm font-medium text-gray-700 bg-white/80 backdrop-blur-sm">
+                        <ng-container *ngIf="i === 0; else featuredLabel">
+                            Product Image **
+                        </ng-container>
+                        <ng-template #featuredLabel>
+                            Featured Image {{ i }}
+                        </ng-template>
+                    </label>
+                    <div class="h-full flex items-center justify-center cursor-pointer" (click)="input.click()">
+                        <input #input type="file" hidden (change)="onUpdateProductImage($event, i)" accept="image/*">
+                        <ng-container *ngIf="!image.preview; else productPreviewTpl">
+                            <div class="flex flex-col items-center text-gray-400">
+                                <i class="pi pi-cloud-upload text-4xl mb-2"></i>
+                                <p class="text-sm">Click to upload</p>
+                            </div>
+                        </ng-container>
+                        <ng-template #productPreviewTpl>
+                            <div class="relative w-full h-full">
+                                <img [src]="image.preview" alt="Product preview" class="w-full h-full object-cover">
+                                <button type="button"
+                                    class="absolute top-2 right-2 bg-white/90 rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:scale-105 transition-all"
+                                    (click)="removeImage(i); $event.stopPropagation()">
+                                    <i class="pi pi-times text-xs text-gray-600 hover:text-red-600"></i>
+                                </button>
+                            </div>
+                        </ng-template>
+                    </div>
+                </div>
+            </div>
+            <div class="flex flex-col gap-6">
+                <app-product-form [parentForm]="productForm" [collectionId]="collectionId"></app-product-form>
+                <div class="flex justify-end pt-6">
+                    <button pButton 
+                            type="submit"
+                            label="Create Product"
+                            class="bg-blue-600 hover:bg-blue-700 text-white"></button>
+                  </div>
+            </div>
+        </div>
+    </form>
+</p-card>

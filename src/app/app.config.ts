@@ -18,6 +18,10 @@ import { isDevMode } from '@angular/core';
 import { TabsModule } from 'primeng/tabs';
 import { collectionReducer } from './store/collections/collection.reducer';
 import { CollectionEffects } from './store/collections/collection.effects';
+import { walletReducer } from './store/wallet/wallet.reducer';
+import { AuthEffects } from './store/auth/auth.effects';
+import { WalletEffects } from './store/wallet/wallet.effects';
+import { authReducer } from './store/auth/auth.reducer';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,8 +36,8 @@ export const appConfig: ApplicationConfig = {
         preset: Aura
       }
     }),
-    provideStore({ user: UserReducer, collection: collectionReducer }),
-    provideEffects([UserEffects, CollectionEffects]),
+    provideStore({ profile: UserReducer, collection: collectionReducer, wallet: walletReducer, auth: authReducer }),
+    provideEffects([UserEffects, CollectionEffects, AuthEffects, WalletEffects]),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),

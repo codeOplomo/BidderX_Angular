@@ -1,92 +1,98 @@
 <div class="flex flex-col gap-8 p-6 rounded-2xl bg-white/80 shadow-md backdrop-blur-sm">
+  <!-- Pending Auction -->
   <div *ngIf="auction?.status === 'PENDING'" class="text-center p-4 text-[#3e1300]">
     <i class="fas fa-clock text-2xl mb-2"></i>
     <p class="font-medium">This auction is awaiting approval</p>
     <p class="text-sm">Check back later when it's approved</p>
   </div>
-  <ng-container *ngIf="auction?.status === 'APPROVED'">
-    <!-- Auction Status & Countdown -->
+
+  <!-- Approved or Ended Auction -->
+  <ng-container *ngIf="auction?.status === 'APPROVED' || auction?.status === 'ENDED'">
     <div class="flex flex-col gap-4 mb-6">
-      <!-- Winning Bid -->
-      <div *ngIf="auctionEnded" class="flex flex-col gap-2">
+      <!-- If Auction has Ended, show Winning Bid Details -->
+      <div *ngIf="auctionEnded; else countdownTemplate" class="flex flex-col gap-2">
         <span class="text-sm text-[#3e1300]">Winning bid</span>
         <div class="flex items-center gap-2">
           <span class="text-xl font-semibold text-[#cb8502]">
-            {{ '0.00' }} SwETH
+            {{ auction.currentBid | currency:'USD' }}
           </span>
-          <span class="text-sm text-[#6b7280]">by {{ 'No bids yet' }}</span>
+          <span class="text-sm text-[#6b7280]">
+            by {{ auction.winner?.profileIdentifier || auction.winner?.email || 'No bids yet' }}
+          </span>
         </div>
       </div>
-  
-      <!-- Countdown -->
-      <div *ngIf="!auctionEnded" class="flex flex-col gap-4">
-        <span class="text-sm text-[#3e1300]">
-          {{ auctionNotStarted ? 'Auction starts in' : 'Auction ends in' }}
-        </span>
-        
-        <div class="flex gap-3 items-center">
-          <!-- Days -->
-          <div class="flex flex-col items-center">
-            <div class="countdown-box">{{ countdown.days }}</div>
-            <span class="countdown-label">Days</span>
-          </div>
-          <span class="countdown-separator">:</span>
-          
-          <!-- Hours -->
-          <div class="flex flex-col items-center">
-            <div class="countdown-box">{{ countdown.hours }}</div>
-            <span class="countdown-label">Hr's</span>
-          </div>
-          <span class="countdown-separator">:</span>
-          
-          <!-- Minutes -->
-          <div class="flex flex-col items-center">
-            <div class="countdown-box">{{ countdown.minutes }}</div>
-            <span class="countdown-label">Min's</span>
-          </div>
-          <span class="countdown-separator">:</span>
-          
-          <!-- Seconds -->
-          <div class="flex flex-col items-center">
-            <div class="countdown-box">{{ countdown.seconds }}</div>
-            <span class="countdown-label">Sec</span>
+      
+      <!-- Countdown Template for Active Auctions -->
+      <ng-template #countdownTemplate>
+        <div class="flex flex-col gap-4">
+          <span class="text-sm text-[#3e1300]">
+            {{ auctionNotStarted ? 'Auction starts in' : 'Auction ends in' }}
+          </span>
+          <div class="flex gap-3 items-center">
+            <!-- Days -->
+            <div class="flex flex-col items-center">
+              <div class="countdown-box">{{ countdown.days }}</div>
+              <span class="countdown-label">Days</span>
+            </div>
+            <span class="countdown-separator">:</span>
+            <!-- Hours -->
+            <div class="flex flex-col items-center">
+              <div class="countdown-box">{{ countdown.hours }}</div>
+              <span class="countdown-label">Hr's</span>
+            </div>
+            <span class="countdown-separator">:</span>
+            <!-- Minutes -->
+            <div class="flex flex-col items-center">
+              <div class="countdown-box">{{ countdown.minutes }}</div>
+              <span class="countdown-label">Min's</span>
+            </div>
+            <span class="countdown-separator">:</span>
+            <!-- Seconds -->
+            <div class="flex flex-col items-center">
+              <div class="countdown-box">{{ countdown.seconds }}</div>
+              <span class="countdown-label">Sec</span>
+            </div>
           </div>
         </div>
-      </div>
-  
+      </ng-template>
+
       <!-- Ended Message -->
       <div *ngIf="auctionEnded" class="text-red-600 font-medium">
         Auction has ended
       </div>
     </div>
-  
+
     <!-- Bid Action Section -->
     <div class="flex flex-col gap-4">
       <div class="flex justify-between items-center">
         <div class="flex flex-col">
           <span class="text-sm text-[#3e1300]">Current Bid</span>
           <span class="text-2xl font-semibold text-[#cb8502]">
-            {{ '0.00' }} SwETH
+            {{ auction.currentBid | currency:'USD' }}
           </span>
         </div>
-  
         <button 
           class="bid-button"
           [disabled]="auctionEnded || auctionNotStarted"
-          
+          (click)="openBidDialog()"
         >
           {{ auctionEnded ? 'Auction Ended' : 'Place Bid' }}
         </button>
       </div>
-  
       <!-- Minimum Bid Info -->
       <div class="text-sm text-[#6b7280]">
-        Minimum bid:  SwETH
+        Minimum bid: {{ '$0.00' }}
       </div>
     </div>
   </ng-container>
-  </div>
+</div>
 
+<app-place-bid-dialog
+  [(visible)]="showBidDialog"
+  [minimumBid]="auction.currentBid || 0"
+  [auctionId]="auction.id"
+  (bidSubmitted)="onBidSubmitted($event)">
+</app-place-bid-dialog>
 <!--   
 
 <div class="flex flex-col gap-8 p-6 rounded-2xl bg-white/80 shadow-md backdrop-blur-sm"

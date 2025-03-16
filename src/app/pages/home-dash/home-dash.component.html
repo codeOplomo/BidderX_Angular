@@ -1,0 +1,16 @@
+<!-- home-dash.component.html -->
+<p-toast></p-toast>
+
+<!-- Stats Cards -->
+<app-stats-card 
+  [totalAuctions]="stats.totalAuctions"
+  [pendingRequests]="stats.pendingRequests"
+  [activeUsers]="stats.activeUsers"
+  [totalRevenue]="stats.totalRevenue">
+</app-stats-card>
+
+<!-- Charts Container -->
+<div class="charts-container grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+  <app-chart-stats [stats]="stats"></app-chart-stats>
+  <app-auction-status-chart [stats]="stats"></app-auction-status-chart>
+</div>

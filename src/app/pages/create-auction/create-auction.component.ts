@@ -18,7 +18,7 @@ import { ProductVM } from '../../models/view-models/product-vm';
 @Component({
   selector: 'app-create-auction',
   standalone: true,
-  imports: [ToastModule, ReactiveFormsModule, CardModule, CommonModule, ProductFormComponent, ToastModule],
+  imports: [ToastModule, ReactiveFormsModule, CardModule, CommonModule, ProductFormComponent],
   templateUrl: './create-auction.component.html',
   styleUrl: './create-auction.component.css',
   providers: [ToastService]

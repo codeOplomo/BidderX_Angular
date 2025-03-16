@@ -1,7 +1,7 @@
-import { User } from "./user.model";
+import { ProfileVM } from "../../models/view-models/profile";
 
 export interface UserState {
-  user: User | null; // Use the User type
+  user: ProfileVM | null; // Use the User type
   loading: boolean;
   error: any;
 }

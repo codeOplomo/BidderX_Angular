@@ -17,8 +17,9 @@ export interface Collection {
     description?: string;
     imageUrl?: string;
     owner?: {
+        email?: string;
         imageUrl?: string;
-        name?: string;
+        profileIdentifier?: string;
       };
     items: CollectionItem[];
 }

@@ -4,7 +4,7 @@ import { TabPanel, TabViewModule } from 'primeng/tabview';
 import { TabsModule } from 'primeng/tabs';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClientModule, HttpErrorResponse, HttpEventType, HttpResponse } from '@angular/common/http';
 import { ButtonModule } from 'primeng/button';
 import { SplitButton, SplitButtonModule } from 'primeng/splitbutton';
@@ -20,6 +20,7 @@ import { MenuItem } from 'primeng/api';
 import { UserService } from '../../services/user.service';
 import { ProfileHeaderComponent } from '../../components/profile-header/profile-header.component';
 import { ProfileTabsComponent } from '../../components/profile-tabs/profile-tabs.component';
+import { ProfileVM } from '../../models/view-models/profile';
 
 @Component({
   selector: 'app-profile',
@@ -42,8 +43,12 @@ import { ProfileTabsComponent } from '../../components/profile-tabs/profile-tabs
 
 export class ProfileComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
+  profile$: Observable<ProfileVM>;
+  visitedProfile$!: Observable<ProfileVM>;
+  isCurrentUser: boolean = false;
+  userEmail: string = '';
+
   rating: number = 5;
-  user$: Observable<any>;
   imageLoading = false;
 
   errorMessage: string = '';
@@ -51,29 +56,37 @@ export class ProfileComponent implements OnInit, OnDestroy {
 
   
   constructor(
-    private authService: AuthService,
     private store: Store,
-    private router: Router,
+    private route: ActivatedRoute,
+    private userService: UserService
   ) {
-    // Initialize user$ in constructor
-    this.user$ = this.store.select(selectUser);
+    this.profile$ = this.store.select(selectUser).pipe(
+      filter((profile): profile is ProfileVM => profile !== null)
+    );
   }
 
   ngOnInit() {
-    if (this.authService.checkAuthState()) {
-      this.user$ = this.store.select(selectUser);
-    }
-    this.user$.subscribe(user =>{ 
-      console.log('User data in ProfileComponent:', user);
-      if (user) {
-        this.userId = user.id; // Extract user ID from user data
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(params => {
+      const email = params.get('email');
+      if (email) {
+        this.userEmail = email;
+        this.visitedProfile$ = this.userService.getProfileByEmail(email).pipe(
+          map(response => response.data)
+        );
+      } else {
+        // Load current user if no email parameter
+        this.store.dispatch(UserActions.loadUserProfile());
       }
-      });
-
-  }
-
-  updateProfile(profileData: any) {
-    this.store.dispatch(UserActions.updateUserProfile({ profileData }));
+    });
+    
+    this.profile$.pipe(
+      takeUntil(this.destroy$)
+    ).subscribe(profile => {
+      this.userId = profile.id ?? '';
+      console.log('Wallet balance:', profile.wallet?.balance);
+    });
   }
 
 

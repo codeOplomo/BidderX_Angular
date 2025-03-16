@@ -12,7 +12,8 @@ import { ImagesService } from '../../services/images.service';
   styleUrl: './product-card.component.css'
 })
 export class ProductCardComponent {
-  @Input() product!: CollectionItem; 
+  @Input() product!: CollectionItem;
+  @Input() editable: boolean = false; 
 
   constructor(private imagesService: ImagesService) {}
 

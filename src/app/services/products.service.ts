@@ -16,6 +16,10 @@ export class ProductsService {
 
   constructor(private http: HttpClient, private imagesService: ImagesService) {}
 
+  createProduct(formData: FormData): Observable<ApiResponse<ProductVM>> {
+    return this.http.post<ApiResponse<ProductVM>>(this.apiUrl, formData);
+  }
+
   getProductById(id: string): Observable<ApiResponse<ProductVM>> {
     return this.http.get<ApiResponse<ProductVM>>(`${this.apiUrl}/${id}`);
   }
@@ -26,10 +30,6 @@ export class ProductsService {
       .set('page', page.toString())
       .set('size', size.toString());
     return this.http.get<ApiResponse<PaginatedApiResponse<ProductVM>>>(`${this.apiUrl}/user`, { params });
-  }
-
-  createProduct(productData: ProductVM): Observable<ApiResponse<ProductVM>> {
-    return this.http.post<ApiResponse<ProductVM>>(`${this.apiUrl}/create`, productData);
   }
 
   uploadProductImage(

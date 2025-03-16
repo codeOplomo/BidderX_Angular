@@ -13,29 +13,48 @@ import { ProductDetailComponent } from './pages/product-detail/product-detail.co
 import { authGuard } from './guards/auth.guard';
 import { DashboardLayoutComponent } from './layouts/dashboard-layout/dashboard-layout.component';
 import { AuctionsDashComponent } from './pages/auctions-dash/auctions-dash.component';
+import { PaymentSuccessComponent } from './components/payment-success/payment-success.component';
+import { PaymentCancelComponent } from './components/payment-cancel/payment-cancel.component';
+import { PaymentConfirmationComponent } from './components/payment-confirmation/payment-confirmation.component';
+import { HomeComponent } from './pages/home/home.component';
+import { CreateProductComponent } from './pages/create-product/create-product.component';
+import { AuctionsExplorerComponent } from './pages/auctions-explorer/auctions-explorer.component';
+import { UsersDashComponent } from './pages/users-dash/users-dash.component';
+import { HomeDashComponent } from './pages/home-dash/home-dash.component';
+import { CreatorsComponent } from './pages/creators/creators.component';
 
 export const routes: Routes = [
     {
         path: '',
         component: MainLayoutComponent,
         children: [
+            { path: '', component: HomeComponent},
             { path: 'login', component: LoginComponent },
             { path: 'register', component: RegisterComponent },
             { path: 'verification', component: VerifyComponent},
             { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
+            { path: 'profile/:email', component: ProfileComponent, canActivate: [authGuard] },
             { path: 'edit-profile', component: EditProfileComponent, canActivate: [authGuard] },
             { path: 'edit-password', component: EditPasswordComponent, canActivate: [authGuard] },
-            { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard], data: { roles: ['OWNER'] } },
-            { path: 'create-auction', component: CreateAuctionComponent, canActivate: [authGuard], data: { roles: ['OWNER'] } },
+            { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard], data: { roles: ['ROLE_OWNER'] } },
+            { path: 'create-auction', component: CreateAuctionComponent, canActivate: [authGuard], data: { roles: ['ROLE_OWNER'] } },
+            { path: 'create-product', component: CreateProductComponent, canActivate: [authGuard], data: { roles: ['ROLE_OWNER'] } },
+            { path: 'explore-auctions', component: AuctionsExplorerComponent},
             { path: 'collection-showcase/:id', component: CollectionShowcaseComponent},
-            { path: 'product-detail/:id', component: ProductDetailComponent}
+            { path: 'product-detail/:id', component: ProductDetailComponent},
+            { path: 'payment-success', component: PaymentSuccessComponent},
+            { path: 'payment-cancel', component: PaymentCancelComponent},
+            { path: 'payment-confirmation', component: PaymentConfirmationComponent},
+            { path: 'creators', component: CreatorsComponent}
         ]
     },
     {
         path: 'dashboard',
         component: DashboardLayoutComponent,
         children: [
-            { path: '', component: AuctionsDashComponent}
+            { path: '', component: HomeDashComponent},
+            { path: 'users', component: UsersDashComponent},
+            { path: 'auctions', component: AuctionsDashComponent},
         ]
     },
 ];

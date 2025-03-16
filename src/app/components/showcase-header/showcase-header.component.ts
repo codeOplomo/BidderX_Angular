@@ -6,6 +6,9 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import { Collection } from '../../store/collections/collection.model';
 import { CommonModule } from '@angular/common';
 import { selectCollectionCoverImage } from '../../store/collections/collection.selectors';
+import { Router } from '@angular/router';
+import { selectIsAuthenticated } from '../../store/auth/auth.selectors';
+import { selectCurrentUserEmail } from '../../store/user/user.selectors';
 
 @Component({
   selector: 'app-showcase-header',
@@ -20,26 +23,50 @@ export class ShowcaseHeaderComponent implements OnInit {
 
   collection$: Observable<Collection | null>;
   private collectionId: string | null = null; 
+
+  ownerEmail: string | null = null;
+  isAuthenticated = false;
+
+  currentUserEmail: string | null = null;
   coverImageLoading = false;
   private destroy$ = new Subject<void>();
 
-  constructor(private imagesService: ImagesService, private store: Store<{ collection: Collection}>) {
+  constructor(private imagesService: ImagesService, private router: Router, private store: Store<{ collection: Collection}>) {
     
     this.collection$ = this.store.pipe(select(selectCollectionCoverImage));
   }
 
   ngOnInit() {
-    // Store the collection ID when the collection data is loaded
+    this.store.select(selectIsAuthenticated)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(isAuth => this.isAuthenticated = isAuth);
+
+    this.store.select(selectCurrentUserEmail)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(email => this.currentUserEmail = email);
+
     this.collection$.pipe(
       takeUntil(this.destroy$)
     ).subscribe(collection => {
       console.log('Header collection data:', collection);
       if (collection) {
         this.collectionId = collection.id ?? null;
+        this.ownerEmail = collection.owner?.email || null;
       }
     });
   }
   
+  get showUpdateIcon(): boolean {
+    return this.isAuthenticated && this.currentUserEmail === this.ownerEmail;
+  }
+
+  navigateToProfile() {
+    if (this.ownerEmail) {
+      this.router.navigate(['/profile', this.ownerEmail]);
+    } else {
+      console.error('No owner email available');
+    }
+  }
 
   getImageUrl(imagePath: string): string {
     return this.imagesService.getImageUrl(imagePath);

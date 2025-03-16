@@ -3,6 +3,7 @@ import { ProfileVM } from "./profile";
 
 export interface AuctionVm {
     id: string;  // UUID string
+    code: string;
     title: string;
     description: string;
     startTime: string;
@@ -11,11 +12,12 @@ export interface AuctionVm {
     type: string;
     status: string;
     startingPrice: string;
-    currentBid: string;
+    currentBid: number;
     product: ProductVM;
     reactionsCount: number;
     totalBidders: number;
     totalBids: number;
     likedByCurrentUser: boolean;
     bidders: ProfileVM[];
+    winner: ProfileVM | null;
 }

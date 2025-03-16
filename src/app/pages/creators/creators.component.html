@@ -1,0 +1,50 @@
+<section class="py-20 px-4 bg-gradient-to-b from-gray-50/50 to-white">
+    <div class="max-w-7xl mx-auto">
+
+        <!-- Section Header -->
+        <div class="mb-4 flex items-center justify-between">
+            <div class="flex items-center mb-4">
+                <span class="material-symbols-outlined text-3xl text-emerald-600 mr-3">search</span>
+                <h1 class="text-4xl font-bold text-gray-900">Explore Creators</h1>
+            </div>
+            <!-- Duration Filter -->
+            <div>
+                <label for="duration" class="mr-2 font-medium">Filter by:</label>
+                <select id="duration" [(ngModel)]="duration" (change)="onDurationChange(duration)"
+                    class="border border-gray-300 rounded p-1">
+                    <option value="1d">Last 24 hours</option>
+                    <option value="7d">Last 7 days</option>
+                    <option value="15d">Last 15 days</option>
+                    <option value="1m">Last month</option>
+                </select>
+            </div>
+        </div>
+
+        
+        <p class="text-lg text-gray-600 max-w-2xl">
+            Discover Our Best Creators
+          </p>
+        <!-- Grid of Ranking Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
+            <app-ranking-owners-card *ngFor="let owner of owners; let i = index"
+                [rank]="(currentPage * pageSize) + i + 1" [ownerName]="owner.owner.profileIdentifier"
+                [revenue]="owner.revenue" [ownerImage]="owner.owner.imageUrl">
+            </app-ranking-owners-card>
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="flex items-center justify-center mt-8" *ngIf="totalPages > 1">
+            <button class="px-4 py-2 mr-2 bg-gray-200 rounded" (click)="goToPage(currentPage - 1)"
+                [disabled]="currentPage === 0">
+                Previous
+            </button>
+
+            <span>Page {{ currentPage + 1 }} of {{ totalPages }}</span>
+
+            <button class="px-4 py-2 ml-2 bg-gray-200 rounded" (click)="goToPage(currentPage + 1)"
+                [disabled]="currentPage === totalPages - 1">
+                Next
+            </button>
+        </div>
+    </div>
+</section>

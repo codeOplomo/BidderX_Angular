@@ -5,6 +5,7 @@ import { PasswordUpdateVM } from '../models/view-models/password-update.model';
 import { ProfileUpdateVM } from '../models/view-models/profile-update.model';
 import { ApiResponse } from '../models/view-models/api-response.model';
 import { ImagesService } from './images.service';
+import { ProfileVM } from '../models/view-models/profile';
 
 @Injectable({
   providedIn: 'root'
@@ -15,15 +16,63 @@ export class UserService {
   constructor(private http: HttpClient, private imagesService: ImagesService) { }
 
 
-  getProfile(): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/profile`).pipe(
-      map(profile => ({
-        ...profile,
-        imageUrl: this.imagesService.getImageUrl(profile.imageUrl), 
-        coverImageUrl: this.imagesService.getImageUrl(profile.coverImageUrl)
+  banUser(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${email}/ban`, {});
+  }
+
+  unbanUser(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${email}/unban`, {});
+  }
+  
+  getUsers(): Observable<ApiResponse<ProfileVM[]>> {
+    return this.http.get<ApiResponse<ProfileVM[]>>(`${this.apiUrl}`);
+  }
+
+  approveOwnerRequest(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${email}/approve-owner`, {});
+  }
+
+  rejectOwnerRequest(email: string): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${email}/reject-owner`, {});
+  }
+
+  requestOwnerUpgrade(): Observable<ApiResponse<any>> {
+    return this.http.post<ApiResponse<any>>(`${this.apiUrl}/become-owner`, {});
+  }
+
+  getProfile(): Observable<ApiResponse<ProfileVM>> {
+    return this.http.get<ApiResponse<ProfileVM>>(`${this.apiUrl}/profile`).pipe(
+      map(response => ({
+        ...response,
+        data: {
+          ...response.data,
+          imageUrl: this.imagesService.getImageUrl(response.data.imageUrl),
+          coverImageUrl: response.data.coverImageUrl
+            ? this.imagesService.getImageUrl(response.data.coverImageUrl)
+            : undefined,
+          collections: response.data.collections || [],
+        }
       }))
     );
   }
+
+  getProfileByEmail(email: string): Observable<ApiResponse<ProfileVM>> {
+    return this.http.get<ApiResponse<ProfileVM>>(`${this.apiUrl}/${email}/profile`).pipe(
+      map(response => ({
+        ...response,
+        data: {
+          ...response.data,
+          imageUrl: this.imagesService.getImageUrl(response.data.imageUrl),
+          coverImageUrl: response.data.coverImageUrl
+            ? this.imagesService.getImageUrl(response.data.coverImageUrl)
+            : undefined,
+          collections: response.data.collections || [],
+        }
+      }))
+    );
+  }
+  
+  
   
   
 

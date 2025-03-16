@@ -9,11 +9,12 @@ import { TooltipModule } from 'primeng/tooltip';
 import { Router, RouterModule } from '@angular/router';
 import { Subject, takeUntil } from 'rxjs';
 import { CountdownService } from '../../services/countdown.service';
+import { UniquePipe } from '../../pipes/unique.pipe';
 
 @Component({
   selector: 'app-auction-card',
   standalone: true,
-  imports: [CommonModule, CardModule, AvatarModule, TooltipModule, RouterModule],
+  imports: [CommonModule, CardModule, AvatarModule, TooltipModule, RouterModule, UniquePipe],
   templateUrl: './auction-card.component.html',
   styleUrl: './auction-card.component.css',
   changeDetection: ChangeDetectionStrategy.OnPush
@@ -138,7 +139,13 @@ export class AuctionCardComponent implements OnInit, OnDestroy {
     return imageUrl?.trim() ? this.imagesService.getImageUrl(imageUrl) : 'https://picsum.photos/400/300?random=1';
   }
 
-  goToProductDetail(productId: string): void {
+  goToProductDetail(productId?: string): void {
     this.router.navigate(['/product-detail', productId]);
+  }
+
+  goToProfile(email: string | undefined): void {
+    if (email) {
+      this.router.navigate(['/profile', email]);
+    }
   }
 }

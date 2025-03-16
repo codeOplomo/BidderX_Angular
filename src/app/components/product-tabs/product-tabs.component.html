@@ -1,37 +1,24 @@
 <div class="flex flex-col gap-6">
   <!-- Tabs container -->
   <nav class="flex gap-6 bg-white/80 shadow-[0_4px_10px_rgba(0_0_0_0.1)] rounded-lg p-2">
-    <button
-      *ngFor="let tab of tabs"
-      (click)="setActiveTab(tab)"
-      [ngClass]="
+    <button *ngFor="let tab of tabs" (click)="setActiveTab(tab)" [ngClass]="
         activeTab === tab
           ? 'text-white bg-[#FFA400] font-semibold shadow-[0_4px_8px_rgba(255_164_0_0.2)] hover:bg-[#FF8C00] hover:shadow-[0_6px_12px_rgba(255_164_0_0.3)]'
           : 'bg-[#f4f8fb] text-black hover:bg-[#A9B6B1] hover:shadow-[0_4px_8px_rgba(0_0_0_0.15)] hover:translate-y-[-2px]'
-      "
-      class="border-0 py-[0.5rem] px-[1.8rem] cursor-pointer text-base transition-all duration-200 relative rounded"
-    >
+      " class="border-0 py-[0.5rem] px-[1.8rem] cursor-pointer text-base transition-all duration-200 relative rounded">
       {{ tab }}
     </button>
   </nav>
   <!-- Tab content -->
   <div class="tab-content" @fadeIn>
-    <div
-      *ngIf="activeTab === 'Details'"
-      class="grid gap-6 py-4 grid-cols-[repeat(auto-fill,minmax(200px,1fr))]"
-    >
-      <div
-        *ngFor="let prop of properties"
-        [ngClass]="prop.type"
-        class="relative p-6 bg-white rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.1)] transition-all duration-300 hover:translate-y-[-2px] hover:shadow-[0_4px_8px_rgba(0,0,0,0.15)]"
-      >
-        <span class="block text-gray-600 text-sm mb-2">
-          {{ prop.label }}
-        </span>
-        <span class="block text-black font-semibold text-xl">
-          {{ prop.value }}
-        </span>
-      </div>
+    <div *ngIf="activeTab === 'Bids'"
+         class="transition-all duration-300 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#cb8502] scrollbar-track-gray-100 pr-2">
+      <app-bid-summary *ngFor="let bid of allBids" [bid]="bid"></app-bid-summary>
     </div>
-  </div>
+
+    <div *ngIf="activeTab === 'History'" 
+         class="transition-all duration-300 max-h-[400px] overflow-y-auto scrollbar-thin scrollbar-thumb-[#cb8502] scrollbar-track-gray-100 pr-2">
+      <app-bid-summary *ngFor="let bid of userBids" [bid]="bid"></app-bid-summary>
+    </div>
+</div>
 </div>

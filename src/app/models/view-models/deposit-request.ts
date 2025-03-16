@@ -1,3 +1,3 @@
 export interface DepositRequest {
-    amount: number;
-  }
+  amount: number;
+}

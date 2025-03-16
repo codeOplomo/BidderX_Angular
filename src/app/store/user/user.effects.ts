@@ -1,26 +1,64 @@
 import { Injectable, inject } from '@angular/core';
 import { Actions, createEffect, ofType } from '@ngrx/effects';
 import { Observable, of, Subject } from 'rxjs';
-import { map, catchError, switchMap } from 'rxjs/operators';
+import { map, catchError, switchMap, tap } from 'rxjs/operators';
 import { UserService } from '../../services/user.service';
 import * as UserActions from './user.actions';
-import { User } from './user.model';
-import { Action } from '@ngrx/store';
+import * as WalletActions from '../wallet/wallet.actions';
+import { Action, Store } from '@ngrx/store';
+import { ProfileVM } from '../../models/view-models/profile';
 
 @Injectable()
 export class UserEffects {
   private readonly actions$ = inject(Actions);
   private readonly userService = inject(UserService);
+  private readonly store = inject(Store);
   private destroy$ = new Subject<void>();
 
   
-  loadProfile$ = createEffect(() => this.actions$.pipe(
+loadProfile$ = createEffect(() => {
+  return this.actions$.pipe(
     ofType(UserActions.loadUserProfile),
-    switchMap(() => this.userService.getProfile().pipe(
-      map(user => UserActions.loadUserProfileSuccess({ user })),
-      catchError(error => of(UserActions.loadUserProfileFailure({ error })))
-    ))
-  ));
+    switchMap(() =>
+      this.userService.getProfile().pipe(
+        tap(response => console.log('DEBUG from user effects: Profile API response:', response.data)),
+        map((response) => {
+          // Map to ProfileVM with full structure
+          const user: ProfileVM = {
+            email: response.data.email,
+            profileIdentifier: response.data.profileIdentifier,
+            phoneNumber: response.data.phoneNumber,
+            firstName: response.data.firstName,
+            lastName: response.data.lastName,
+            imageUrl: response.data.imageUrl,
+            hasWallet: response.data.hasWallet,
+            coverImageUrl: response.data.coverImageUrl,
+            wallet: response.data.wallet ? {
+              id: response.data.wallet.id,
+              type: response.data.wallet.type,
+              balance: response.data.wallet.balance,
+              currencyCode: response.data.wallet.currencyCode,
+              transactions: response.data.wallet.transactions,
+              userId: response.data.wallet.userId,
+              checkoutUrl: response.data.wallet.checkoutUrl
+            } : null,
+            collections: response.data.collections,
+            roles: response.data.roles || []
+          };
+
+          if (user.hasWallet && user.wallet) {
+            this.store.dispatch(WalletActions.loadWalletSuccess({
+              wallet: user.wallet
+            }));
+          }
+          
+          return UserActions.loadUserProfileSuccess({ user });
+        }),
+        catchError((error) => of(UserActions.loadUserProfileFailure({ error })))
+      )
+    )
+  );
+});
 
   updateProfile$ = createEffect(() => this.actions$.pipe(
     ofType(UserActions.updateUserProfile),
@@ -32,13 +70,15 @@ export class UserEffects {
       return this.userService.updateProfile(profileData).pipe(
         // Map the API response to match the User interface
         map(response => {
-          const updatedUser: User = {
+          const updatedUser: ProfileVM = {
             profileIdentifier: response.data.profileIdentifier,
             firstName: response.data.firstName,
             lastName: response.data.lastName,
             phoneNumber: response.data.phoneNumber,
             email: response.data.email,
-            imageUrl: response.data.imageUrl
+            imageUrl: response.data.imageUrl,
+            hasWallet: response.data.hasWallet,
+            roles: response.data.roles || [],
           };
           return UserActions.updateUserProfileSuccess({ user: updatedUser });
         }),

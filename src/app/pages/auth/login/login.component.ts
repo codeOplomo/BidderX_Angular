@@ -13,6 +13,8 @@ import { IconField } from 'primeng/iconfield';
 import { InputIcon } from 'primeng/inputicon';
 import { AuthService } from '../../../services/auth.service';
 import { Toast } from 'primeng/toast';
+import { Store } from '@ngrx/store';
+import * as AuthActions from '../../../store/auth/auth.actions';
 
 @Component({
   selector: 'app-login',
@@ -42,7 +44,8 @@ export class LoginComponent implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private store: Store
   ) {}
 
   ngOnInit() {
@@ -83,28 +86,17 @@ export class LoginComponent implements OnInit {
 
   onLogin() {
     this.submitted = true;
-  
-    // Mark all fields as touched to trigger validation
     this.loginForm.markAllAsTouched();
   
     if (this.loginForm.valid) {
       const { email, password } = this.loginForm.value;
-  
-      const loginData = { email, password };
-  
       this.loading = true;
-      this.errorMessage = ''; 
-  
-      this.authService.login(loginData).subscribe({
-        next: () => {
-          this.router.navigate(['/dashboard']);
-        },
-        error: (err) => {
-          this.errorMessage = err.error?.message || 'Login failed. Please check your credentials.';
-          console.error('Login error', err);
-          this.loading = false;
-        }
-      });
+      this.errorMessage = '';
+      
+      // Dispatch action instead of direct service call
+      this.store.dispatch(AuthActions.login({
+        credentials: { email, password }
+      }));
     }
   }
   

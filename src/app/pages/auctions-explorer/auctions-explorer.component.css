@@ -1,0 +1,19 @@
+::ng-deep .mat-mdc-paginator-container {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 3px !important; /* Adjust spacing between elements */
+  }
+  
+  /* Keep your existing icon styles */
+  ::ng-deep .mat-mdc-paginator-icon {
+    fill: #ffa400 !important;
+  }
+  
+  ::ng-deep .mat-mdc-paginator-navigation-button {
+    color: #ffa400 !important;
+  }
+  
+  ::ng-deep .mat-mdc-paginator-navigation-button:hover {
+    background-color: rgba(255, 164, 0, 0.1) !important;
+  }
