@@ -49,6 +49,8 @@ export class ProductDetailComponent {
   isOwner$: Observable<boolean>;
   isAuthenticated$: Observable<boolean>;
 
+  auctionEnded = false;
+auctionNotStarted = false;
   showBidDialog = false;
   constructor(
     private route: ActivatedRoute,
@@ -79,7 +81,6 @@ export class ProductDetailComponent {
           this.loading = false;
         }),
         switchMap(() => {
-          // Only fetch auction if auctionId exists on the product
           if (this.product?.auctionId) {
             return this.auctionsService.getAuctionById(this.product.auctionId);
           }
@@ -109,12 +110,11 @@ export class ProductDetailComponent {
       this.bidsService.placeBid(bidRequest).subscribe({
         next: (response) => {
           this.store.dispatch(loadWallet());
-          // Refresh auction data
           this.auctionsService.getAuctionById(this.auction!.id).subscribe(
             auctionResponse => {
               this.auction = auctionResponse.data;
+              this.showBidDialog = false;
               
-              // Manually trigger bids refresh
               if (this.productTabs) {
                 this.productTabs.loadBids();
               }

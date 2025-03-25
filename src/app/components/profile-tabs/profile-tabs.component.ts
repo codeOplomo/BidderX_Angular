@@ -68,14 +68,14 @@ export class ProfileTabsComponent implements OnInit {
 
   get itemsToShow(): string[] {
     if (this.isCurrentUser) {
-      // When current user is a bidder, show only tracked and victories.
+      if (this.isOwner) {
+        return ['auctions', 'collections', 'tracked', 'victories'];
+      }
       if (this.isBidder) {
         return ['tracked', 'victories'];
       }
-      // When current user is an owner, show all tabs.
-      return ['auctions', 'collections', 'tracked', 'victories'];
+      return [];
     } else {
-      console.log("roles:" + this.userData?.roles);
       if (this.userData?.roles.includes('BIDDER')) {
         return ['victories'];
       } else {

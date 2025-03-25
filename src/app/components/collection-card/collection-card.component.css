@@ -85,6 +85,8 @@
     align-items: center;
     justify-content: space-between;
     margin-top: 1rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
   }
   
   .title {

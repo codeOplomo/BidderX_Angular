@@ -1,19 +1,51 @@
-<div class="bg-white rounded-lg shadow-md hover:-translate-y-1 transition-transform duration-300 group">
-  <div class="relative aspect-square overflow-hidden rounded-t-lg">
+<div class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-300 group relative overflow-hidden border border-[#A9B6B1]/20 hover:-translate-y-1.5">
+    <!-- Category Tag -->
+    <div *ngIf="product.category?.name" class="absolute top-3 left-0 z-10">
+      <span class="bg-emerald-700 text-white px-3 py-1.5 text-xs font-semibold uppercase tracking-wide rounded-r-lg shadow-md">
+        {{ product.category?.name }}
+      </span>
+    </div>
+    
+    <!-- Image Container -->
+    <div class="relative aspect-square overflow-hidden">
       <img
-          [src]="getImageUrl(product.imageUrl ?? '') || '/assets/placeholder.jpg'"
-          [alt]="product.title"
-          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+        [src]="getImageUrl(product.imageUrl ?? '') || '/assets/placeholder.jpg'"
+        [alt]="product.title"
+        class="w-full h-full object-cover transition-transform duration-300 ease-out group-hover:scale-105"
       >
-      <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-  </div>
-  <div class="p-4">
-      <h3 class="font-semibold text-lg mb-1">{{ product.title }}</h3>
-      <p class="text-sm text-gray-600 mb-2">{{ product.description }}</p>
-      <div class="flex items-center gap-2 text-xs text-gray-500">
-          <span class="px-2 py-1 bg-gray-100 rounded-full">{{ product.condition }}</span>
-          <span class="px-2 py-1 bg-gray-100 rounded-full">{{ product.manufacturer }}</span>
-          <span class="px-2 py-1 bg-gray-100 rounded-full">{{ product.category?.name }}</span>
+      <div class="absolute inset-0 bg-gradient-to-t from-emerald-900/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      
+      <!-- Remove Icon -->
+      <button
+        *ngIf="editable"
+        (click)="delete.emit(product); $event.stopPropagation()"
+        class="absolute top-2 right-2 bg-red-600 text-white p-1.5 rounded-lg hover:bg-red-700 shadow-sm transition-all z-10"
+        title="Remove Product"
+      >
+        <span class="material-symbols-outlined text-base">delete</span>
+      </button>
+    </div>
+    
+    <!-- Content Container -->
+    <div class="p-4 bg-gradient-to-b from-white to-emerald-50/30">
+      <!-- Product Title -->
+      <h3 class="font-bold text-brown-900 mb-1 line-clamp-1 hover:text-emerald-700 transition-colors cursor-pointer">
+        {{ product.title }}
+      </h3>
+      
+      <!-- Description -->
+      <p class="text-sm text-brown-700/80 mb-3 line-clamp-2">
+        {{ product.description }}
+      </p>
+      
+      <!-- Product Metadata -->
+      <div class="flex flex-wrap items-center gap-2 text-xs">
+        <span class="px-2.5 py-1 bg-[#A9B6B1]/20 rounded-full text-brown-700 font-medium">
+          {{ product.condition }}
+        </span>
+        <span class="px-2.5 py-1 bg-orange-100/80 text-orange-900 rounded-full font-medium">
+          {{ product.manufacturer }}
+        </span>
       </div>
-  </div>
+    </div>
 </div>

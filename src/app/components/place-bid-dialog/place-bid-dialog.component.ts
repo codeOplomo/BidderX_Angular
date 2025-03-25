@@ -84,7 +84,7 @@ submitBid() {
   ).subscribe();
 }
 
-  private validateBid(): boolean {
+  public validateBid(): boolean {
     return !!this.bidAmount && this.bidAmount >= this.minimumBid;
   }
 
@@ -92,7 +92,7 @@ submitBid() {
     this.visible = false;
     this.router.navigate([route]);
   }
-  
+
   onClose() {
     this.visible = false;
     this.resetForm();

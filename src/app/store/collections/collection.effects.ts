@@ -22,7 +22,7 @@ export class CollectionEffects {
             this.collectionsService.getCollectionById(action.id).pipe(
               map((apiResponse) => {
                 const collection = apiResponse.data;
-                console.log('Loaded collection:', collection); // Verify collection data
+                console.log('Loaded collection:', collection); 
                 return CollectionActions.loadCollectionSuccess({ collection });
               }),
               catchError((error) =>
@@ -43,12 +43,10 @@ export class CollectionEffects {
                 collectionId,
                 this.destroy$,
                 (imageUrl) => {
-                  // Dispatch success action with both imageUrl and collectionId
                   observer.next(CollectionActions.updateCollectionCoverImageSuccess({ 
                     imageUrl, 
                     collectionId 
                   }));
-                  // After updating the image, reload the collection to get fresh data
                   observer.next(CollectionActions.loadCollection({ id: collectionId }));
                   observer.complete();
                 },
@@ -65,22 +63,6 @@ export class CollectionEffects {
         )
       );
       
-
-      // updateCollectionCoverImage$ = createEffect(() =>
-      //   this.actions$.pipe(
-      //     ofType(CollectionActions.updateCollectionCoverImage),
-      //     switchMap(({ imageFile, collectionId }) =>  // Extract collectionId from the action
-      //       this.collectionsService.uploadShowcaseCoverImage(imageFile, collectionId).pipe(
-      //         map(response => CollectionActions.updateCollectionCoverImageSuccess({
-      //           imageUrl: response.imageUrl,
-      //         })),
-      //         catchError(error => 
-      //           of(CollectionActions.updateCollectionCoverImageFailure({ error }))
-      //         )
-      //       )
-      //     )
-      //   )
-      // );
       
 
 }

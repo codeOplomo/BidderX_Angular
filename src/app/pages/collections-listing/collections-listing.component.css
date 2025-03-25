@@ -1,0 +1,17 @@
+.mat-paginator {
+    background: transparent;
+    border-radius: 12px;
+    padding: 1rem;
+  
+    .mat-paginator-container {
+      justify-content: center;
+    }
+  
+    .mat-paginator-page-size-label {
+      color: #4a635a;
+    }
+  
+    .mat-select-value {
+      color: #2c4b3f;
+    }
+  }

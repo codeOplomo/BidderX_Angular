@@ -1,58 +1,58 @@
 <ng-container *ngIf="collection$ | async as collection">
-    <div class="w-full rounded-xl shadow-lg overflow-hidden"
-         style="background: linear-gradient(135deg, #f3f9f2 0%, #f3f9f2 100%);">
-      <app-showcase-header (imageUpdated)="handleImageUpdate($event)"></app-showcase-header>
-      <!-- Floating Action Button -->
-      <button *ngIf="isOwner$ | async"  (click)="openAddProductDialog()"
-          class="absolute -bottom-6 right-6 bg-green-500 text-white p-4 rounded-full shadow-lg hover:bg-green-600 transition-all duration-300 flex items-center gap-2">
-          <span class="material-symbols-outlined">add</span>
-      </button>
-    </div>
-  
-    <div class="p-8 pt-12">
-      <!-- Loading State -->
-      <div *ngIf="loading$ | async" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- ...loading placeholders... -->
+  <div class="w-full rounded-xl shadow-lg overflow-hidden relative"
+       style="background: linear-gradient(135deg, #f3f9f2 0%, #e8f5e6 100%);">
+    <app-showcase-header (imageUpdated)="handleImageUpdate($event)"></app-showcase-header>
+    
+    <!-- Floating Action Button -->
+    <button *ngIf="isCollectionOwner$ | async" (click)="openAddProductDialog()"
+        class="absolute -bottom-6 right-6 bg-orange-500 text-white p-4 rounded-full shadow-lg hover:shadow-xl hover:bg-orange-600 transition-all duration-300 ease-out z-20">
+        <span class="material-symbols-outlined text-2xl">add</span>
+    </button>
+  </div>
+
+  <div class="p-8 pt-16"> <!-- Increased top padding -->
+
+    <!-- Products Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"> <!-- Increased gap -->
+      <!-- Add Product Card -->
+      <div *ngIf="(isCollectionOwner$ | async) && collection.items?.length"
+          class="border-2 border-dashed border-[#A9B6B1]/50 hover:border-orange-500 rounded-xl transition-all duration-300 cursor-pointer flex items-center justify-center min-h-[320px] group"
+          (click)="openAddProductDialog()">
+          <div class="text-center text-[#A9B6B1] group-hover:text-orange-500 transition-colors">
+              <span class="material-symbols-outlined text-5xl mb-3">add_box</span>
+              <p class="text-lg font-semibold">Add Product</p>
+          </div>
       </div>
-  
-      <!-- Error State -->
-      <div *ngIf="error$ | async as error" class="text-red-500 text-center p-4 rounded-lg bg-red-50">
-        <span class="material-symbols-outlined text-3xl mb-2">error</span>
-        <p>{{ error }}</p>
-        <button (click)="retryLoading()" class="mt-2 text-red-600 hover:text-red-700 font-medium">
-            Retry
-        </button>
-      </div>
-  
-      <!-- Products Grid with Empty State -->
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <!-- Add Product Card (for owners) -->
-        <div *ngIf="(isOwner$ | async) && collection.items?.length"
-            class="border-2 border-dashed border-gray-200 rounded-xl hover:border-green-500 transition-colors cursor-pointer flex items-center justify-center min-h-[300px]"
-            (click)="openAddProductDialog()">
-            <div class="text-center text-gray-400 hover:text-green-500">
-                <span class="material-symbols-outlined text-4xl">add</span>
-                <p class="mt-2 font-medium">Add Product</p>
-            </div>
-        </div>
-  
-        <app-product-card *ngFor="let product of collection.items"
-            [product]="product" [editable]="(isOwner$ | async) ?? false" 
-            (edit)="onEditItem(product)" (delete)="onDeleteItem(product)"></app-product-card>
-  
-        <!-- Empty State -->
-        <div *ngIf="!collection.items?.length" class="col-span-full text-center py-12">
-            <div class="max-w-md mx-auto">
-                <span class="material-symbols-outlined text-6xl text-gray-300 mb-4">inventory</span>
-                <h3 class="text-xl font-semibold mb-2">No products in this collection yet</h3>
-                <p class="text-gray-500 mb-4">Start by adding your first product to showcase</p>
-                <button *ngIf="isOwner$ | async"  (click)="openAddProductDialog()"
-                    class="bg-green-500 text-white px-6 py-2 rounded-lg hover:bg-green-600 transition-colors">
-                    Add First Product
-                </button>
-            </div>
-        </div>
+
+      <app-product-card *ngFor="let product of collection.items"
+          [product]="product" [editable]="(isCollectionOwner$ | async) ?? false" 
+          (edit)="onEditItem(product)" (delete)="onDeleteItem(product)"
+          class="hover:-translate-y-1 transition-transform duration-300"> <!-- Added hover effect -->
+      </app-product-card>
+
+      <!-- Empty State -->
+      <div *ngIf="!collection.items?.length" class="col-span-full text-center py-16">
+          <div class="max-w-md mx-auto">
+              <span class="material-symbols-outlined text-7xl text-[#A9B6B1] mb-6">inventory_2</span>
+              <h3 class="text-2xl font-bold text-brown-900 mb-3">Empty Collection</h3>
+              <p class="text-brown-700/80 mb-6">Curate your first piece to start the collection</p>
+              <button *ngIf="isCollectionOwner$ | async" (click)="openAddProductDialog()"
+                  class="bg-orange-500 text-white px-8 py-3 rounded-xl hover:bg-orange-600 transition-colors font-semibold shadow-lg hover:shadow-md">
+                  Add First Item
+              </button>
+          </div>
       </div>
     </div>
-  </ng-container>
+  </div>
+</ng-container>
   
+  <app-product-choice-dialog
+    *ngIf="displayProductChoiceDialog"
+    (choiceMade)="onProductChoice($event)">
+  </app-product-choice-dialog>
+
+  <app-products-selecting-dialog
+    *ngIf="displayProductsSelectingDialog"
+    [collectionId]="collectionId"
+    (closeDialog)="onProductsSelectionClosed($event)">
+  </app-products-selecting-dialog>

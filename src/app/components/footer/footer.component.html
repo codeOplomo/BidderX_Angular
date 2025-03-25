@@ -1,54 +1,77 @@
-<footer style="background-color: rgba(255, 255, 255, 0.9); padding: 20px 0;">
-  <div class="container" style="max-width: 1200px; margin: 0 auto; padding: 0 15px;">
-    <!-- Top Section -->
-    <div class="top-footer" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: space-between;">
-      <!-- Panels Section (including Logo) -->
-      <div class="footer-panels" style="display: flex; flex-wrap: wrap; gap: 20px; width: 100%;">
+<footer class="bg-white/90 backdrop-blur-sm border-t border-[#A9B6B1]/30 py-8">
+  <div class="max-w-7xl mx-auto px-4">
+    <div class="flex flex-wrap gap-8 justify-between mb-8">
+      
+      <!-- Left Sections -->
+      <div class="flex flex-wrap gap-8 flex-1 min-w-[300px]">
         <!-- Logo Section -->
-        <div class="footer-logo" style="flex: 1 1 200px; display: flex; align-items: center; min-width: 150px;">
-          <img src="#" alt="Bidder X Logo" style="height: 40px; margin-right: 10px;">
-          <span style="font-size: 1.2rem; font-weight: bold;">Bidder X</span>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 bg-emerald-600 rounded-lg flex items-center justify-center">
+            <span class="material-symbols-outlined text-white">gavel</span>
+          </div>
+          <span class="text-2xl font-bold text-brown-900">BidderX</span>
         </div>
-        <!-- Resources Panel -->
-        <div style="flex: 1 1 200px; min-width: 150px;">
-          <h4 style="margin-bottom: 10px; font-size: 1rem; font-weight: bold;">Resources</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 5px;"><a href="#" style="text-decoration: none; color: #6c757d;">Flowbite</a></li>
-            <li><a href="#" style="text-decoration: none; color: #6c757d;">Tailwind CSS</a></li>
-          </ul>
-        </div>
-        <!-- Follow Us Panel -->
-        <div style="flex: 1 1 200px; min-width: 150px;">
-          <h4 style="margin-bottom: 10px; font-size: 1rem; font-weight: bold;">Follow Us</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 5px;"><a href="#" style="text-decoration: none; color: #6c757d;">Github</a></li>
-            <li><a href="#" style="text-decoration: none; color: #6c757d;">Discord</a></li>
-          </ul>
-        </div>
+
         <!-- Legal Panel -->
-        <div style="flex: 1 1 200px; min-width: 150px;">
-          <h4 style="margin-bottom: 10px; font-size: 1rem; font-weight: bold;">Legal</h4>
-          <ul style="list-style: none; padding: 0; margin: 0;">
-            <li style="margin-bottom: 5px;"><a href="#" style="text-decoration: none; color: #6c757d;">Privacy Policy</a></li>
-            <li><a href="#" style="text-decoration: none; color: #6c757d;">Terms & Conditions</a></li>
+        <div class="min-w-[160px]">
+          <h4 class="text-brown-900 font-semibold mb-3">Legal</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-[#A9B6B1] hover:text-emerald-600 transition-colors">Privacy Policy</a></li>
+            <li><a href="#" class="text-[#A9B6B1] hover:text-emerald-600 transition-colors">Terms & Conditions</a></li>
           </ul>
+        </div>
+
+        <!-- Resources Panel -->
+        <div class="min-w-[160px]">
+          <h4 class="text-brown-900 font-semibold mb-3">Resources</h4>
+          <ul class="space-y-2">
+            <li><a href="#" class="text-[#A9B6B1] hover:text-emerald-600 transition-colors">Documentation</a></li>
+            <li><a href="#" class="text-[#A9B6B1] hover:text-emerald-600 transition-colors">Support Center</a></li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Right Panel - Last Won Auction -->
+      <div class="min-w-[300px] flex-1">
+        <h4 class="text-brown-900 font-semibold mb-4">Latest Win</h4>
+        <!-- Compact Winner Card -->
+        <div class="bg-emerald-50/80 rounded-xl p-2 border border-emerald-100">
+          <div class="flex items-center gap-2 mb-2">
+            <div class="w-8 h-8 rounded-full border-2 border-orange-400 overflow-hidden">
+              <img src="https://via.placeholder.com/40" alt="Winner" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <p class="font-medium text-brown-900 text-sm">JohnDoe92</p>
+              <p class="text-xs text-[#A9B6B1]">Won 2h ago</p>
+            </div>
+          </div>
+          <div class="flex items-center justify-between">
+            <div>
+              <p class="text-xs text-brown-700">Vintage Pocket Watch</p>
+              <p class="text-emerald-600 font-semibold text-sm">$1,850.00</p>
+            </div>
+            <span class="material-symbols-outlined text-orange-500 text-sm">military_tech</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Bottom Section -->
-    <div class="bottom-footer" style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; border-top: 1px solid #dee2e6; margin-top: 20px; padding-top: 10px;">
-      <!-- Copyright -->
-      <div style="flex: 1 1 300px; text-align: center; font-size: 0.9rem; color: #6c757d;">
-        © 2024 Bidder X. All Rights Reserved.
+    <div class="pt-6 border-t border-[#A9B6B1]/20 flex flex-wrap justify-between items-center gap-4">
+      <div class="text-[#A9B6B1] text-sm">
+        © 2024 BidderX. All rights reserved
       </div>
-      <!-- Social Links -->
-      <div style="flex: 1 1 300px; display: flex; justify-content: center; gap: 10px;">
-        <a href="#" style="color: #6c757d; text-decoration: none;"><i class="pi pi-facebook" style="font-size: 1.2rem;"></i></a>
-        <a href="#" style="color: #6c757d; text-decoration: none;"><i class="pi pi-discord" style="font-size: 1.2rem;"></i></a>
-        <a href="#" style="color: #6c757d; text-decoration: none;"><i class="pi pi-twitter" style="font-size: 1.2rem;"></i></a>
-        <a href="#" style="color: #6c757d; text-decoration: none;"><i class="pi pi-github" style="font-size: 1.2rem;"></i></a>
-        <a href="#" style="color: #6c757d; text-decoration: none;"><i class="pi pi-dribbble" style="font-size: 1.2rem;"></i></a>
+      
+      <div class="flex gap-4">
+        <a href="#" class="text-[#A9B6B1] hover:text-emerald-600 transition-colors">
+          <i class="pi pi-github text-lg"></i>
+        </a>
+        <a href="#" class="text-[#A9B6B1] hover:text-emerald-600 transition-colors">
+          <i class="pi pi-twitter text-lg"></i>
+        </a>
+        <a href="#" class="text-[#A9B6B1] hover:text-emerald-600 transition-colors">
+          <i class="pi pi-discord text-lg"></i>
+        </a>
       </div>
     </div>
   </div>

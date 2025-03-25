@@ -1,0 +1,21 @@
+.bid-button {
+    background: #FFA400;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 12px 24px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .bid-button:disabled {
+    background: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+  }
+  
+  .bid-button:hover:not(:disabled) {
+    background: #db8c00;
+    transform: translateY(-1px);
+  }

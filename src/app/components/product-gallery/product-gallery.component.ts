@@ -39,14 +39,13 @@ closeLightbox(): void {
 
   loadThumbnails(): void {
     if (this.product) {
-      // Create a base array, only adding imageUrl if it exists
       const images: string[] = [];
-      
+  
       if (this.product.imageUrl) {
         images.push(this.product.imageUrl);
       }
       
-      // Only spread featuredImages if it exists
+      // Use the correct property name "featuredImages" from your API response.
       if (this.product.featuredImages && this.product.featuredImages.length > 0) {
         images.push(...this.product.featuredImages);
       }
@@ -54,6 +53,7 @@ closeLightbox(): void {
       this.thumbnails = images;
     }
   }
+  
 
   get selectedImage(): string {
     return this.thumbnails[this.selectedThumb];

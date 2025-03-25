@@ -1,21 +1,29 @@
-<div class="w-full font-serif" style="background: linear-gradient(135deg, #f8faf8 0%, #f3f7f2 100%);">
-    <!-- Hero Section -->
+<div class="w-full" style="background: linear-gradient(135deg, #f3f9f2 0%, #e8f5e6 100%);">
     <app-home-hero></app-home-hero>
 
-    <!-- Featured Auctions -->
-    <section class="py-20 px-4">
+    <section class="py-20 px-4 border-b border-[#A9B6B1]/20">
         <div class="max-w-7xl mx-auto">
-            <div class="mb-12">
-                <div class="flex items-center mb-4">
-                    <span class="material-symbols-outlined text-3xl text-emerald-600 mr-3">auto_awesome</span>
-                    <h2 class="text-4xl font-bold text-gray-900">Featured Collections</h2>
+            <div class="mb-12 flex justify-between items-start gap-4">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <span class="material-symbols-outlined text-3xl text-emerald-700/90 mr-3">collections_bookmark</span>
+                        <h2 class="text-4xl font-bold text-brown-900">Featured Collections</h2>
+                    </div>
+                    <p class="text-lg text-brown-700/80 max-w-2xl">
+                        Discover exceptional items from curated collections
+                    </p>
                 </div>
-                <p class="text-lg text-gray-600 max-w-2xl">
-                    Discover exceptional items from curated collections
-                </p>
+                
+                <div class="shrink-0" [@expandCollapse]>
+                    <button
+                        class="px-8 py-3.5 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl shadow-lg hover:shadow-md transition-all duration-300 font-semibold flex items-center gap-2 hover:-translate-y-0.5"
+                        (click)="browseAllCollections()">
+                        Explore All Listings
+                        <span class="material-symbols-outlined text-xl">arrow_forward</span>
+                    </button>
+                </div>
             </div>
 
-            <!-- Grid container for collection cards with animation -->
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8"
                 [@staggeredFade]="displayedCollections.length">
                 <!-- Collection cards -->
@@ -23,47 +31,176 @@
                 </app-collection-card>
             </div>
 
-            <!-- Separate container for Explore All Listings Button -->
-            <div class="w-full text-center mb-8" *ngIf="showMore" [@expandCollapse]>
+            <div class="text-center mb-4">
+                <button class="text-[#A9B6B1] hover:text-orange-600 transition-colors duration-300 font-medium"
+                    (click)="toggleShowMore()">
+                    {{ showMore ? 'Show Less' : 'Show More' }}
+                    <i class="fas fa-chevron-{{ showMore ? 'up' : 'down' }} ml-2 text-sm"></i>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Live Auctions -->
+    <section class="py-20 bg-gradient-to-b from-emerald-50/30 to-white">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="mb-12 flex justify-between items-start gap-4">
+                <div>
+                <div class="flex items-center mb-4">
+                    <span class="material-symbols-outlined text-3xl text-orange-600 mr-3">local_fire_department</span>
+                    <h2 class="text-4xl font-bold text-brown-900">Trending Now</h2>
+                </div>
+                <p class="text-lg text-brown-700/80">Active auctions ending soon - place your bids</p>
+                </div>
+                
+            <div class="shrink-0" [@expandCollapse]>
                 <button
-                    class="px-8 py-3.5 bg-gradient-to-r from-emerald-600 to-teal-600 text-white rounded-xl hover:shadow-lg transition-all duration-300 font-medium flex items-center justify-center mx-auto gap-2"
+                    class="px-8 py-3.5 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl shadow-lg hover:shadow-md transition-all duration-300 font-semibold flex items-center justify-center mx-auto gap-2 hover:-translate-y-0.5"
                     (click)="browseAllAuctions()">
                     Explore All Listings
                     <span class="material-symbols-outlined text-xl">arrow_forward</span>
                 </button>
             </div>
+            </div>
 
-            <!-- Show More / Show Less Toggle -->
-            <div class="text-center mb-4">
-                <button class="text-emerald-600 underline hover:text-emerald-800 transition-colors duration-300"
-                    (click)="toggleShowMore()">
-                    {{ showMore ? 'Show Less' : 'Show More' }}
+            <div class="grid gap-4 sm:gap-6" [@staggeredFade]="(auctionsShowMore ? 6 : 3)"
+                style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
+                <app-auction-card *ngFor="let auction of liveAuctions | slice:0:(auctionsShowMore ? 6 : 3)"
+                    [auction]="auction">
+                </app-auction-card>
+            </div>
+
+
+            <div class="w-full text-center mt-4" [@expandCollapse]>
+                <button class="text-[#A9B6B1] hover:text-orange-600 transition-colors duration-300 font-medium"
+                    (click)="toggleAuctionsShowMore()">
+                    {{ auctionsShowMore ? 'Show Less' : 'Show More' }}
+                    <i class="fas fa-chevron-{{ auctionsShowMore ? 'up' : 'down' }} ml-2 text-sm"></i>
                 </button>
             </div>
         </div>
     </section>
 
 
-
-    <!-- Live Auctions -->
-    <section class="py-20 bg-gradient-to-b from-gray-50/50 to-white border-t border-gray-100">
+    <section class="py-16 bg-emerald-50/30 border-t border-[#A9B6B1]/20">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="mb-12">
-                <div class="flex items-center mb-4">
-                    <span class="material-symbols-outlined text-3xl text-rose-600 mr-3">local_fire_department</span>
-                    <h2 class="text-4xl font-bold text-gray-900">Trending Now</h2>
+            <div class="mb-12 flex justify-between items-start gap-4">
+                <div>
+                    <div class="flex items-center mb-4">
+                        <span class="material-symbols-outlined text-4xl text-emerald-700 align-middle mr-3">leaderboard</span>
+                        <h2 class="text-4xl font-bold text-brown-900">Top Sellers in</h2>
+                        <div class="relative ml-3">
+                            <button (click)="toggleDurationDropdown()" class="flex items-center text-4xl font-bold text-orange-600 hover:text-orange-700">
+                                {{ selectedDuration.label }} <span class="material-symbols-outlined ml-1 text-2xl">expand_more</span>
+                            </button>
+                            <div *ngIf="showDurationDropdown" 
+                                 class="absolute z-10 mt-1 bg-gray-900 text-white rounded-md shadow-lg py-2 w-48"
+                                 style="left: 0; top: 100%;">
+                                <div *ngFor="let duration of durations" 
+                                     (click)="selectDuration(duration)"
+                                     class="px-4 py-2 hover:bg-gray-700 cursor-pointer">
+                                    {{ duration.label }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="text-lg text-brown-700/80">Leading sellers in the selected time period</p>
                 </div>
-                <p class="text-lg text-gray-600">Active auctions ending soon - place your bids</p>
+    
+                <div class="shrink-0" [@expandCollapse]>
+                    <button
+                        class="px-8 py-3.5 bg-gradient-to-br from-orange-500 to-orange-600 text-white rounded-xl shadow-lg hover:shadow-md transition-all duration-300 font-semibold flex items-center gap-2 hover:-translate-y-0.5"
+                        (click)="browseAllCreators()">
+                        Explore All Listings
+                        <span class="material-symbols-outlined text-xl">arrow_forward</span>
+                    </button>
+                </div>
+            </div>
+    
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                <app-ranking-owners-card *ngFor="let owner of topOwners; let i = index" 
+                    [rank]="i + 1"
+                    [ownerName]="owner.owner.profileIdentifier" 
+                    [revenue]="owner.revenue"
+                    [ownerImage]="owner.owner.imageUrl">
+                </app-ranking-owners-card>
+            </div>
+        </div>
+    </section>
+    
+
+
+    <section class="py-20 bg-gradient-to-b from-white to-emerald-50/40">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center mb-10">
+                <span class="material-symbols-outlined text-4xl text-emerald-700 mr-3">category</span>
+                <h2 class="text-4xl font-bold text-brown-900">Browse Categories</h2>
+            </div>
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+                <div *ngFor="let category of categories" (click)="goToCategoryAuctions(category)" class="group relative bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 
+                          cursor-pointer hover:-translate-y-2 border border-[#A9B6B1]/20">
+                    <div class="w-14 h-14 bg-emerald-100/80 rounded-xl mb-4 flex items-center justify-center
+                              group-hover:bg-orange-100 transition-colors">
+                        <span class="material-symbols-outlined text-2xl text-emerald-700 
+                                  group-hover:text-orange-600 transition-colors">
+                            {{ categoryIcons[category.name] || categoryIcons['default'] }}
+                        </span>
+                    </div>
+                    <h3 class="font-semibold text-brown-900 mb-1.5">{{ category.name }}</h3>
+                    <p class="text-sm text-[#A9B6B1] group-hover:text-emerald-700 transition-colors">
+                        {{ category.auctionsCount }} items
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+
+
+    <section class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="flex items-center mb-8">
+                <span class="material-symbols-outlined text-3xl text-emerald-600 mr-3">insights</span>
+                <h2 class="text-4xl font-bold text-gray-900">Market Trends</h2>
             </div>
 
-            <div class="grid gap-4 sm:gap-6" style="grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));">
-                <app-auction-card *ngFor="let auction of liveAuctions | slice:0:(showMore ? 8 : 4)" [auction]="auction">
-                </app-auction-card>
-              </div>
-              
+            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+                <div class="flex items-center justify-between mb-6">
+                    <div>
+                        <div class="text-2xl font-bold text-emerald-600">+24.7%</div>
+                        <div class="text-gray-500">12-month average premium</div>
+                    </div>
+                    <div class="flex gap-2">
+                        <button class="px-4 py-2 rounded-lg bg-emerald-600/10 text-emerald-700">1Y</button>
+                        <button class="px-4 py-2 rounded-lg hover:bg-gray-100">3Y</button>
+                        <button class="px-4 py-2 rounded-lg hover:bg-gray-100">5Y</button>
+                    </div>
+                </div>
 
-            <!-- Auction Categories -->
-            <!-- <div class="space-y-6">
+                <!-- Chart Container -->
+                <div class="h-64 bg-gradient-to-b from-emerald-50/50 to-white rounded-xl p-4">
+                    <div class="relative h-full flex items-end justify-between">
+                        <ng-container *ngFor="let bar of chartData; let i = index">
+                            <div class="flex flex-col items-center">
+                                <div class="absolute bottom-0 w-8 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md"
+                                    [style.height]="bar.height" [style.animation-delay]="i * 100 + 'ms'"
+                                    style="animation: grow 0.5s ease-out forwards;">
+                                </div>
+                                <div class="text-xs text-gray-500 mt-2 relative top-6">{{bar.month}}</div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+</div>
+
+<!-- Auction Categories -->
+    <!-- <div class="space-y-6">
                 <div class="bg-white rounded-2xl shadow-sm border border-gray-200/80 overflow-hidden">
                     <div class="p-6 bg-gradient-to-r from-gray-50 to-gray-100/50 border-b border-gray-200/50">
                         <h3 class="text-2xl font-semibold text-gray-900 flex items-center gap-2">
@@ -138,248 +275,4 @@
                     </div>
                 </div>
             </div> -->
-        </div>
-    </section>
-
     <!-- Ranking Section -->
-<section class="py-16 bg-white">
-    <div class="max-w-7xl mx-auto px-4">
-        <div class="mb-12 text-center">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">
-                <span class="material-symbols-outlined text-4xl text-purple-600 align-middle mr-2">leaderboard</span>
-                Top Sellers Ranking
-            </h2>
-            <p class="text-lg text-gray-600">Top performing sellers in the last 24 hours</p>
-        </div>
-
-        <!-- Updated Grid Container -->
-<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-6">
-    <!-- Ranking Cards -->
-    <app-ranking-owners-card 
-        *ngFor="let owner of topOwners; let i = index"
-        [rank]="i + 1"
-        [ownerName]="owner.owner.profileIdentifier"
-        [revenue]="owner.revenue"
-        [ownerImage]="owner.owner.imageUrl">
-    </app-ranking-owners-card>
-  </div>
-  
-
-        <!-- View Full Ranking -->
-        <div class="text-center mt-12">
-            <button class="text-purple-600 hover:text-purple-800 font-medium flex items-center justify-center mx-auto gap-1">
-                View Full Ranking
-                <span class="material-symbols-outlined">arrow_forward</span>
-            </button>
-        </div>
-    </div>
-</section>
-    <section class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-center mb-8">
-                <span class="material-symbols-outlined text-3xl text-purple-600 mr-3">category</span>
-                <h2 class="text-4xl font-bold text-gray-900">Explore Categories</h2>
-            </div>
-            <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                <div *ngFor="let category of categories" (click)="goToCategoryAuctions(category)"
-                    class="bg-[#A9B6B1] rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
-                    <div class="w-12 h-12 bg-purple-50 rounded-lg mb-3 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-purple-600">
-                            {{ categoryIcons[category.name] || categoryIcons['default'] }}
-                        </span>
-                    </div>
-                    <h3 class="font-semibold mb-1">{{ category.name }}</h3>
-                    <p class="text-sm text-gray-500">{{ category.productsCount }} items</p>
-                </div>
-
-
-            </div>
-        </div>
-    </section>
-
-
-
-
-
-    <section class="py-20 bg-gray-50">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-center mb-8">
-                <span class="material-symbols-outlined text-3xl text-emerald-600 mr-3">insights</span>
-                <h2 class="text-4xl font-bold text-gray-900">Market Trends</h2>
-            </div>
-
-            <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                <div class="flex items-center justify-between mb-6">
-                    <div>
-                        <div class="text-2xl font-bold text-emerald-600">+24.7%</div>
-                        <div class="text-gray-500">12-month average premium</div>
-                    </div>
-                    <div class="flex gap-2">
-                        <button class="px-4 py-2 rounded-lg bg-emerald-600/10 text-emerald-700">1Y</button>
-                        <button class="px-4 py-2 rounded-lg hover:bg-gray-100">3Y</button>
-                        <button class="px-4 py-2 rounded-lg hover:bg-gray-100">5Y</button>
-                    </div>
-                </div>
-
-                <!-- Chart Container -->
-                <div class="h-64 bg-gradient-to-b from-emerald-50/50 to-white rounded-xl p-4">
-                    <div class="relative h-full flex items-end justify-between">
-                        <ng-container *ngFor="let bar of chartData; let i = index">
-                            <div class="flex flex-col items-center">
-                                <div class="absolute bottom-0 w-8 bg-gradient-to-t from-emerald-600 to-emerald-400 rounded-t-md"
-                                    [style.height]="bar.height" [style.animation-delay]="i * 100 + 'ms'"
-                                    style="animation: grow 0.5s ease-out forwards;">
-                                </div>
-                                <div class="text-xs text-gray-500 mt-2 relative top-6">{{bar.month}}</div>
-                            </div>
-                        </ng-container>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="py-16 bg-gradient-to-b from-white to-gray-50/50">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="flex items-center mb-8">
-
-                <span class="material-symbols-outlined text-3xl text-amber-600 mr-3">schedule</span>
-                <h2 class="text-4xl font-bold text-gray-900">Live Bidding</h2>
-            </div>
-
-            <div class="relative overflow-hidden">
-                <div class="flex overflow-x-auto pb-6 snap-x snap-mandatory scroll-smooth">
-                    <!-- <div *ngFor="let lot of trendingLots" 
-                   class="min-w-[300px] snap-center mr-6 transition-transform hover:scale-[1.02]">
-                <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div class="h-48 bg-gray-100 relative">
-                    <img [src]="lot.image" alt="" class="w-full h-full object-cover">
-                    <div class="absolute bottom-2 right-2 bg-white/90 px-3 py-1 rounded-full text-sm flex items-center">
-                      <span class="material-symbols-outlined text-rose-600 text-base mr-1">visibility</span>
-                      {{lot.views}}k
-                    </div>
-                  </div>
-                  <div class="p-5">
-                    <h3 class="font-semibold mb-2">{{lot.title}}</h3>
-                    <div class="flex justify-between items-center">
-                      <div class="text-rose-600 font-medium">
-                        {{lot.currentBid | currency}}
-                      </div>
-                      <div class="text-sm text-gray-500 flex items-center">
-                        <span class="material-symbols-outlined text-base mr-1">schedule</span>
-                        {{lot.timeLeft}}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div> -->
-                </div>
-
-                <section class="py-20 bg-white">
-                    <div class="max-w-7xl mx-auto px-4">
-                        <div class="flex items-center mb-8">
-                            <span class="material-symbols-outlined text-3xl text-amber-600 mr-3">verified_user</span>
-                            <h2 class="text-4xl font-bold text-gray-900">Expert Picks</h2>
-                        </div>
-
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                            <!-- <div *ngFor="let specialist of specialists" 
-                         class="group relative bg-gray-50 rounded-2xl overflow-hidden hover:shadow-lg transition-shadow">
-                      <div class="p-6">
-                        <div class="flex items-center mb-4">
-                          <div class="w-16 h-16 rounded-full bg-gray-200 overflow-hidden mr-4">
-                            <img [src]="specialist.photo" class="w-full h-full object-cover">
-                          </div>
-                          <div>
-                            <h3 class="font-semibold">{{specialist.name}}</h3>
-                            <p class="text-sm text-gray-500">{{specialist.role}}</p>
-                          </div>
-                        </div>
-                        <div class="space-y-4">
-                          <div *ngFor="let pick of specialist.picks" 
-                               class="bg-white p-4 rounded-xl border border-gray-100">
-                            <div class="flex items-center justify-between">
-                              <div>
-                                <div class="font-medium text-sm">{{pick.title}}</div>
-                                <div class="text-xs text-gray-500">{{pick.category}}</div>
-                              </div>
-                              <span class="material-symbols-outlined text-amber-600 text-xl">star</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="absolute inset-0 border-2 border-transparent group-hover:border-amber-100 rounded-2xl transition-all"></div>
-                    </div> -->
-                        </div>
-                    </div>
-                </section>
-
-
-                <section class="py-20 bg-gradient-to-r from-gray-900 to-gray-800 text-white">
-                    <div class="max-w-7xl mx-auto px-4">
-                        <div class="grid md:grid-cols-2 gap-12 items-center">
-                            <div class="space-y-6">
-                                <h2 class="text-4xl font-bold">360° Preview Experience</h2>
-                                <p class="text-gray-300 text-lg">Explore high-value items in immersive detail</p>
-                                <button
-                                    class="px-6 py-3.5 bg-emerald-600 rounded-xl hover:bg-emerald-700 flex items-center gap-2">
-                                    <span class="material-symbols-outlined">view_in_ar</span>
-                                    Launch Viewer
-                                </button>
-                            </div>
-                            <div
-                                class="relative aspect-square bg-gradient-to-tr from-emerald-900/30 to-gray-800/50 rounded-3xl overflow-hidden">
-                                <div class="absolute inset-0 flex items-center justify-center">
-                                    <div
-                                        class="w-24 h-24 rounded-full bg-white/10 backdrop-blur-sm flex items-center justify-center">
-                                        <span
-                                            class="material-symbols-outlined text-4xl text-emerald-400">3d_rotation</span>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- <section class="py-20 bg-white border-t border-gray-100">
-                    <div class="max-w-7xl mx-auto px-4">
-                        <div class="flex items-center mb-8">
-                            <span class="material-symbols-outlined text-3xl text-purple-600 mr-3">event_upcoming</span>
-                            <h2 class="text-4xl font-bold text-gray-900">Auction Calendar</h2>
-                        </div>
-
-                        <div class="grid md:grid-cols-2 gap-8">
-                            <div *ngFor="let event of upcomingEvents"
-                                class="group relative p-6 bg-gray-50 rounded-xl hover:bg-white transition-colors">
-                                <div class="flex gap-4">
-                                    <div class="w-20 flex-shrink-0">
-                                        <div class="text-purple-600 font-bold text-2xl">{{event.date | date:'d'}}</div>
-                                        <div class="text-gray-500 uppercase text-sm">{{event.date | date:'MMM'}}</div>
-                                    </div>
-                                    <div>
-                                        <h3 class="font-semibold mb-2">{{event.title}}</h3>
-                                        <div class="flex items-center text-sm text-gray-500 gap-2">
-                                            <span class="material-symbols-outlined text-base">location_on</span>
-                                            {{event.location}}
-                                        </div>
-                                    </div>
-                                </div>
-                                <div
-                                    class="absolute top-6 right-6 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <button class="text-purple-600 hover:text-purple-700">
-                                        <span class="material-symbols-outlined">arrow_forward</span>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </section> -->
-                <!-- Navigation Arrows -->
-                <button
-                    class="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 p-2 rounded-full shadow-lg hover:bg-white">
-                    <span class="material-symbols-outlined">chevron_right</span>
-                </button>
-            </div>
-        </div>
-    </section>
-</div>

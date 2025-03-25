@@ -5,6 +5,7 @@ import { AuctionVm } from '../../models/view-models/auction-vm.model';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
 
 
 
@@ -15,7 +16,7 @@ interface DialogData {
 @Component({
   selector: 'app-reject-dialog',
   standalone: true,
-  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDialogModule],
+  imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatDialogModule, CommonModule],
   templateUrl: './reject-dialog.component.html',
   styleUrl: './reject-dialog.component.css'
 })

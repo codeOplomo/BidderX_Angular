@@ -1,0 +1,16 @@
+<p-dialog header="Add Product to Collection"
+          [(visible)]="display"
+          modal="true"
+          [closable]="false"
+          [style]="{'width': '500px', 'background-color': '#f3f9f2'}">
+  <div class="p-grid">
+    <div class="p-col-12">
+      <button pButton type="button" label="Create New Product" icon="pi pi-plus"
+              (click)="selectChoice('new')"></button>
+    </div>
+    <div class="p-col-12" style="margin-top: 1rem;">
+      <button pButton type="button" label="Add Existing Products" icon="pi pi-book"
+              (click)="selectChoice('existing')"></button>
+    </div>
+  </div>
+</p-dialog>

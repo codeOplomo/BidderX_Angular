@@ -1,0 +1,46 @@
+<div class="min-h-screen bg-gradient-to-b from-[#f7faf7] to-[#e8f5e6] py-12 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-7xl mx-auto">
+      <!-- Header Section -->
+      <div class="mb-12 text-left">
+        <h1 class="text-4xl font-bold text-brown-900 mb-4 flex items-center">
+          <span class="material-symbols-outlined text-4xl mr-2 text-emerald-700">collections</span>
+          All Collections
+        </h1>
+        <p class="text-lg text-brown-700/80 max-w-2xl">
+          Explore our curated collections of exceptional items from around the world
+        </p>
+      </div>
+      
+  
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex justify-center items-center h-96">
+        <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-emerald-600"></div>
+      </div>
+  
+      <!-- Collections Grid -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-8">
+        <app-collection-card 
+          *ngFor="let collection of collections"
+          [collection]="collection"
+          class="transform transition-transform duration-300 hover:scale-105">
+        </app-collection-card>
+      </div>
+  
+      <!-- Pagination -->
+      <mat-paginator 
+        *ngIf="totalCollections > pageSize"
+        [length]="totalCollections"
+        [pageSize]="pageSize"
+        [pageIndex]="pageIndex"
+        [pageSizeOptions]="[12, 24, 48]"
+        (page)="onPageChange($event)"
+        class="bg-white rounded-lg shadow-sm">
+      </mat-paginator>
+  
+      <!-- Empty State -->
+      <div *ngIf="!loading && collections.length === 0" class="text-center py-20">
+        <span class="material-symbols-outlined text-6xl text-gray-400 mb-4">inbox</span>
+        <p class="text-xl text-gray-600">No collections found</p>
+      </div>
+    </div>
+  </div>

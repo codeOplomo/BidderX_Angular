@@ -1,33 +1,35 @@
-<p-card class="collection-card" [style]="{ backgroundColor: '#A9B6B1' }">
-    <!-- Cover Image Section -->
-    <div class="cover-image">
-        <img [src]="getImageUrl(collection.imageUrl)" [alt]="collection.name" />
+<p-card class="collection-card">
+  <!-- Cover Image Section -->
+  <div class="cover-image">
+    <div class="image-overlay"></div>
+    <img [src]="getImageUrl(collection.imageUrl)" [alt]="collection.name" />
+  </div>
+
+  <!-- Profile Image Overlay -->
+  <div class="profile-image-overlay">
+    <div class="profile-image">
+      <img [src]="getImageUrl(collection.owner?.imageUrl)" alt="Profile" />
     </div>
-    <!-- Profile Image Overlay -->
-    <div class="profile-image-overlay">
-        <div class="profile-image">
-            <img [src]="getImageUrl(collection.owner?.imageUrl)" alt="Profile" />
+  </div>
+
+  <!-- Content Section -->
+  <div class="content">
+    <!-- Product Images Grid -->
+    <div class="product-grid">
+      <ng-container *ngFor="let item of displayItems; trackBy: trackByItem">
+        <div class="product-image">
+          <div class="image-hover-overlay"></div>
+          <img [src]="getImageUrl(item?.imageUrl)" [alt]="item?.name || 'Product'" />
         </div>
+      </ng-container>
     </div>
 
-    <!-- Content Section -->
-    <div class="content">
-        <!-- Product Images Grid -->
-        <div class="product-grid">
-            <ng-container *ngFor="let item of displayItems; trackBy: trackByItem">
-                <div class="product-image">
-                    <img [src]="getImageUrl(item?.imageUrl)" [alt]="item?.name || 'Product'" />
-                </div>
-            </ng-container>
-        </div>
-
-        <!-- Collection Info -->
-        <div class="info">
-            <!-- Make collection name clickable -->
-            <h3 class="title" (click)="viewCollection(collection.id)">
-                {{ collection.name }}
-            </h3>
-            <span class="items-count">{{ collection.items.length }} Items</span>
-        </div>
+    <!-- Collection Info -->
+    <div class="info">
+      <h3 class="title" (click)="viewCollection(collection.id)">
+        {{ collection.name }}
+      </h3>
+      <span class="items-count">{{ collection.items.length }} Items</span>
     </div>
+  </div>
 </p-card>

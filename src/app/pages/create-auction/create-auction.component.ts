@@ -34,8 +34,6 @@ export class CreateAuctionComponent {
   productFiles: File[] = [];
   productImages: { file: File | null, preview: string | null }[] = [{ file: null, preview: null }];
 
-
-
   constructor(
     private fb: FormBuilder,
     private auctionService: AuctionsService,
@@ -84,7 +82,6 @@ export class CreateAuctionComponent {
         this.updateValidators();
       });
 
-
     this.auctionForm.get('isInstantAuction')?.valueChanges
       .pipe(takeUntil(this.destroy$))
       .subscribe(() => this.updateValidators());
@@ -92,81 +89,128 @@ export class CreateAuctionComponent {
 
   async onSubmit(): Promise<void> {
     if (this.isSubmitting || this.auctionForm.invalid) return;
-    this.isSubmitting = true;
 
-    // Prepare FormData
+    const formValue = this.auctionForm.getRawValue();
+    console.log('createNewProduct value:', formValue.createNewProduct);
+    // Check if form is valid before proceeding
+    if (this.auctionForm.invalid) {
+        this.markFormGroupTouched(this.auctionForm);
+        this.logInvalidControls();
+        return;
+    }
+    
+    if (formValue.createNewProduct) {
+      console.log('productFiles:', this.productFiles); // Debugging log
+      const hasMainImage = this.productFiles.length > 0 && this.productFiles[0] != null;
+      if (!hasMainImage) {
+        this.toastService.showError('Main Image Required', 'Please upload a main image for the product.');
+        this.isSubmitting = false;
+        return;
+      }
+    } else {
+      // Check existingProductId using formValue
+      if (!formValue.existingProductId) {
+        this.toastService.showError('Product Required', 'Please select an existing product or create a new one.');
+        this.isSubmitting = false;
+        return;
+      }
+    }
+  
+    this.isSubmitting = true;
     const formData = new FormData();
 
-    // 1. Append the CreateAuctionVM as a JSON blob
-    const vm: CreateAuctionVM = {
-      title: this.auctionForm.value.title,
-      description: this.auctionForm.value.description,
-      startingPrice: BigInt(this.auctionForm.value.startingPrice).toString(),
-      isInstantAuction: this.auctionForm.value.isInstantAuction,
-      auctionDurationInHours: this.auctionForm.value.isInstantAuction
-    ? null
-    : this.auctionForm.value.auctionDurationInHours,
-      ...(this.auctionForm.value.createNewProduct ? {
-        productTitle: this.auctionForm.value.productTitle,
-        productDescription: this.auctionForm.value.productDescription,
-        condition: this.auctionForm.value.condition,
-        manufacturer: this.auctionForm.value.manufacturer,
-        productionDate: new Date(this.auctionForm.value.productionDate).toISOString(),
-        categoryId: this.auctionForm.value.category,
-        collectionId: this.auctionForm.value.collectionId
-      } : { existingProductId: this.auctionForm.value.existingProductId })
+    // Create the base auction data
+    let vm: CreateAuctionVM = {
+        title: formValue.title,
+        description: formValue.description,
+        startingPrice: BigInt(formValue.startingPrice).toString(),
+        isInstantAuction: formValue.isInstantAuction,
+        auctionDurationInHours: formValue.isInstantAuction ? null : formValue.auctionDurationInHours
     };
-    
 
+    // Add product-specific fields based on whether we're creating a new product
+    if (formValue.createNewProduct) {
+        vm = {
+            ...vm,
+            productTitle: formValue.productTitle,
+            productDescription: formValue.productDescription,
+            condition: formValue.condition,
+            manufacturer: formValue.manufacturer,
+            productionDate: formValue.productionDate ? 
+                new Date(formValue.productionDate).toISOString() : undefined,
+            categoryId: formValue.category,
+            collectionId: formValue.collectionId
+        };
+    } else {
+        vm.existingProductId = formValue.existingProductId;
+    }
+    
     formData.append('vm', new Blob([JSON.stringify(vm)], { type: 'application/json' }));
 
-    // 2. Append images (only for new products)
-    if (this.auctionForm.value.createNewProduct) {
-      this.productFiles.forEach((file, index) => {
-        formData.append(index === 0 ? 'mainImage' : 'additionalImages', file);
-      });
+    if (formValue.createNewProduct) {
+        // Filter out any null files and ensure we have at least one valid file
+        const filteredFiles = this.productFiles.filter(file => file !== null && file !== undefined);
+        
+        if (filteredFiles.length > 0) {
+            // Append the first file as mainImage
+            formData.append('mainImage', filteredFiles[0], filteredFiles[0].name);
+            
+            // Append any additional files (if they exist)
+            filteredFiles.slice(1).forEach((file, index) => {
+                formData.append('additionalImages', file, file.name);
+            });
+        }
     }
-
-    // 3. Send request
+    console.log('FormData entries:');
+    for (const entry of (formData as any).entries()) {
+      console.log(entry[0], entry[1]);
+    }
     try {
-      const response = await lastValueFrom(
-        this.auctionService.createAuction(formData)
-      );
-      this.toastService.showSuccess(
-        'Auction Created', 
-        'Your auction was created successfully!'
-      );
+        const response = await lastValueFrom(
+            this.auctionService.createAuction(formData)
+        );
+        this.toastService.showSuccess(
+            'Auction Created', 
+            'Your auction was created successfully!'
+        );
 
-      const productId = response.data.product.id;
-      this.router.navigate(['/product-detail', productId]);
+        const productId = response.data.product.id;
+        this.router.navigate(['/product-detail', productId]);
     } catch (error) {
-      this.toastService.showError(
-        'Creation Failed', 
-        'There was an error creating your auction. Please try again.'
-      );
+        console.error('Auction creation error:', error);
+        this.toastService.showError(
+            'Creation Failed', 
+            'There was an error creating your auction. Please try again.'
+        );
     } finally {
-      this.isSubmitting = false;
+        this.isSubmitting = false;
     }
-  }
+}
 
-  private loadProducts(): void {
-    if (!this.userEmail) return;
-    this.productService.getAvailableUserProductsByEmail(this.userEmail)
-      .pipe(take(1))
-      .subscribe({
-        next: (response) => {
-          this.products = response.data.content;
-          if (this.products.length === 0) {
-            this.auctionForm.get('createNewProduct')?.setValue(true);
-            this.showNewProductFields = true;
-            this.updateValidators();
-          }
-        },
-        error: (err) => console.error('Error fetching products:', err),
-      });
-  }
-
-
+private loadProducts(): void {
+  this.productService.getAvailableUserProductsByEmail(this.userEmail).subscribe({
+    next: (response) => {
+      this.products = response.data.content.filter(product => !product.auctionId);
+      
+      if (this.products.length === 0) {
+        this.auctionForm.get('createNewProduct')?.setValue(true);
+        this.auctionForm.get('createNewProduct')?.disable();
+        this.showNewProductFields = true;
+        this.updateValidators();
+        this.auctionForm.updateValueAndValidity(); // <-- Force validation update
+      }
+    },
+    error: (err) => {
+      this.products = [];
+      this.auctionForm.get('createNewProduct')?.setValue(true);
+      this.auctionForm.get('createNewProduct')?.disable();
+      this.showNewProductFields = true;
+      this.updateValidators();
+      this.auctionForm.updateValueAndValidity(); // <-- Force validation update
+    }
+  });
+}
+  
   private markFormGroupTouched(formGroup: FormGroup): void {
     Object.values(formGroup.controls).forEach(control => {
       control.markAsTouched();
@@ -178,76 +222,91 @@ export class CreateAuctionComponent {
     const fileInput = event.target as HTMLInputElement;
     const file = fileInput.files?.[0];
     if (!file) return;
-
+  
+    // Update productFiles
+    if (index >= this.productFiles.length) {
+      this.productFiles.push(file);
+    } else {
+      this.productFiles[index] = file;
+    }
+  
+    // Update productImages for preview
     const reader = new FileReader();
     reader.onload = () => {
-      // Update productImages for preview
       this.productImages[index] = { file, preview: reader.result as string };
-
-      // Also update productFiles so the file can be appended to the form data
-      this.productFiles[index] = file;
-
-      // If it's the last placeholder, add a new empty slot
+      // Add new empty slot only if this is the last image
       if (index === this.productImages.length - 1) {
         this.productImages.push({ file: null, preview: null });
-        this.productFiles.push(null as any); // or simply leave it unpushed if not needed
       }
+      this.auctionForm.markAsDirty(); // Ensure form detects changes
     };
     reader.readAsDataURL(file);
   }
-
+  
+  removeImage(index: number): void {
+    // Remove the image and shift remaining files
+    this.productImages.splice(index, 1);
+    this.productFiles.splice(index, 1);
+    
+    // Add empty slot if last image was removed
+    if (this.productImages.length === 0) {
+      this.productImages.push({ file: null, preview: null });
+    }
+  }
 
   private updateValidators(): void {
     const createNewProduct = this.auctionForm.get('createNewProduct')?.value;
     const isInstantAuction = this.auctionForm.get('isInstantAuction')?.value;
   
-    // Reset validators on controls that need dynamic validators
+    // Reset validators
     Object.keys(this.auctionForm.controls)
       .filter(key => key !== 'createNewProduct' && key !== 'isInstantAuction')
       .forEach(key => {
         this.auctionForm.get(key)?.clearValidators();
       });
   
-    // Always set validators for common fields
+    // Common required fields
     this.auctionForm.get('title')?.setValidators([Validators.required, Validators.maxLength(100)]);
     this.auctionForm.get('description')?.setValidators([Validators.required, Validators.maxLength(500)]);
     this.auctionForm.get('startingPrice')?.setValidators([Validators.required, Validators.min(0)]);
   
-  
+    // Product-specific validators
     if (createNewProduct) {
-      // New product validators
       this.auctionForm.get('productTitle')?.setValidators([Validators.required]);
       this.auctionForm.get('productDescription')?.setValidators([Validators.required]);
       this.auctionForm.get('category')?.setValidators([Validators.required]);
       this.auctionForm.get('condition')?.setValidators([Validators.required]);
       this.auctionForm.get('manufacturer')?.setValidators([Validators.required]);
       this.auctionForm.get('productionDate')?.setValidators([Validators.required]);
+      
+      // Clear existing product selection
+      this.auctionForm.get('existingProductId')?.clearValidators();
+      this.auctionForm.get('existingProductId')?.setValue(null);
     } else {
-      // Existing product validator
+      // Require existing product selection when not creating new
       this.auctionForm.get('existingProductId')?.setValidators([Validators.required]);
+      
+      // Clear new product fields
+      ['productTitle', 'productDescription', 'category', 'condition', 
+       'manufacturer', 'productionDate'].forEach(field => {
+        this.auctionForm.get(field)?.setValue(null);
+      });
     }
   
-    // Handle auction duration based on instant auction selection
+    // Duration validators based on auction type
     if (isInstantAuction) {
-      // Disable auction duration since it's not needed
       this.auctionForm.get('auctionDurationInHours')?.clearValidators();
       this.auctionForm.get('auctionDurationInHours')?.setValue(null);
       this.auctionForm.get('auctionDurationInHours')?.disable();
     } else {
-      // Enable auction duration and add a required validator if needed
       this.auctionForm.get('auctionDurationInHours')?.enable();
       this.auctionForm.get('auctionDurationInHours')?.setValidators([Validators.required]);
     }
   
-    // Update validity for all controls
+    // Update validity state
     Object.keys(this.auctionForm.controls).forEach(key => {
       this.auctionForm.get(key)?.updateValueAndValidity();
     });
-  }
-  
-
-  removeImage(index: number): void {
-    this.productImages.splice(index, 1);
   }
 
   ngOnDestroy(): void {
@@ -255,10 +314,8 @@ export class CreateAuctionComponent {
     this.destroy$.complete();
   }
 
-
-  // Helper method to log all invalid controls for debugging
   logInvalidControls(): void {
-    const invalidControls: string[] = []; // Explicitly declare as string array
+    const invalidControls: string[] = []; 
     Object.keys(this.auctionForm.controls).forEach(key => {
       const control = this.auctionForm.get(key);
       if (control?.invalid) {

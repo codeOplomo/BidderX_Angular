@@ -55,7 +55,8 @@ export class AuctionsExplorerComponent {
   categories: Category[] = [];
   selectedCategory: string | null = null;
 
-  // Optional additional filters
+  eraStart: number | null = null;
+  eraEnd: number | null = null;
   minPrice: number | null = null;
   maxPrice: number | null = null;
   selectedStatus: string = 'APPROVED';
@@ -76,12 +77,15 @@ export class AuctionsExplorerComponent {
 
   ngOnInit(): void {
     this.loadCategories();
-    // Retrieve the 'category' query parameter (if available)
     this.route.queryParamMap.subscribe(params => {
       this.selectedCategory = params.get('categoryId');
       this.searchQuery = params.get('q') || '';
       this.selectedType = params.get('type') || '';
-      // Fetch auctions once we have the filter parameter
+      const startDateParam = params.get('startDate');
+      const endDateParam = params.get('endDate');
+      this.eraStart = startDateParam ? Number(startDateParam) : null;
+      this.eraEnd = endDateParam ? Number(endDateParam) : null;
+      
       this.getAuctions();
     });
   }
@@ -105,6 +109,8 @@ export class AuctionsExplorerComponent {
       this.maxPrice,
       this.selectedStatus,
       this.selectedType,
+      this.eraStart ?? undefined,
+      this.eraEnd ?? undefined,
       this.selectedSortOrder,
       this.currentPage,
       this.pageSize,
@@ -132,7 +138,6 @@ export class AuctionsExplorerComponent {
     this.getAuctions();
   }
 
-  // Called when the user changes the price filter inputs
   onPriceFilterChange(): void {
     this.applyFilters();
   }
