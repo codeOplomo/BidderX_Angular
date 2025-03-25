@@ -27,7 +27,6 @@ export class CreateProductComponent {
     this.initializeForm();
     this.route.queryParams.subscribe(params => {
       this.collectionId = params['collectionId'];
-      // You can now pre-fill this.collectionId in your form
     });
   }
 
@@ -62,15 +61,16 @@ export class CreateProductComponent {
       type: 'application/json' 
     }));
   
-    this.productFiles.forEach((file, index) => {
-      formData.append(index === 0 ? 'mainImage' : 'additionalImages', file);
-    });
+    this.productFiles
+  .filter((file) => file !== null)
+  .forEach((file, index) => {
+    formData.append(index === 0 ? 'mainImage' : 'additionalImages', file);
+  });
   
     try {
       console.log('Submitting form:', this.productForm.value);
       await this.productsService.createProduct(formData).toPromise();
       console.log('Form submitted successfully:', this.productForm.value);
-      // Reset form after successful submission
       this.productForm.reset();
       this.productImages = [{ file: null, preview: null }];
       this.productFiles = [];
@@ -94,16 +94,13 @@ export class CreateProductComponent {
 
     const reader = new FileReader();
     reader.onload = () => {
-      // Update productImages for preview
       this.productImages[index] = { file, preview: reader.result as string };
 
-      // Also update productFiles so the file can be appended to the form data
       this.productFiles[index] = file;
 
-      // If it's the last placeholder, add a new empty slot
       if (index === this.productImages.length - 1) {
         this.productImages.push({ file: null, preview: null });
-        this.productFiles.push(null as any); // or simply leave it unpushed if not needed
+        this.productFiles.push(null as any); 
       }
     };
     reader.readAsDataURL(file);

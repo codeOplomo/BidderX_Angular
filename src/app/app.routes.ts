@@ -22,6 +22,8 @@ import { AuctionsExplorerComponent } from './pages/auctions-explorer/auctions-ex
 import { UsersDashComponent } from './pages/users-dash/users-dash.component';
 import { HomeDashComponent } from './pages/home-dash/home-dash.component';
 import { CreatorsComponent } from './pages/creators/creators.component';
+import { roleGuard } from './guards/role.guard';
+import { CollectionsListingComponent } from './pages/collections-listing/collections-listing.component';
 
 export const routes: Routes = [
     {
@@ -36,25 +38,32 @@ export const routes: Routes = [
             { path: 'profile/:email', component: ProfileComponent, canActivate: [authGuard] },
             { path: 'edit-profile', component: EditProfileComponent, canActivate: [authGuard] },
             { path: 'edit-password', component: EditPasswordComponent, canActivate: [authGuard] },
-            { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard], data: { roles: ['ROLE_OWNER'] } },
-            { path: 'create-auction', component: CreateAuctionComponent, canActivate: [authGuard], data: { roles: ['ROLE_OWNER'] } },
-            { path: 'create-product', component: CreateProductComponent, canActivate: [authGuard], data: { roles: ['ROLE_OWNER'] } },
+            { path: 'create-collection', component: CreateCollectionComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ROLE_OWNER'] } },
+            { path: 'create-auction', component: CreateAuctionComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ROLE_OWNER'] } },
+            { path: 'create-product', component: CreateProductComponent, canActivate: [authGuard, roleGuard], data: { roles: ['ROLE_OWNER'] } },
             { path: 'explore-auctions', component: AuctionsExplorerComponent},
             { path: 'collection-showcase/:id', component: CollectionShowcaseComponent},
             { path: 'product-detail/:id', component: ProductDetailComponent},
             { path: 'payment-success', component: PaymentSuccessComponent},
             { path: 'payment-cancel', component: PaymentCancelComponent},
             { path: 'payment-confirmation', component: PaymentConfirmationComponent},
-            { path: 'creators', component: CreatorsComponent}
+            { path: 'creators', component: CreatorsComponent},
+            { path: 'collections', component: CollectionsListingComponent }
         ]
     },
     {
         path: 'dashboard',
         component: DashboardLayoutComponent,
         children: [
-            { path: '', component: HomeDashComponent},
-            { path: 'users', component: UsersDashComponent},
-            { path: 'auctions', component: AuctionsDashComponent},
+            { path: '', component: HomeDashComponent,
+                canActivate: [authGuard, roleGuard],
+                data: { roles: ['ROLE_ADMIN'] }},
+            { path: 'users', component: UsersDashComponent,
+                canActivate: [authGuard, roleGuard],
+                data: { roles: ['ROLE_ADMIN'] }},
+            { path: 'auctions', component: AuctionsDashComponent,
+                canActivate: [authGuard, roleGuard],
+                data: { roles: ['ROLE_ADMIN'] }},
         ]
     },
 ];

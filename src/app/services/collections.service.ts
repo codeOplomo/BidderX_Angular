@@ -15,6 +15,15 @@ export class CollectionsService {
 
   constructor(private http: HttpClient, private imagesService: ImagesService) { }
 
+
+  removeProductFromCollection(collectionId: string, productId: string): Observable<ApiResponse<string>> {
+    return this.http.delete<ApiResponse<string>>(`${this.apiUrl}/${collectionId}/products/${productId}`);
+  }
+  
+  addProductsToCollection(collectionId: string, productIds: string[]): Observable<ApiResponse<string>> {
+    return this.http.post<ApiResponse<string>>(`${this.apiUrl}/${collectionId}/products`,  productIds );
+  }
+  
   getCollections(page: number = 0, size: number = 12): Observable<ApiResponse<PaginatedApiResponse<Collection>>> {
     const params = new HttpParams()
       .set('page', page.toString())

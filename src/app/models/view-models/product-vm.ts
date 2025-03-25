@@ -12,6 +12,7 @@ export interface ProductVM {
     ownerEmail?: string;
     auctionId?: string;
     imageUrl?: string;
+    featuredImageUrls?: string[];
     featuredImages?: string[];
 
     currentBid?: string;

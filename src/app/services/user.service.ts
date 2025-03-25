@@ -1,4 +1,4 @@
-import { HttpClient, HttpEventType, HttpHeaders, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpEventType, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { filter, map, Observable, Subject } from 'rxjs';
 import { PasswordUpdateVM } from '../models/view-models/password-update.model';
@@ -6,6 +6,8 @@ import { ProfileUpdateVM } from '../models/view-models/profile-update.model';
 import { ApiResponse } from '../models/view-models/api-response.model';
 import { ImagesService } from './images.service';
 import { ProfileVM } from '../models/view-models/profile';
+import { PaginatedApiResponse } from '../models/view-models/paginated-api-response.model';
+import { OwnerRankingVM } from '../models/view-models/owner-ranking-vm';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +18,15 @@ export class UserService {
   constructor(private http: HttpClient, private imagesService: ImagesService) { }
 
 
+  searchOwners(query: string, page: number, size: number): Observable<ApiResponse<PaginatedApiResponse<OwnerRankingVM>>> {
+    const params = new HttpParams()
+      .set('q', query)
+      .set('page', page.toString())
+      .set('size', size.toString());
+
+    return this.http.get<ApiResponse<PaginatedApiResponse<OwnerRankingVM>>>(`${this.apiUrl}/search`, { params });
+  }
+  
   banUser(email: string): Observable<ApiResponse<any>> {
     return this.http.post<ApiResponse<any>>(`${this.apiUrl}/${email}/ban`, {});
   }

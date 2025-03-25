@@ -1,83 +1,96 @@
-<!-- treasures-search.component.html -->
-<section class="relative py-24 px-6 bg-cover bg-center"
-  [style.background-image]="'url(https://images.unsplash.com/photo-1614707267537-b85aaf00c4b7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1772&q=80)'">
-  <div class="absolute inset-0 bg-gradient-to-r from-emerald-900/85 to-teal-900/70"></div>
-
+<section class="relative py-24 px-6 bg-cover bg-center transition-opacity duration-1000"
+  [style.background-image]="'url(' + currentImage + ')'">
+  <div class="absolute inset-0 bg-gradient-to-r from-emerald-800/90 to-orange-900/70"></div>
   <div class="relative max-w-6xl mx-auto text-center px-4">
-    <div class="mb-12 space-y-6">
-      <h1 class="text-5xl md:text-7xl font-bold text-emerald-50 mb-6 leading-tight">
-        Curated History <span class="text-amber-300">Rediscovered</span>
+    <div class="mb-12 space-y-6 text-center">
+      <h1 class="text-5xl md:text-7xl font-bold text-emerald-50 mb-6 leading-tight drop-shadow-lg">
+        Curated History <br>
+        <span class="bg-gradient-to-r from-orange-300 to-amber-200 bg-clip-text text-transparent">
+          Rediscovered
+        </span>
       </h1>
-      <p class="text-xl md:text-2xl text-emerald-100/90 max-w-2xl mx-auto leading-relaxed">
+      <p class="text-xl md:text-2xl text-emerald-100/95 w-full leading-relaxed font-medium text-center">
         Journey through exceptional collectibles spanning centuries - where provenance meets passion
       </p>
     </div>
 
+
     <!-- Search Container -->
-    <div class="bg-white/95 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-emerald-100/50 max-w-4xl mx-auto">
-      <div class="flex flex-col md:flex-row gap-4">
-        <!-- Search Input -->
-        <div class="flex-grow relative">
-          <input type="text" placeholder="Seek artifacts, collectibles, memorabilia..." [(ngModel)]="searchTerm"
-            class="w-full pl-12 pr-5 py-4 rounded-xl border border-emerald-200/80 focus:border-emerald-400 focus:ring-2 focus:ring-emerald-200/50 placeholder-emerald-600/80 text-emerald-900 transition-all">
-          <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600/80">
-            search
-          </span>
-        </div>
-      </div>
-
-      <!-- Era Dropdown -->
-      <div class="relative md:w-[200px]">
-        <div class="dropdown group">
-          <button
-            class="w-full px-5 py-4 rounded-xl border border-emerald-200/80 bg-white hover:border-emerald-400 flex justify-between items-center transition-colors">
-            <span class="text-emerald-900/90">Select Era</span>
-            <span
-              class="material-symbols-outlined text-emerald-600/80 group-focus-within:rotate-180 transition-transform">
-              unfold_more
+    <div
+      class="bg-gradient-to-br from-white/95 to-emerald-50/50 backdrop-blur-sm p-8 rounded-2xl shadow-2xl border border-emerald-200/30 max-w-4xl mx-auto">
+      <div class="flex flex-col gap-4">
+        <div class="flex flex-col md:flex-row items-center gap-4">
+          <!-- Search Input -->
+          <div class="flex-grow relative">
+            <input type="text" placeholder="Seek artifacts, collectibles, memorabilia..." [(ngModel)]="searchTerm"
+              class="w-full pl-12 pr-5 py-4 rounded-xl border-2 border-emerald-300/50 focus:border-orange-400 focus:ring-2 focus:ring-emerald-200/30 placeholder-emerald-600/80 text-brown-900 transition-all">
+            <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-emerald-600/80">
+              search
             </span>
-          </button>
-          <div *ngIf="showEraDropdown"
-            class="absolute mt-2 w-full bg-white rounded-xl shadow-lg z-10 border border-emerald-200/50 overflow-hidden">
-            <div class="py-2">
-              <div *ngFor="let era of eras"
-                class="px-5 py-3 hover:bg-emerald-50/80 cursor-pointer text-emerald-900 transition-colors">
-                {{ era }}
+          </div>
+
+          <!-- Era Dropdown -->
+          <div class="relative md:w-[200px]">
+            <div class="dropdown group">
+              <button (click)="toggleEraDropdown()"
+                class="w-full px-5 py-4 rounded-xl border-2 border-emerald-300/50 bg-white hover:border-orange-400 flex justify-between items-center transition-colors">
+                <span class="text-brown-900/90">{{ selectedEra?.name || 'Select Era' }}</span>
+                <span class="material-symbols-outlined text-emerald-600/80 transition-transform">
+                  {{ showEraDropdown ? 'unfold_less' : 'unfold_more' }}
+                </span>
+              </button>
+              <div *ngIf="showEraDropdown"
+                class="absolute mt-2 w-full bg-white rounded-xl shadow-lg z-10 border border-emerald-200/30 overflow-hidden">
+                <div class="py-2">
+                  <div *ngFor="let era of eras" (click)="selectEra(era)" class="px-5 py-3 hover:bg-emerald-50 cursor-pointer text-brown-900 transition-colors
+            {% raw %}{{ selectedEra?.name === era.name ? 'bg-emerald-50 border-l-4 border-emerald-400' : '' }}">
+                    {{ era.name }}
+                    <span *ngIf="selectedEra?.name === era.name"
+                      class="material-symbols-outlined float-right text-emerald-600">
+                      check
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Dropdown -->
+          <div class="relative md:w-[200px]">
+            <div class="dropdown group">
+              <button (click)="toggleCategoryDropdown()"
+                class="w-full px-5 py-4 rounded-xl border-2 border-emerald-300/50 bg-white hover:border-orange-400 flex justify-between items-center transition-colors">
+                <span class="text-brown-900/90">{{ selectedCategory?.name || 'Category' }}</span>
+                <span class="material-symbols-outlined text-emerald-600/80 transition-transform">
+                  {{ showCategoryDropdown ? 'unfold_less' : 'unfold_more' }}
+                </span>
+              </button>
+              <div *ngIf="showCategoryDropdown"
+                class="absolute mt-2 w-full bg-white rounded-xl shadow-lg z-10 border border-emerald-200/30 overflow-hidden">
+                <div class="py-2">
+                  <div *ngFor="let category of categories" (click)="selectCategory(category)" class="px-5 py-3 hover:bg-orange-50 cursor-pointer text-brown-900 transition-colors
+            {% raw %}{{ selectedCategory?.id === category.id ? 'bg-orange-50 border-l-4 border-orange-400' : '' }}">
+                    {{ category.name }}
+                    <span *ngIf="selectedCategory?.id === category.id"
+                      class="material-symbols-outlined float-right text-orange-600">
+                      check
+                    </span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- Category Dropdown -->
-      <div class="relative md:w-[200px]">
-        <div class="dropdown group">
-          <button
-            class="w-full px-5 py-4 rounded-xl border border-emerald-200/80 bg-white hover:border-emerald-400 flex justify-between items-center transition-colors">
-            <span class="text-emerald-900/90">Category</span>
-            <span
-              class="material-symbols-outlined text-emerald-600/80 group-focus-within:rotate-180 transition-transform">
-              unfold_more
-            </span>
+        <div class="flex justify-center">
+          <button (click)="searchTreasures()"
+            class="px-8 py-4 bg-gradient-to-br from-emerald-600 to-orange-500 hover:from-emerald-700 hover:to-orange-600 text-white rounded-xl font-semibold transition-all duration-300 flex items-center justify-center gap-2 shadow-lg hover:shadow-emerald-300/40 hover:-translate-y-0.5">
+            <span class="material-symbols-outlined text-lg">explore</span>
+            Explore Now
           </button>
-          <div *ngIf="showCategoryDropdown"
-            class="absolute mt-2 w-full bg-white rounded-xl shadow-lg z-10 border border-emerald-200/50 overflow-hidden">
-            <div class="py-2">
-              <div *ngFor="let category of categories"
-                class="px-5 py-3 hover:bg-emerald-50/80 cursor-pointer text-emerald-900 transition-colors">
-                {{ category }}
-              </div>
-            </div>
-          </div>
         </div>
       </div>
-
-      <!-- Search Button -->
-      <button (click)="searchTreasures()"
-        class="px-8 py-4 bg-gradient-to-r from-emerald-700 to-teal-700 hover:from-emerald-600 hover:to-teal-600 text-white rounded-xl font-medium transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-emerald-200/40">
-        <span class="material-symbols-outlined">explore</span>
-        Explore Now
-      </button>
     </div>
+
   </div>
 </section>

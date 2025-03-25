@@ -67,7 +67,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
         { label: 'Instant Auctions', routerLink: '/explore-auctions', queryParams: { type: 'INSTANT' } }
       ]
     },
-    { label: 'About', icon: 'info', routerLink: '/about' }
+    { label: 'Creators', icon: 'info', routerLink: '/creators' }
   ];
 
   dropdownItems = [

@@ -57,10 +57,20 @@ export class HomeComponent {
     'Sculptures': 'architecture',
     'Photography': 'camera_alt',
     'Prints': 'print',
-    // Add fallback icon for unknown categories
     'default': 'category'
   };
+
   showMore: boolean = false; 
+  auctionsShowMore: boolean = false;
+
+  durations = [
+    { value: '1d', label: '1 day' },
+    { value: '7d', label: '7 Day\'s' },
+    { value: '15d', label: '15 Day\'s' },
+    { value: '1m', label: '30 Day\'s' }
+  ];
+  selectedDuration = this.durations[0]; 
+showDurationDropdown = false;
 
   chartData: any[] = [
     { month: 'Jan', value: 65, height: '65%' },
@@ -103,44 +113,66 @@ export class HomeComponent {
       error: (error) => console.error('Error fetching live auctions:', error)
     });
 
-    this.auctionsService.getOwnerRanking('1d', 0, 10).subscribe({
-      next: (response) => {
-        this.topOwners = response.data.content.slice(0, 10); 
-      },
-      error: (error) => console.error('Error fetching rankings:', error)
-    });
-    
     this.categoriesService.getCategories().subscribe({
       next: (response: ApiResponse<Category[]>) => {
         this.categories = response.data;
       },
       error: (error) => console.error('Error fetching categories:', error)
     });
+
+    this.loadTopSellers(this.selectedDuration.value);
   }
 
   goToCategoryAuctions(category: Category): void {
-    // Navigate to the auctions page, passing the category name as a query parameter.
     this.router.navigate(['/explore-auctions'], { queryParams: { categoryId: category.id } });
   }
 
   viewDetails(item: AuctionVm): void {
-    // Implement view details logic
     console.log('Viewing details for:', item);
   }
 
   toggleShowMore(): void {
     this.showMore = !this.showMore;
-    // This is the key change: we update the displayed collections array
-    // which will trigger the animation for the new cards
     this.displayedCollections = this.collections.slice(0, this.showMore ? 8 : 4);
   }
+
+  toggleAuctionsShowMore(): void {
+    this.auctionsShowMore = !this.auctionsShowMore;
+  }
   trackLot(item: AuctionVm): void {
-    // Implement track lot logic
     console.log('Tracking lot:', item);
   }
 
+  browseAllCollections(): void {
+    this.router.navigate(['/collections']);
+  }
+
   browseAllAuctions(): void {
-    // Implement browse all auctions navigation
-    console.log('Browsing all auctions');
+    this.router.navigate(['/explore-auctions']);
+  }
+
+  browseAllCreators() {
+    console.log("Navigating to all top sellers page...");
+    this.router.navigate(['/creators']);
+}
+
+
+  toggleDurationDropdown() {
+    this.showDurationDropdown = !this.showDurationDropdown;
+  }
+  
+  selectDuration(duration: any) {
+    this.selectedDuration = duration;
+    this.showDurationDropdown = false;
+    this.loadTopSellers(duration.value); 
+  }
+  
+  loadTopSellers(durationValue: string) {
+    this.auctionsService.getOwnerRanking(durationValue, 0, 10).subscribe({
+      next: (response) => {
+        this.topOwners = response.data.content;
+      },
+      error: (error) => console.error('Error fetching rankings:', error)
+    });
   }
 }

@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { ProductVM } from '../../models/view-models/product-vm';
 import { CollectionItem } from '../../store/collections/collection.model';
 import { ImagesService } from '../../services/images.service';
@@ -14,6 +14,7 @@ import { ImagesService } from '../../services/images.service';
 export class ProductCardComponent {
   @Input() product!: CollectionItem;
   @Input() editable: boolean = false; 
+  @Output() delete = new EventEmitter<any>();
 
   constructor(private imagesService: ImagesService) {}
 

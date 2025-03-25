@@ -2,7 +2,7 @@
           [dismissableMask]="true" [modal]="true" position="bottom">
   <div class="dialog-content flex flex-col gap-4">
     <!-- Unauthenticated State -->
-    <div *ngIf="!(isAuthenticated$ | async)" class="text-center p-4">
+    <div data-testid="auth-required" *ngIf="!(isAuthenticated$ | async)" class="text-center p-4">
       <h3 class="text-lg font-semibold text-[#3e1300] mb-3">
         <i class="pi pi-lock text-xl mr-2"></i>
         Authentication Required
@@ -25,7 +25,7 @@
     </div>
 
     <!-- Authenticated but No Wallet -->
-    <div *ngIf="(isAuthenticated$ | async) && !(hasWallet$ | async)" class="text-center p-4">
+    <div data-testid="wallet-required" *ngIf="(isAuthenticated$ | async) && !(hasWallet$ | async)" class="text-center p-4">
       <h3 class="text-lg font-semibold text-[#3e1300] mb-3">
         <i class="pi pi-wallet text-xl mr-2"></i>
         Wallet Setup Required
@@ -41,7 +41,7 @@
     </div>
 
     <!-- Authenticated with Wallet -->
-    <div *ngIf="(isAuthenticated$ | async) && (hasWallet$ | async)">
+    <div data-testid="bid-form" *ngIf="(isAuthenticated$ | async) && (hasWallet$ | async)">
       <div class="flex flex-col gap-2">
         <small class="text-sm" [class.text-green-500]="!insufficientBalance" [class.text-red-500]="insufficientBalance">
             Available balance: {{ (walletBalance$ | async) | currency }}

@@ -40,6 +40,8 @@ export class AuctionsService {
     maxPrice: number | null = null,
     status: string,
     type: string | null,
+    startDate?: number,
+    endDate?: number,
     sortOrder: 'ASC' | 'DESC' = 'DESC',
     page: number = 0,
     size: number = 8,
@@ -58,18 +60,23 @@ export class AuctionsService {
       params = params.set('type', type);
     }
 
-    // Add category filter if provided
     if (categoryId) {
       params = params.set('categoryId', categoryId);
     }
     
-    // Add price filters if provided
+    
     if (minPrice !== null) {
       params = params.set('minPrice', minPrice.toString());
     }
-    
     if (maxPrice !== null) {
       params = params.set('maxPrice', maxPrice.toString());
+    }
+
+    if (startDate !== undefined && startDate !== null) {
+      params = params.set('startDate', startDate.toString());
+    }
+    if (endDate !== undefined && endDate !== null) {
+      params = params.set('endDate', endDate.toString());
     }
 
     if (query) {

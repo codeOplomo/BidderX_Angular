@@ -5,6 +5,7 @@ export interface CreateAuctionVM {
     isInstantAuction: boolean;
     auctionDurationInHours: number; 
 
+    createNewProduct?: boolean;
     // Product selection - either existingProductId or new product details
     existingProductId?: string; 
 

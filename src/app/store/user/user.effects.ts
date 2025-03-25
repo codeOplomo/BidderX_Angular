@@ -23,7 +23,6 @@ loadProfile$ = createEffect(() => {
       this.userService.getProfile().pipe(
         tap(response => console.log('DEBUG from user effects: Profile API response:', response.data)),
         map((response) => {
-          // Map to ProfileVM with full structure
           const user: ProfileVM = {
             email: response.data.email,
             profileIdentifier: response.data.profileIdentifier,
@@ -68,7 +67,6 @@ loadProfile$ = createEffect(() => {
       }
       
       return this.userService.updateProfile(profileData).pipe(
-        // Map the API response to match the User interface
         map(response => {
           const updatedUser: ProfileVM = {
             profileIdentifier: response.data.profileIdentifier,
@@ -96,13 +94,13 @@ loadProfile$ = createEffect(() => {
       switchMap(({ imageFile }) =>
         new Observable<Action>((observer) => {
           this.userService.uploadProfileImage(
-            this.destroy$, // Provide the destroy$ subject
+            this.destroy$, 
             (imageUrl) => {
               observer.next(UserActions.updateUserImageSuccess({ imageUrl }));
               observer.complete();
             },
             (loading) => {
-              console.log('Loading state:', loading); // Handle loading if necessary
+              console.log('Loading state:', loading); 
             }
           );
         }).pipe(

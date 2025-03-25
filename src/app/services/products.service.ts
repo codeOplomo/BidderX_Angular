@@ -16,6 +16,10 @@ export class ProductsService {
 
   constructor(private http: HttpClient, private imagesService: ImagesService) {}
 
+  getCollectionProducts(collectionId: string): Observable<ApiResponse<ProductVM[]>> {
+    return this.http.get<ApiResponse<ProductVM[]>>(`${this.apiUrl}/${collectionId}/products`);
+  }
+  
   createProduct(formData: FormData): Observable<ApiResponse<ProductVM>> {
     return this.http.post<ApiResponse<ProductVM>>(this.apiUrl, formData);
   }
